@@ -1,0 +1,1 @@
+﻿Запускать: java -jar orponing-1.0.jar
