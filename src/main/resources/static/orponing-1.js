@@ -126,13 +126,11 @@ async function orponingFile(data) {
 
     result = await getAddressInfo(list);
 
-
     downloadFile = getDownloadFile();
 
     dataForSave = convertAddressInfoToString(result);
 
     downloadFile.href = dataForSave;
-
 
     if (document.querySelector("#div-file-load>a")) {
         document.querySelector("#div-file-load>a").remove();

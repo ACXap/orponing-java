@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class OrponingTableService {
 
-    public OrponingTableService(PropertyService propertyService, IDbSaveData dbSaveData, OrponinService service) {
+    public OrponingTableService(PropertyService propertyService, IDbSaveData dbSaveData, OrponingService service) {
         _propertyService = propertyService;
         _dbSaveData = dbSaveData;
         _service = service;
@@ -22,19 +22,23 @@ public class OrponingTableService {
         _statusService = StatusService.Stop();
     }
 
+    //region PrivateField
     private final PropertyService _propertyService;
     private final IDbSaveData _dbSaveData;
 
-    private final OrponinService _service;
+    private final OrponingService _service;
 
     private final Object lock = new Object();
     private StatusService _statusService;
+    //endregion PrivateField
 
+    //region PublicProperty
     public StatusService getStatusService() {
         return _statusService;
     }
+    //endregion PublicProperty
 
-
+    //region PublicMethod
     public StatusService startService() {
 
         synchronized (lock) {
@@ -45,7 +49,6 @@ public class OrponingTableService {
         }
 
         while (_statusService.Status == StatusType.START) {
-
             try {
                 List<EntityAddress> listEntityAddress = _dbSaveData.GetEntityAddress();
 
@@ -55,7 +58,10 @@ public class OrponingTableService {
                         ResponseOrponingList response = _service.OrponingAddressList(list);
 
                         _dbSaveData.AddAddressInfo(response.AddressInfoList);
-                        _dbSaveData.AddAddressInfoError(response.AddressInfoError);
+
+                        if (response.HasError) {
+                            _dbSaveData.AddAddressInfoError(response.AddressInfoError);
+                        }
                     }
                 } else {
                     _statusService = StatusService.Stop();
@@ -67,4 +73,10 @@ public class OrponingTableService {
 
         return _statusService;
     }
+
+    //endregion PublicMethod
+
+    //region PrivateMethod
+
+    //endregion PrivateMethod
 }

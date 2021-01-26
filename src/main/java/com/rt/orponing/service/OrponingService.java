@@ -2,10 +2,7 @@ package com.rt.orponing.service;
 
 import com.google.common.collect.Lists;
 import com.rt.orponing.repository.IRepositoryOrpon;
-import com.rt.orponing.repository.data.AddressInfo;
-import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.repository.data.EntityAddressError;
-import com.rt.orponing.repository.data.RepositoryException;
+import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.ResponseOrponingList;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class OrponinService {
+public class OrponingService {
 
-    public OrponinService(PropertyService propertyService, IRepositoryOrpon repository) {
+    public OrponingService(PropertyService propertyService, IRepositoryOrpon repository) {
         _propertyService = propertyService;
         _repository = repository;
     }
@@ -24,9 +21,7 @@ public class OrponinService {
     private final IRepositoryOrpon _repository;
 
     public AddressInfo OrponingAddress(EntityAddress entityAddress) throws RepositoryException {
-        AddressInfo addressInfo = _repository.GetInfo(entityAddress);
-
-        return addressInfo;
+        return _repository.GetInfo(entityAddress);
     }
 
     public ResponseOrponingList OrponingAddressList(List<EntityAddress> entityAddressList) {
@@ -51,7 +46,6 @@ public class OrponinService {
             }
         }
 
-        ResponseOrponingList response = new ResponseOrponingList(addressInfo, entityAddressError);
-        return response;
+        return new ResponseOrponingList(addressInfo, entityAddressError);
     }
 }

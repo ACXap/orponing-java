@@ -1,8 +1,6 @@
 package com.rt.orponing.repository;
 
-import com.rt.orponing.repository.data.AddressInfo;
-import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.repository.data.RepositoryException;
+import com.rt.orponing.repository.data.*;
 import com.rt.orponing.repository.soap.*;
 import com.rt.orponing.service.PropertyService;
 import org.springframework.stereotype.Repository;
@@ -31,9 +29,7 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
                 add(entityAddress);
             }});
 
-            AddressElementNameResponse2.AddressElementResponseList2.AddressElementNameGroup2 addressElementNameGroup2 = addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().get(0);
-
-            return ParsAddressInfo(addressElementNameGroup2);
+            return ParsAddressInfo(addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().get(0));
         } catch (Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
@@ -45,7 +41,6 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
             AddressElementNameResponse2 addressElementNameResponse2 = GetAddressElementNameResponse(entityAddressList);
 
             return addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().stream().map(this::ParsAddressInfo).collect(Collectors.toList());
-
         } catch (Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
         }
