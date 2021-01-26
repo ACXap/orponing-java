@@ -10,6 +10,9 @@ import com.rt.orponing.service.data.StatusType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 @Component
 public class OrponingTableService {
@@ -25,11 +28,12 @@ public class OrponingTableService {
     //region PrivateField
     private final PropertyService _propertyService;
     private final IDbSaveData _dbSaveData;
-
     private final OrponingService _service;
+    private final Logger _logger = Logger.getLogger("OrponingTableService");
 
     private final Object lock = new Object();
     private StatusService _statusService;
+
     //endregion PrivateField
 
     //region PublicProperty
@@ -40,6 +44,7 @@ public class OrponingTableService {
 
     //region PublicMethod
     public StatusService startService() {
+        _logger.info("Start service orponing");
 
         synchronized (lock) {
             if (_statusService.Status == StatusType.START) {
@@ -48,28 +53,40 @@ public class OrponingTableService {
             _statusService = StatusService.Start();
         }
 
-        while (_statusService.Status == StatusType.START) {
-            try {
-                List<EntityAddress> listEntityAddress = _dbSaveData.GetEntityAddress();
+        ExecutorService service = Executors.newCachedThreadPool();
 
-                if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
-                    for (List<EntityAddress> list : Lists.partition(listEntityAddress, _propertyService.PartitionSizePars)) {
+        service.execute(()->{
+            while (_statusService.Status == StatusType.START) {
+                try {
+                    _logger.info("Load address for orponing");
+                    List<EntityAddress> listEntityAddress = _dbSaveData.GetEntityAddress();
 
-                        ResponseOrponingList response = _service.OrponingAddressList(list);
+                    if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
+                        for (List<EntityAddress> list : Lists.partition(listEntityAddress, _propertyService.PartitionSizePars)) {
 
-                        _dbSaveData.AddAddressInfo(response.AddressInfoList);
+                            _logger.info("Orponing address");
+                            ResponseOrponingList response = _service.OrponingAddressList(list);
 
-                        if (response.HasError) {
-                            _dbSaveData.AddAddressInfoError(response.AddressInfoError);
+                            _logger.info("Write address info to bd");
+                            _dbSaveData.AddAddressInfo(response.AddressInfoList);
+
+                            if (response.HasError) {
+                                _logger.info("Write address info error to bd");
+                                _dbSaveData.AddAddressInfoError(response.AddressInfoError);
+                            }
                         }
+                    } else {
+                        _logger.info("Not found address for orponing");
+                        _statusService = StatusService.Stop();
                     }
-                } else {
-                    _statusService = StatusService.Stop();
+                } catch (DaoException de) {
+                    _logger.info(de.getMessage());
+                    _statusService = StatusService.Error(de.getMessage());
                 }
-            } catch (DaoException de) {
-                _statusService = StatusService.Error(de.getMessage());
             }
-        }
+        });
+
+        service.shutdown();
 
         return _statusService;
     }

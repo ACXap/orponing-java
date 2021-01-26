@@ -5,6 +5,7 @@ import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.StatusService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.logging.Logger;
 
 @RestController
 public class OrponingServiceController {
@@ -14,6 +15,7 @@ public class OrponingServiceController {
     }
 
     private final OrponingTableService _service;
+    private final Logger _logger = Logger.getLogger("OrponingServiceController");
 
     @GetMapping("/orponing_service/start")
     public StatusService startService() throws DaoException {
