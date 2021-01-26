@@ -18,52 +18,86 @@
 
         <div class="row py-5 text-center">
             <div class="col-sm-10">
-                <h2>Орпонизация адреса</h2>
+                <h2>Орпонизация</h2>
             </div>
             <div class="col-sm-2">
                 <a href="/orponing_service" class="btn btn-primary" type="button">Сервис орпонизации</a>
             </div>
         </div>
 
-        <div class="input-group">
-            <input type="text" class="form-control" placeholder="Адрес" id="input-address">
-            <button class="btn btn-primary" type="button" id="button-orponing">Орпонизируй меня полностью</button>
-        </div>
+        <div class="container border">
+            <div class="row">
+                <div class="tab-panel p-3">
+                    <div class="tab-panel-tabs p-2">
+                        <button class="btn btn-primary" id="button-orponing-address">Адреса</button>
+                        <button class="btn btn-primary" id="button-orponing-file">Файла</button>
+                    </div>
 
-        <hr>
+                    <div class="input-group p-2" id="div-form-address">
+                        <input type="text" class="form-control" placeholder="Адрес" id="input-address">
+                        <button class="btn btn-primary" type="button" id="orponing-address">Орпонизируй меня полностью
+                        </button>
+                    </div>
 
-        <div class="row" hidden id="result">
-            <div class="col-sm-2">
-                <label for="gid" class="form-label">ГИД</label>
-                <input type="text" class="form-control" id="gid" placeholder="" value="" required="">
-            </div>
-
-            <div class="col-sm-10">
-                <label for="addressOrpon" class="form-label">AddressOrpon</label>
-                <input type="text" class="form-control" id="addressOrpon" placeholder="" value="" required="">
-            </div>
-
-            <div class="col-sm-3">
-                <label for="parsingLevelCode" class="form-label">ParsingLevelCode</label>
-                <input type="text" class="form-control" id="parsingLevelCode" placeholder="" value="" required="">
-            </div>
-
-            <div class="col-sm-3">
-                <label for="unparsedParts" class="form-label">UnparsedParts</label>
-                <input type="text" class="form-control" id="unparsedParts" placeholder="" value="" required="">
-            </div>
-
-            <div class="col-sm-3">
-                <label for="qualityCode" class="form-label">QualityCode</label>
-                <input type="text" class="form-control" id="qualityCode" placeholder="" value="" required="">
-            </div>
-
-            <div class="col-sm-3">
-                <label for="checkStatus" class="form-label">CheckStatus</label>
-                <input type="text" class="form-control" id="checkStatus" placeholder="" value="" required="">
+                    <div class="input-group p-2" hidden id="div-form-file">
+                        <input class="form-control" type="file" id="formFile">
+                        <button class="btn btn-primary" type="button" id="orponing-file">Орпонизируй меня полностью
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
-        <script src="orponing.js"></script>
+
+        <div class="container border p-3" hidden id="result">
+            <div class="row">
+                <div class="col-sm-2">
+                    <label for="gid" class="form-label">ГИД</label>
+                    <input type="text" class="form-control" id="gid" placeholder="" value="" required="">
+                </div>
+
+                <div class="col-sm-10">
+                    <label for="addressOrpon" class="form-label">AddressOrpon</label>
+                    <input type="text" class="form-control" id="addressOrpon" placeholder="" value="" required="">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="parsingLevelCode" class="form-label">ParsingLevelCode</label>
+                    <input type="text" class="form-control" id="parsingLevelCode" placeholder="" value="" required="">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="unparsedParts" class="form-label">UnparsedParts</label>
+                    <input type="text" class="form-control" id="unparsedParts" placeholder="" value="" required="">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="qualityCode" class="form-label">QualityCode</label>
+                    <input type="text" class="form-control" id="qualityCode" placeholder="" value="" required="">
+                </div>
+
+                <div class="col-sm-3">
+                    <label for="checkStatus" class="form-label">CheckStatus</label>
+                    <input type="text" class="form-control" id="checkStatus" placeholder="" value="" required="">
+                </div>
+            </div>
+        </div>
+
+        <div class="container border p-3" id="result-file" hidden>
+            <div class="container row py-2 text-center" hidden id="await-file">
+                <div class="col-sm-12">
+                    <h3>Идет обработка данных. Пожалуйста, подождите!</h3>
+                </div>
+                <div class="col-sm-12">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Обработка...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container text-center p-3" id="div-file-load"></div>
+        </div>
+
+        <script src="orponing-1.js"></script>
     </div>
 </body>
 

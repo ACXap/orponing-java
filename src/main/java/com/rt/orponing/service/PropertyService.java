@@ -1,9 +1,8 @@
 package com.rt.orponing.service;
 
-import com.rt.orponing.dao.DbConnectProperty;
+import com.rt.orponing.dao.data.DbConnectProperty;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;

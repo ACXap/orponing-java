@@ -1,28 +1,37 @@
 package com.rt.orponing.controllers;
 
-import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import com.rt.orponing.service.OrponinService;
+import com.rt.orponing.service.data.ResponseOrponingList;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class AddressOrponingController {
 
-    public  AddressOrponingController(IRepositoryOrpon repository){
-        _repository = repository;
+    public  AddressOrponingController(OrponinService service){
+        _service = service;
     }
 
-    private final IRepositoryOrpon _repository;
+    private final OrponinService _service;
 
     @GetMapping("/get_globalid")
-    public AddressInfo getMainPage(@RequestParam("address") String address){
+    public AddressInfo getGlobalIdPage(@RequestParam("address") String address){
 
         try {
-            return _repository.GetInfo(new EntityAddress(1, address));
+            return _service.OrponingAddress(new EntityAddress(1, address));
         }  catch (Exception ex){
             return AddressInfo.GetErrorAddressInfo();
         }
+    }
+
+    @PostMapping(path ="/get_globalid", consumes = "application/json", produces = "application/json")
+    public ResponseOrponingList getGlobalIdsPage(@RequestBody List<EntityAddress> list){
+
+        ResponseOrponingList response = _service.OrponingAddressList(list);
+
+        return response;
     }
 }

@@ -1,4 +1,4 @@
-package com.rt.orponing.dao;
+package com.rt.orponing.dao.data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

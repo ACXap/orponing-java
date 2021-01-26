@@ -1,4 +1,4 @@
-package com.rt.orponing.dao;
+package com.rt.orponing.dao.data;
 
 public class DaoException extends Exception {
     public DaoException(String message) {

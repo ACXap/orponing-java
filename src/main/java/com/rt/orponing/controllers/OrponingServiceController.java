@@ -1,7 +1,7 @@
 package com.rt.orponing.controllers;
 
-import com.rt.orponing.dao.DaoException;
-import com.rt.orponing.service.OrponingService;
+import com.rt.orponing.dao.data.DaoException;
+import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.StatusService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,19 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrponingServiceController {
 
-    public OrponingServiceController(OrponingService service) {
+    public OrponingServiceController(OrponingTableService service) {
         _service = service;
     }
 
-    private final OrponingService _service;
-
-    @GetMapping("/orponing_service")
-    public String orponingService() throws DaoException {
-        String urls = "/orponing_service/start - запуск сервиса <br>" +
-                "/orponing_service/status - проверка статуса сервиса";
-
-        return urls;
-    }
+    private final OrponingTableService _service;
 
     @GetMapping("/orponing_service/start")
     public StatusService startService() throws DaoException {
