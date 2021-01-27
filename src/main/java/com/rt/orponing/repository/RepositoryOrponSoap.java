@@ -60,13 +60,21 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
         return _wsSearch.searchAddressElementByFullName(addressElementNameData);
     }
 
-    private AddressInfo ParsAddressInfo(AddressElementNameResponse2.AddressElementResponseList2.AddressElementNameGroup2 addressElementNameGroup2) {
-        return new AddressInfo(Integer.parseInt(addressElementNameGroup2.getSystemCode()),
-                Long.parseLong(addressElementNameGroup2.getGlobalID()),
-                addressElementNameGroup2.getParsingLevelCode(),
-                addressElementNameGroup2.getUnparsedParts(),
-                addressElementNameGroup2.getQualityCode(),
-                addressElementNameGroup2.getCheckStatus());
+    private AddressInfo ParsAddressInfo(AddressElementNameResponse2.AddressElementResponseList2.AddressElementNameGroup2 adr) {
+        return new AddressInfo(Integer.parseInt(adr.getSystemCode()),
+                ParsGlobalId(adr.getGlobalID()),
+                adr.getParsingLevelCode(),
+                adr.getUnparsedParts(),
+                adr.getQualityCode(),
+                adr.getCheckStatus());
+    }
+
+    private long ParsGlobalId(String globalId) {
+        try {
+            return Long.parseLong(globalId);
+        } catch (Exception ex) {
+            return -1;
+        }
     }
 
     private AddressElementNameData.AddressElementFullNameList.AddressElementFullNameGroup ParsFullNameGroup(EntityAddress entityAddress) {

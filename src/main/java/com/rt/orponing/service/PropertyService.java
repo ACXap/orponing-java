@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
-
 @Component
 public class PropertyService {
 
@@ -18,16 +17,13 @@ public class PropertyService {
 
     //region PrivateField
     private static final String FILE_INI = "settings.ini";
-
     //endregion PrivateField
 
     //region PublicProperty
     public String UrlService;
-    public String DbSeparator;
     public DbConnectProperty DbConnectProperty;
     public String PathTempFile;
     public int PartitionSizePars = 200;
-
     //endregion PublicProperty
 
     //region PublicMethod
@@ -40,7 +36,6 @@ public class PropertyService {
         }
 
         UrlService = props.getProperty("UrlService");
-        DbSeparator = props.getProperty("DbSeparator");
         DbConnectProperty = new DbConnectProperty(props.getProperty("DbServer"),
                 Integer.parseInt(props.getProperty("DbPort")),
                 props.getProperty("DbName"),

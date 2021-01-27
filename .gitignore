@@ -37,3 +37,6 @@ build/
 /mvnw.cmd
 /.mvn/wrapper/MavenWrapperDownloader.java
 /logs/
+/src/main/resources/static/css/
+/src/main/resources/static/img/
+/src/main/resources/static/webfonts/

@@ -3,9 +3,7 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.RepositoryOrponSoap;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.repository.data.EntityAddressError;
 import com.rt.orponing.repository.data.RepositoryException;
-import com.rt.orponing.service.data.ResponseOrponingList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -61,9 +59,9 @@ class OrponingServiceTest {
         list.add(entityAddress_1);
         list.add(entityAddress_2);
 
-        ResponseOrponingList response  = _service.OrponingAddressList(list);
-        AddressInfo addressInfo_1 = response.AddressInfoList.stream().filter(a -> a.Id == 1).findAny().orElse(null);
-        AddressInfo addressInfo_2 = response.AddressInfoList.stream().filter(a -> a.Id == 2).findAny().orElse(null);
+        List<AddressInfo> response  = _service.OrponingAddressList(list);
+        AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().orElse(null);
+        AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().orElse(null);
 
         assertEquals(id_1, addressInfo_1.Id);
         assertEquals(globalId_1, addressInfo_1.GlobalId);
@@ -75,7 +73,7 @@ class OrponingServiceTest {
         assertEquals(level_2, addressInfo_2.ParsingLevelCode);
         assertEquals(unparsed_2, addressInfo_2.UnparsedParts);
 
-        assertFalse(response.HasError);
+
     }
 
     @Test
@@ -94,19 +92,19 @@ class OrponingServiceTest {
         list.add(entityAddress_1);
         list.add(entityAddress_2);
 
-        ResponseOrponingList response  = _service.OrponingAddressList(list);
-        AddressInfo addressInfo_1 = response.AddressInfoList.stream().filter(a -> a.Id == 1).findAny().orElse(null);
+        List<AddressInfo> response  = _service.OrponingAddressList(list);
+        AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().orElse(null);
 
-        EntityAddressError addressInfo_2 = response.AddressInfoError.stream().filter(a -> a.Address.Id == 2).findAny().orElse(null);
+        AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().orElse(null);
 
         assertEquals(id_1, addressInfo_1.Id);
         assertEquals(globalId_1, addressInfo_1.GlobalId);
         assertEquals(level_1, addressInfo_1.ParsingLevelCode);
         assertEquals(unparsed_1, addressInfo_1.UnparsedParts);
+        assertTrue(addressInfo_1.IsValid);
 
-        assertEquals(id_2, addressInfo_2.Address.Id);
+        assertEquals(id_2, addressInfo_2.Id);
+        assertFalse(addressInfo_2.IsValid);
         assertEquals("Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact cause of the failure.", addressInfo_2.Error);
-
-        assertTrue(response.HasError);
     }
 }

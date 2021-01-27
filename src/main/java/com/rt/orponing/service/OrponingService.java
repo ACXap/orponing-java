@@ -3,11 +3,13 @@ package com.rt.orponing.service;
 import com.google.common.collect.Lists;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
-import com.rt.orponing.service.data.ResponseOrponingList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Component
 public class OrponingService {
@@ -19,16 +21,28 @@ public class OrponingService {
 
     private final PropertyService _propertyService;
     private final IRepositoryOrpon _repository;
+    private final Logger _logger = LoggerFactory.getLogger("OrponingService");
 
-    public AddressInfo OrponingAddress(EntityAddress entityAddress) throws RepositoryException {
-        return _repository.GetInfo(entityAddress);
+    public AddressInfo OrponingAddress(EntityAddress entityAddress) {
+        try {
+            _logger.info("Orponing address");
+            AddressInfo addressInfo = _repository.GetInfo(entityAddress);
+
+            // тут еще надо получить строку адреса из орпон
+
+            return addressInfo;
+        } catch (Exception ex) {
+
+            _logger.error(entityAddress.Address + " " +  ex.getMessage());
+            return new AddressInfo(entityAddress.Id, ex.getMessage());
+        }
     }
 
-    public ResponseOrponingList OrponingAddressList(List<EntityAddress> entityAddressList) {
+    public List<AddressInfo> OrponingAddressList(List<EntityAddress> entityAddressList) {
         List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
-        List<EntityAddressError> entityAddressError = new ArrayList<>();
 
+        _logger.info("Orponing list address");
         for (List<EntityAddress> list : Lists.partition(entityAddressList, _propertyService.PartitionSizePars)) {
             try {
                 addressInfo.addAll(_repository.GetInfo(list));
@@ -37,15 +51,11 @@ public class OrponingService {
             }
         }
 
+        _logger.info("Orponing list bad address");
         for (EntityAddress address : tempAddressError) {
-            try {
-                addressInfo.add(_repository.GetInfo(address));
-            } catch (RepositoryException re) {
-
-                entityAddressError.add(new EntityAddressError(address, re.getMessage()));
-            }
+            addressInfo.add(OrponingAddress(address));
         }
 
-        return new ResponseOrponingList(addressInfo, entityAddressError);
+        return addressInfo;
     }
 }

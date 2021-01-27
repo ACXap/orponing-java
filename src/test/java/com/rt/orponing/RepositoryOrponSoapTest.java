@@ -84,4 +84,15 @@ class RepositoryOrponSoapTest {
             assertEquals("Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact cause of the failure.", ex.getMessage());
         }
     }
+
+    @Test
+    void getInfo_NotFound() throws RepositoryException {
+        int id = 1;
+        EntityAddress entityAddress = new EntityAddress(id, "l;l;l;l;");
+
+        AddressInfo addressInfo = _repository.GetInfo(entityAddress);
+        assertEquals(id, addressInfo.Id);
+        assertEquals(-1, addressInfo.GlobalId);
+        assertEquals("EMPTY", addressInfo.ParsingLevelCode);
+    }
 }

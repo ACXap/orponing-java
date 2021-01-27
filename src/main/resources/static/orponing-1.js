@@ -1,54 +1,86 @@
 list = [];
 
+function getElement(id) {
+    return document.querySelector(`#${id}`);
+}
+
 document.querySelector("#orponing-address").onclick = async () => {
     const address = document.querySelector("#input-address").value;
     if (address) {
         const response = await fetch("/get_globalid?address=" + address);
         const json = await response.json();
+
         if (json) {
-            document.querySelector("#result").hidden = false;
-            document.querySelector("#gid").value = json.GlobalId;
-            document.querySelector("#addressOrpon").value = json.AddressOrpon;
-            document.querySelector("#parsingLevelCode").value = json.ParsingLevelCode;
-            document.querySelector("#unparsedParts").value = json.UnparsedParts;
-            document.querySelector("#qualityCode").value = json.QualityCode;
-            document.querySelector("#checkStatus").value = json.CheckStatus;
+            getElement("result").hidden = false;
+            getElement("errorInfo").hidden = json.IsValid;
+            getElement("gidInfo").hidden = !json.IsValid;
+            getElement("addressInfo").hidden = !json.IsValid;
+
+            getElement("gid").value = json.GlobalId;
+            getElement("addressOrpon").value = json.AddressOrpon;
+            getElement("parsingLevelCode").value = json.ParsingLevelCode;
+            getElement("unparsedParts").value = json.UnparsedParts;
+            getElement("qualityCode").value = json.QualityCode;
+            getElement("checkStatus").value = json.CheckStatus;
+            getElement("error").value = json.Error;
+
+            header = getElement("headerInfoAddress");
+            if (json.IsValid) {
+                header.textContent = "Адрес разобран";
+                header.style = "color:green";
+            } else {
+                header.textContent = "Адрес разобран c ошибками";
+                header.style = "color:red";
+            }
         }
     }
 }
 
-document.querySelector("#orponing-file").onclick = () => {
-    document.querySelector("#await-file").hidden = false;
-    document.querySelector("#result-file").hidden = false;
-    document.querySelector("#div-file-load").hidden = true;
-
-    const file = document.querySelector("#formFile").files[0];
-    if (!file && checkTypeFile(file) === false) {
-        alert("Неверный тип файла.<br> Допускается только *.txt и *.csv");
-        document.querySelector("#await-file").hidden = true;
-        return;
+getElement("input-address").addEventListener("keyup", (event) => {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        getElement("orponing-address").click();
     }
+})
+
+getElement("orponing-file").onclick = () => {
+    const file = getElement("formFile").files[0];
+    if (!file || checkTypeFile(file) === false) {
+    if(!file){
+         alert("А кто файл то будет добавлять?");
+    } else{
+         alert("Неверный тип файла. Допускается только *.txt и *.csv");
+    }
+    return;
+}
+
+    getElement("await-file").hidden = false;
+    getElement("result-file").hidden = false;
+    getElement("div-file-load").hidden = true;
 
     const reader = new FileReader();
     reader.readAsText(file, "UTF-8");
     reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
 }
 
-document.querySelector("#button-orponing-address").onclick = async () => {
-    document.querySelector("#div-form-address").hidden = false;
-    document.querySelector("#div-form-file").hidden = true;
+getElement("button-orponing-address").onclick = async () => {
+    getElement("div-form-address").hidden = false;
+    getElement("div-form-file").hidden = true;
 
-    document.querySelector("#result-file").hidden = true;
-    if (document.querySelector("#gid").value) {
-        document.querySelector("#result").hidden = false;
+    getElement("result-file").hidden = true;
+    if (getElement("gid").value) {
+        getElement("result").hidden = false;
     }
 }
 
-document.querySelector("#button-orponing-file").onclick = async () => {
-    document.querySelector("#div-form-address").hidden = true;
-    document.querySelector("#div-form-file").hidden = false;
+getElement("button-orponing-file").onclick = async () => {
+    getElement("div-form-address").hidden = true;
+    getElement("div-form-file").hidden = false;
 
-    document.querySelector("#result").hidden = true;
+    getElement("result").hidden = true;
+    if(list.length> 0){
+        getElement("result-file").hidden = false;
+    }
 }
 
 function checkTypeFile(file) {
@@ -100,12 +132,8 @@ function convertAddressInfoToString(addressInfo) {
     data = [];
     data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
 
-    addressInfo.AddressInfoError.forEach(el => {
-        data.push(`${getString(el.Address.Id)};${getString(el.Address.Address).replace("\r")};;;;;;${getString(el.Error)}`);
-    });
-
-    addressInfo.AddressInfoList.forEach(el => {
-        data.push(`${getString(el.Id)};${getString(list.find(e => e.Id == el.Id).Address).replace("\r")};${getString(el.GlobalId)};${getString(el.AddressOrpon)};${getString(el.ParsingLevelCode)};${getString(el.QualityCode)};${getString(el.UnparsedParts)};`);
+    addressInfo.forEach(el => {
+        data.push(`${getString(el.Id)};${getString(list.find(e => e.Id == el.Id).Address).replace("\r")};${getString(el.GlobalId)};${getString(el.AddressOrpon)};${getString(el.ParsingLevelCode)};${getString(el.QualityCode)};${getString(el.UnparsedParts)};${getString(el.Error)}`);
     });
 
     dataForSave += encodeURIComponent(data.join("\r\n"));
@@ -132,10 +160,10 @@ async function orponingFile(data) {
 
     downloadFile.href = dataForSave;
 
-    if (document.querySelector("#div-file-load>a")) {
-        document.querySelector("#div-file-load>a").remove();
+    if (getElement("div-file-load>a")) {
+        getElement("div-file-load>a").remove();
     }
-    document.querySelector("#await-file").hidden = true;
-    document.querySelector("#div-file-load").hidden = false;
-    document.querySelector("#div-file-load").appendChild(downloadFile);
+    getElement("await-file").hidden = true;
+    getElement("div-file-load").hidden = false;
+    getElement("div-file-load").appendChild(downloadFile);
 }

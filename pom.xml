@@ -11,7 +11,7 @@
 	<groupId>com.rt</groupId>
 	<artifactId>orponing</artifactId>
 	<version>1.0</version>
-	<name>orponing</name>
+	<name>OrponingJava</name>
 	<description>Get global id for address</description>
 	<properties>
 		<maven.compiler.source>8</maven.compiler.source>

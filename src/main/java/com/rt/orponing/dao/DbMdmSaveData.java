@@ -6,7 +6,6 @@ import com.rt.orponing.dao.data.ICheckedConsumer;
 import com.rt.orponing.dao.queryGenerator.QueryGeneratorMdmSaveData;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.repository.data.EntityAddressError;
 import com.rt.orponing.service.PropertyService;
 import org.springframework.stereotype.Component;
 
@@ -55,7 +54,7 @@ public class DbMdmSaveData implements IDbSaveData{
     }
 
     @Override
-    public void AddAddressInfoError(List<EntityAddressError> collectionAddress) throws DaoException {
+    public void AddAddressInfoError(List<AddressInfo> collectionAddress) throws DaoException {
         ProcessConnect(con -> AddAddressInfoError(con, collectionAddress));
     }
 
@@ -81,13 +80,13 @@ public class DbMdmSaveData implements IDbSaveData{
         }
     }
 
-    private void AddAddressInfoError(Connection con, List<EntityAddressError> collectionAddress) throws DaoException {
+    private void AddAddressInfoError(Connection con, List<AddressInfo> collectionAddress) throws DaoException {
         String query = _queryGenerator.UpdateAddressInfoError();
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
-            for (EntityAddressError address : collectionAddress) {
+            for (AddressInfo address : collectionAddress) {
 
-                ps.setInt(1, address.Address.Id);
+                ps.setInt(1, address.Id);
                 ps.setString(2, address.Error);
 
                 ps.addBatch();
