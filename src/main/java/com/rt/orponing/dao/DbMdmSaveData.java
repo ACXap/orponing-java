@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class DbMdmSaveData implements IDbSaveData{
+public class DbMdmSaveData implements IDbSaveData {
 
-    public DbMdmSaveData(PropertyService propertyService, QueryGeneratorMdmSaveData queryGenerator){
+    public DbMdmSaveData(PropertyService propertyService, QueryGeneratorMdmSaveData queryGenerator) {
         _dbConnectProperty = propertyService.DbConnectProperty;
         _queryGenerator = queryGenerator;
     }
@@ -54,8 +54,19 @@ public class DbMdmSaveData implements IDbSaveData{
     }
 
     @Override
-    public void AddAddressInfoError(List<AddressInfo> collectionAddress) throws DaoException {
-        ProcessConnect(con -> AddAddressInfoError(con, collectionAddress));
+    public boolean TestDb() throws DaoException {
+       ProcessConnect(this::TestBd);
+        return  true;
+    }
+
+    public void TestBd(Connection con) throws DaoException {
+        String query = _queryGenerator.TestBd();
+
+        try (PreparedStatement ps = con.prepareStatement(query)) {
+            ps.execute();
+        } catch (Exception ex) {
+            throw new DaoException("Ошибка обработки запроса: " + query + " " + ex.getMessage());
+        }
     }
 
     public void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
@@ -71,23 +82,7 @@ public class DbMdmSaveData implements IDbSaveData{
                 ps.setString(5, a.UnparsedParts);
                 ps.setString(6, a.QualityCode);
                 ps.setString(7, a.CheckStatus);
-
-                ps.addBatch();
-            }
-            ps.executeBatch();
-        } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + query + " " + ex.getMessage());
-        }
-    }
-
-    private void AddAddressInfoError(Connection con, List<AddressInfo> collectionAddress) throws DaoException {
-        String query = _queryGenerator.UpdateAddressInfoError();
-
-        try (PreparedStatement ps = con.prepareStatement(query)) {
-            for (AddressInfo address : collectionAddress) {
-
-                ps.setInt(1, address.Id);
-                ps.setString(2, address.Error);
+                ps.setString(8, a.Error);
 
                 ps.addBatch();
             }

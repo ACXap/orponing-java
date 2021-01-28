@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="../img/favicon.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <title>Помощь</title>
+</head>
+
+<body>
+<header th:insert="../block/nav.html :: nav"></header>
+
+    <div class="container">
+        <h1 class="mt-5">ОРПОН</h1>
+        <p class="lead">Отраслевое решение «паспортизация объектов недвижимости» - система управления адресной информацией и информацией об объектах недвижимости</p>
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">Орпонизация</h1>
+        <p class="lead">Процесс получения глобального идентификатора системы ОРПОН (по простому: ГИД ОРПОН) для указанного адреса</p>
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">Сервис "Орпонизации"</h1>
+        <p class="lead">Процедура изо дня в день орпонизирует предоставленные адреса</p>
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">Корректный формат адреса</h1>
+        <p class="lead">Зачастую по переданному адресу даже человек не может определить где это,
+            что уж говорить о "1 и 0", по этому, что бы получить максимально достоверный результат,
+            необходимо придерживаться определенного формата адреса:<br>
+        <span class="m-5" style="width: 600px;"><b>Область, район, населенный пункт, улица, дом</b></span><br>
+            Избегать посторонних слов, символов, цифр - которые никак не указывают на адрес.</p>
+    </div>
+
+</body>
+
+</html>

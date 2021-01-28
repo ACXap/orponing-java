@@ -42,7 +42,6 @@ public class OrponingService {
         List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
 
-        _logger.info("Orponing list address");
         for (List<EntityAddress> list : Lists.partition(entityAddressList, _propertyService.PartitionSizePars)) {
             try {
                 addressInfo.addAll(_repository.GetInfo(list));
@@ -51,9 +50,12 @@ public class OrponingService {
             }
         }
 
-        _logger.info("Orponing list bad address");
-        for (EntityAddress address : tempAddressError) {
-            addressInfo.add(OrponingAddress(address));
+        if(!tempAddressError.isEmpty()) {
+            _logger.info("Orponing list bad address");
+
+            for (EntityAddress address : tempAddressError) {
+                addressInfo.add(OrponingAddress(address));
+            }
         }
 
         return addressInfo;

@@ -46,13 +46,13 @@ getElement("input-address").addEventListener("keyup", (event) => {
 getElement("orponing-file").onclick = () => {
     const file = getElement("formFile").files[0];
     if (!file || checkTypeFile(file) === false) {
-    if(!file){
-         alert("А кто файл то будет добавлять?");
-    } else{
-         alert("Неверный тип файла. Допускается только *.txt и *.csv");
+        if (!file) {
+            alert("А кто файл то будет добавлять?");
+        } else {
+            alert("Неверный тип файла. Допускается только *.txt и *.csv");
+        }
+        return;
     }
-    return;
-}
 
     getElement("await-file").hidden = false;
     getElement("result-file").hidden = false;
@@ -78,7 +78,7 @@ getElement("button-orponing-file").onclick = async () => {
     getElement("div-form-file").hidden = false;
 
     getElement("result").hidden = true;
-    if(list.length> 0){
+    if (list.length > 0) {
         getElement("result-file").hidden = false;
     }
 }

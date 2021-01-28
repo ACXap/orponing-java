@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 @Component
 public class OrponingTableService {
@@ -24,7 +23,7 @@ public class OrponingTableService {
         _dbSaveData = dbSaveData;
         _service = service;
 
-        _statusService = StatusService.Stop();
+        _statusService = StatusService.Stop(StatusService.StatusMessage.STOP);
     }
 
     //region PrivateField
@@ -51,7 +50,7 @@ public class OrponingTableService {
             if (_statusService.Status == StatusType.START) {
                 return _statusService;
             }
-            _statusService = StatusService.Start();
+            _statusService = StatusService.Start(StatusService.StatusMessage.START);
         }
 
         ExecutorService service = Executors.newCachedThreadPool();
@@ -65,26 +64,19 @@ public class OrponingTableService {
                     if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
 
                         for (List<EntityAddress> list : Lists.partition(listEntityAddress, _propertyService.PartitionSizePars)) {
-                            _logger.info("Orponing address");
+                            _logger.info("Orponing collection address");
                             List<AddressInfo> response = _service.OrponingAddressList(list);
 
-                            _logger.info("Write address info to bd");
-                            List<AddressInfo> address = response.stream().filter(a -> a.IsValid).collect(Collectors.toList());
-                            _dbSaveData.AddAddressInfo(address);
-
-                            List<AddressInfo> errorAddress = response.stream().filter(a -> !a.IsValid).collect(Collectors.toList());
-                            if (!errorAddress.isEmpty()) {
-                                _logger.info("Write address info error to bd");
-                                _dbSaveData.AddAddressInfoError(errorAddress);
-                            }
+                            _logger.info("Write collection address info to bd");
+                            _dbSaveData.AddAddressInfo(response);
                         }
                     } else {
                         _logger.info("Not found address for orponing");
-                        _statusService = StatusService.Stop();
+                        _statusService = StatusService.Stop(StatusService.StatusMessage.NO_WORK);
                     }
                 } catch (DaoException de) {
                     _logger.error(de.getMessage());
-                    _statusService = StatusService.Error(de.getMessage());
+                    _statusService = StatusService.Error(StatusService.StatusMessage.ERROR + ". " + de.getMessage());
                 }
             }
         });

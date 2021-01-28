@@ -5,28 +5,36 @@ import java.util.Date;
 public class StatusService {
     public final StatusType Status;
     public final Date DateStatus;
-    public final String Error;
+    public final String Message;
 
-    private StatusService(StatusType status, Date date, String error) {
+    private StatusService(StatusType status, Date date, String message) {
         Status = status;
         DateStatus = date;
-        Error = error;
-    }
-    private StatusService(StatusType status) {
-        Status = status;
-        DateStatus = new Date();
-        Error = null;
+        Message = message;
     }
 
-    public static StatusService Start(){
-        return new StatusService(StatusType.START, new Date(), null);
+    public static StatusService Start(String message) {
+        if(message == null) message = StatusMessage.START;
+
+        return new StatusService(StatusType.START, new Date(), message);
     }
 
-    public static StatusService Stop(){
-        return new StatusService(StatusType.STOP, new Date(), null);
+    public static StatusService Stop(String message) {
+        if(message == null) message = StatusMessage.STOP;
+
+        return new StatusService(StatusType.STOP, new Date(), message);
     }
 
-    public static StatusService Error(String error){
-        return new StatusService(StatusType.ERROR, new Date(), error);
+    public static StatusService Error(String message) {
+        if(message == null) message = StatusMessage.ERROR;
+
+        return new StatusService(StatusType.ERROR, new Date(), message);
+    }
+
+    public static class StatusMessage {
+        public static String STOP = "Мне ничего не поручали";
+        public static String START = "Мне недосуг";
+        public static String NO_WORK = "Мне нечего делать";
+        public static String ERROR = "Ой, я упал. Поднимите меня";
     }
 }
