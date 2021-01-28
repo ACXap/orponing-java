@@ -9,7 +9,9 @@ async function loadLog(){
     const response = await fetch("/log", {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Content-Encoding': 'gzip, deflate, br'
         }
     });
 

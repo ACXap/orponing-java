@@ -31,9 +31,9 @@ public class StatusReadService {
 
     public StatusService getStatusOrponingTableService() {
 
-        if(isTime(_otsStatus) ){
+       // if(isTime(_otsStatus) ){
             _otsStatus = _ots.getStatusService();
-        }
+        //}
 
         return _otsStatus;
     }
@@ -41,7 +41,7 @@ public class StatusReadService {
     public StatusService getStatusOrponingService() {
 
         // тут надо проверять что статус не позднее 5 минут
-        if(isTime(_osStatus)){
+       // if(isTime(_osStatus)){
             AddressInfo addressInfo = _os.OrponingAddress(new EntityAddress(1, _testAddress));
 
             if (addressInfo.GlobalId == _testGlobalId) {
@@ -49,14 +49,14 @@ public class StatusReadService {
             } else {
                 _osStatus = StatusService.Error(StatusService.StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
             }
-        }
+       // }
 
         return _osStatus;
     }
 
     public StatusService getStatusDbSaveData() {
 
-        if(isTime(_dbStatus)){
+       // if(isTime(_dbStatus)){
            try {
                boolean result = _db.TestDb();
                if(result){
@@ -68,7 +68,7 @@ public class StatusReadService {
            } catch (Exception ex) {
                _dbStatus = StatusService.Error(StatusService.StatusMessage.ERROR + " " + ex.getMessage());
            }
-       }
+      // }
 
         return _dbStatus;
     }

@@ -107,7 +107,9 @@ async function getAddressInfo(list) {
     const response = await fetch("/get_globalid", {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=utf-8'
+            'Content-Type': 'application/json;charset=utf-8',
+             'Accept-Encoding': 'gzip, deflate, br',
+             'Content-Encoding': 'gzip, deflate, br'
         },
         body: JSON.stringify(list)
     });
