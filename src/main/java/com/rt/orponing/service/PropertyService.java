@@ -18,7 +18,7 @@ public class PropertyService {
     }
 
     //region PrivateField
-    private static final String FILE_INI = "settings.ini";
+    private static final String FILE_INI = "emptysettings.ini";
     //endregion PrivateField
 
     //region PublicProperty
