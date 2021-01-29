@@ -3,10 +3,12 @@
 package com.rt.orponing.controllers;
 
 import com.rt.orponing.service.LogReadService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@Lazy
 public class LogController {
 
     public LogController(LogReadService service) {

@@ -4,9 +4,11 @@ package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.dao.DbMdmSaveData;
 import com.rt.orponing.service.data.Status;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class StatusServiceDbMdm extends StatusService {
 
     public StatusServiceDbMdm(DbMdmSaveData _db) {

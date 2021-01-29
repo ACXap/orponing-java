@@ -5,6 +5,7 @@ package com.rt.orponing.repository;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.repository.soap.*;
 import com.rt.orponing.service.PropertyService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
+@Lazy
 public class RepositoryOrponSoap implements IRepositoryOrpon {
 
     public RepositoryOrponSoap(PropertyService propertyService) throws RepositoryException {

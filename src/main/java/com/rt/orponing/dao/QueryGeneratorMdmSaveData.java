@@ -3,9 +3,11 @@
 package com.rt.orponing.dao;
 
 import com.rt.orponing.service.PropertyService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class QueryGeneratorMdmSaveData {
 
     public QueryGeneratorMdmSaveData(PropertyService propertyService) {

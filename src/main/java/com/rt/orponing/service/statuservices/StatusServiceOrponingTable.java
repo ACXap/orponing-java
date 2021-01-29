@@ -4,9 +4,11 @@ package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.Status;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class StatusServiceOrponingTable extends StatusService{
 
     public StatusServiceOrponingTable(OrponingTableService ots) {

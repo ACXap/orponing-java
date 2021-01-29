@@ -8,6 +8,7 @@ import com.rt.orponing.dao.data.ICheckedConsumer;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.PropertyService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Lazy
 public class DbMdmSaveData implements IDbSaveData {
 
     public DbMdmSaveData(PropertyService propertyService, QueryGeneratorMdmSaveData queryGenerator) {

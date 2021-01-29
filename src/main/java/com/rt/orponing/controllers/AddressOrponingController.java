@@ -5,11 +5,13 @@ package com.rt.orponing.controllers;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Lazy
 public class AddressOrponingController {
 
     public AddressOrponingController(OrponingService service) {

@@ -11,6 +11,7 @@ import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Component
+@Lazy
 public class OrponingTableService {
 
     public OrponingTableService(PropertyService propertyService, IDbSaveData dbSaveData, OrponingService service) {

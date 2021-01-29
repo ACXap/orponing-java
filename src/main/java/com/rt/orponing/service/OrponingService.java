@@ -7,12 +7,14 @@ import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@Lazy
 public class OrponingService {
 
     public OrponingService(PropertyService propertyService, IRepositoryOrpon repository) {

@@ -6,6 +6,7 @@ import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.statuservices.StatusService;
 import com.rt.orponing.service.statuservices.StatusServiceDefault;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toMap;
 
 @RestController
+@Lazy
 public class OrponingServiceController {
 
     public OrponingServiceController(OrponingTableService service, List<StatusService> listStatusServices) {

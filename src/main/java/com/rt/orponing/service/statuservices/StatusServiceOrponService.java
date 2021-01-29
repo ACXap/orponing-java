@@ -6,9 +6,11 @@ import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingService;
 import com.rt.orponing.service.data.Status;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class StatusServiceOrponService extends StatusService {
 
     public StatusServiceOrponService(OrponingService _os) {
