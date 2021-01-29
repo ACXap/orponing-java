@@ -16,6 +16,7 @@
 <body>
     <header th:insert="../block/nav.html :: nav"></header>
 
+
     <div class="container">
 
         <div class="row py-2 text-center">
@@ -23,6 +24,14 @@
                 <h2>Сервис Орпонизации</h2>
             </div>
             <hr>
+
+            <div class="container m-5 p-5" id="loadcomp">
+                <p>Загрузка компонентов...</p>
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-grow text-primary" role="status"></div>
+
+                </div>
+            </div>
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3" id="main">
             </div>

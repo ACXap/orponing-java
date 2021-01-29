@@ -2,7 +2,7 @@ function getElement(id) {
     return document.querySelector(`#${id}`);
 }
 
-async function loadLog(){
+async function loadLog() {
     const t = getElement("floatingTextarea");
     t.value = "";
 
@@ -17,11 +17,11 @@ async function loadLog(){
 
     t.value = await response.text();
     t.focus();
-    t.scrollTop = 100000;
+    t.scrollTop = Number.MAX_SAFE_INTEGER;
 }
 
 // пока будем получать весь, потом подумаем как получать только обновления
-getElement("loadlog").onclick=()=>{
+getElement("loadlog").onclick = () => {
     loadLog();
 };
 

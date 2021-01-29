@@ -7,17 +7,18 @@
 
     <link rel="shortcut icon" href="../img/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
     <title>Помощь</title>
 </head>
 
 <body>
-<header th:insert="../block/nav.html :: nav"></header>
+    <header th:insert="../block/nav.html :: nav"></header>
 
     <div class="container">
         <h1 class="mt-5">ОРПОН</h1>
-        <p class="lead">Отраслевое решение «паспортизация объектов недвижимости» - система управления адресной информацией и информацией об объектах недвижимости</p>
+        <p class="lead">Отраслевое решение «паспортизация объектов недвижимости» - система управления адресной информацией и информацией об объектах
+            недвижимости</p>
     </div>
 
     <div class="container">
@@ -35,8 +36,67 @@
         <p class="lead">Зачастую по переданному адресу даже человек не может определить где это,
             что уж говорить о "1 и 0", по этому, что бы получить максимально достоверный результат,
             необходимо придерживаться определенного формата адреса:<br>
-        <span class="m-5" style="width: 600px;"><b>Область, район, населенный пункт, улица, дом</b></span><br>
-            Избегать посторонних слов, символов, цифр - которые никак не указывают на адрес.</p>
+            <span class="m-5" style="width: 600px;"><b>Область, район, населенный пункт, улица, дом</b></span><br>
+            Избегать посторонних слов, символов, цифр - которые никак не указывают на адрес.
+        </p>
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">API</h1>
+        <p class="lead">Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый адрес}
+
+        <div class="form-floating">
+            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 330px; width: 500px;">{
+        Id: 1,
+        GlobalId: 21904819,
+        ParsingLevelCode: "FIAS_HOUSE",
+        UnparsedParts: "",
+        QualityCode: "UNDEF_05",
+        CheckStatus: "VALIDATED",
+        IsValid: true,
+        Error: null,
+        AddressOrpon: null
+}</textarea>
+        </div>
+        </p>
+
+        <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /get_globalid. Тело запроса при этом:
+        <div class="form-floating">
+            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 150px; width: 800px;">
+            [
+                {"Id":"1","Address":"Новосибирск Зорге 1"},
+                {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
+            ]</textarea>
+        </div>
+        И ответ:
+        <div class="form-floating">
+            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
+        {
+            Id: 1,
+            GlobalId: 21904819,
+            ParsingLevelCode: "FIAS_HOUSE",
+            UnparsedParts: "",
+            QualityCode: "UNDEF_05",
+            CheckStatus: "VALIDATED",
+            IsValid: true,
+            Error: null,
+            AddressOrpon: null
+        },
+        {
+            "Id":2,
+        "GlobalId":-1,
+        "ParsingLevelCode":null,
+        "UnparsedParts":null,
+        "QualityCode":null,
+        "CheckStatus":null,
+        "IsValid":false,
+        "Error":"Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact
+    cause of the failure.",
+    "AddressOrpon":null
+}]</textarea>
+        </div>
+        </p>
+
     </div>
 
 </body>

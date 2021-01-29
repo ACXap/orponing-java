@@ -24,7 +24,7 @@ class OrponingServiceTest {
     }
 
     @Test
-    void orponingAddress() throws RepositoryException {
+    void orponingAddress() {
         long globalId = 29182486;
         int id = 1;
         String level = "FIAS_HOUSE";

@@ -1,42 +1,23 @@
-db = "db";
-dnName = "БД для хранения разобранных адресов";
-orponing = "orponing";
-
-orponingName = "Сервис для разбора адресов";
-orponingService = "orponing-service";
-orponingServiceName = "Фоновый сервис орпонизации";
-
-iconServer = "fa-server";
-iconDb = "fa-database";
-
 function getElement(id) {
     return document.querySelector(`#${id}`);
 }
 
 async function init() {
-    addBlock(iconDb, dnName, db);
-    addBlock(iconServer, orponingName, orponing);
-    await addBlock(iconServer, orponingServiceName, orponingService);
-
-    addStartButton(orponingService);
-}
-
-async function addBlock(iconServer, nameService, idService) {
-    const result = await getStatus(idService);
-
-    getElement("main").innerHTML += getBlock(iconServer, idService, nameService, result.Status, result.DateStatus, result.Message);
-}
-
-async function getStatus(idService) {
-    const response = await fetch("/orponing_service/status?service=" + idService);
+    const response = await fetch("/orponing_service/all_status");
     const result = await response.json();
-    return result;
+
+    result.forEach(el => getElement("main").innerHTML += getBlock(el.icon, el.id, el.name, el.status.status, el.status.dateStatus, el.status.message));
+
+    // тут пока вручную смотрим кому надо кнопку старт
+    addStartButton(result.find(el => el.id == "orponing-service").id);
+
+    getElement("loadcomp").remove();
 }
 
 function getBlock(icon, idService, nameService, statusService, dateService, messageService) {
     return `<div class="col" id=${idService}>
                 <div class="card shadow-sm">
-                    <i class="fas ${icon} fa-5x m-5" style="color:${getColor(statusService)}"></i>
+                    <i class="fas fa-${icon} fa-5x m-5" style="color:${getColor(statusService)}"></i>
                     <div class="card-body">
                         <p class="card-text">${nameService}</p>
                         <div>
@@ -47,7 +28,7 @@ function getBlock(icon, idService, nameService, statusService, dateService, mess
                     </div>
                     <div class="container">
                         <div class="row">
-                            <div class="col-2" style="cursor:pointer"><i class="fas fa-sync m-3" onClick="updateStatus('${idService}')"></i></div>
+                            <div class="col-2" style="cursor:pointer"><i class="fas fa-sync m-3" onClick="loadStatus('${idService}')"></i></div>
                         </div>
                     </div>
                 </div>
@@ -61,27 +42,41 @@ function getColor(status) {
 }
 
 function addStartButton(idService) {
-    getElement(idService).querySelector("div.row").innerHTML += `<div class="col-8"><i class="fas fa-play m-3"></i></div>`;
+    getElement(idService).querySelector("div.row")
+        .innerHTML += `<div class="col-8" style="cursor:pointer"><i class="fas fa-play m-3" onClick="startService('${idService}')"></i></div>`;
 }
 
-async function updateStatus(idService) {
+async function startService(idService) {
+    updateStatus(idService, async () => {
+        const response = await fetch("/orponing_service/start");
+        return response.json();
+    })
+}
+
+async function loadStatus(idService) {
+    updateStatus(idService, async () => {
+        const response = await fetch("/orponing_service/status?service=" + idService);
+        return response.json();
+    });
+}
+
+
+async function updateStatus(idService, getStatus) {
     const divMain = getElement(idService);
     const iconService = divMain.querySelectorAll("i")[1];
     iconService.classList.add("fa-spin");
 
-
     try {
-        const result = await getStatus(idService);
-        divMain.querySelectorAll("span")[0].title = result.Status;
-        divMain.querySelectorAll("span")[0].textContent = result.Message;
+        const status = await getStatus();
 
-        divMain.querySelectorAll("span")[1].textContent = result.DateStatus;
-
-        divMain.querySelectorAll("i")[0].style = `color:${getColor(result.Status)}`;
-        iconService.classList.remove("fa-spin");
+        divMain.querySelectorAll("span")[0].title = status.status;
+        divMain.querySelectorAll("span")[0].textContent = status.message;
+        divMain.querySelectorAll("span")[1].textContent = status.dateStatus;
+        divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
     } catch (e) {
-        iconService.classList.remove("fa-spin");
         console.error(e);
+    } finally {
+        iconService.classList.remove("fa-spin");
     }
 }
 

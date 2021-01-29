@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LogReadServiceTest {
 
-    LogReadService service = new LogReadService();
-
+    final LogReadService  service = new LogReadService();
 
     @Test
     void readLog() {

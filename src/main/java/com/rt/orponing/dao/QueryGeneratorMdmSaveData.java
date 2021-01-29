@@ -1,5 +1,6 @@
-package com.rt.orponing.dao.queryGenerator;
-
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+package com.rt.orponing.dao;
 
 import com.rt.orponing.service.PropertyService;
 import org.springframework.stereotype.Component;
