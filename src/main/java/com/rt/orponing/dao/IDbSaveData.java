@@ -11,8 +11,7 @@ import java.util.List;
 public interface IDbSaveData {
     List<EntityAddress> GetEntityAddress() throws DaoException;
 
-    void AddAddressInfo(List<AddressInfo> collectionAddressInfo) throws DaoException;
-    //void AddAddressInfoError(List<AddressInfo> collectionAddressInfo) throws DaoException;
+    void UpdateEntityAddress(List<AddressInfo> collectionAddressInfo) throws DaoException;
 
     boolean TestDb() throws DaoException;
 }

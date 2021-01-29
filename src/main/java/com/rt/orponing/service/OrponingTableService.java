@@ -70,7 +70,7 @@ public class OrponingTableService {
                             List<AddressInfo> response = _service.OrponingAddressList(list);
 
                             _logger.info("Write collection address info to bd");
-                            _dbSaveData.AddAddressInfo(response);
+                            _dbSaveData.UpdateEntityAddress(response);
                         }
                     } else {
                         _logger.info("Not found address for orponing");

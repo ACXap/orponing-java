@@ -50,7 +50,7 @@ public class DbMdmSaveData implements IDbSaveData {
     }
 
     @Override
-    public void AddAddressInfo(List<AddressInfo> collectionAddressInfo) throws DaoException {
+    public void UpdateEntityAddress(List<AddressInfo> collectionAddressInfo) throws DaoException {
         ProcessConnect(con -> AddAddressInfo(con, collectionAddressInfo));
     }
 
@@ -60,7 +60,7 @@ public class DbMdmSaveData implements IDbSaveData {
         return  true;
     }
 
-    public void TestBd(Connection con) throws DaoException {
+    private void TestBd(Connection con) throws DaoException {
         String query = _queryGenerator.TestBd();
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
@@ -70,7 +70,7 @@ public class DbMdmSaveData implements IDbSaveData {
         }
     }
 
-    public void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
+    private void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
         String query = _queryGenerator.UpdateAddressInfo();
 
         try (PreparedStatement ps = con.prepareStatement(query)) {
