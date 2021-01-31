@@ -2,12 +2,9 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.dao;
 
-import com.rt.orponing.dao.data.DaoException;
-import com.rt.orponing.dao.data.DbConnectProperty;
-import com.rt.orponing.dao.data.ICheckedConsumer;
-import com.rt.orponing.repository.data.AddressInfo;
-import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.service.PropertyService;
+import com.rt.orponing.dao.data.*;
+import com.rt.orponing.repository.data.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -21,20 +18,22 @@ import java.util.List;
 @Lazy
 public class DbMdmSaveData implements IDbSaveData {
 
-    public DbMdmSaveData(PropertyService propertyService, QueryGeneratorMdmSaveData queryGenerator) {
-        _dbConnectProperty = propertyService.DbConnectProperty;
-        _queryGenerator = queryGenerator;
-    }
+    //region PrivateField
+    @Autowired
+    private DbConnect _dbConnect;
 
-    protected final QueryGeneratorMdmSaveData _queryGenerator;
-    protected final DbConnectProperty _dbConnectProperty;
+    private static final String _querySelectAddress = "Select * from public.nsi_temp_orponing_select_input_data();";
+    private static final String _queryUpdateAddress = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";
+    private static final String _queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
 
+    //endregion PrivateField
+
+    //region PublicMethod
     @Override
     public List<EntityAddress> GetEntityAddress() throws DaoException {
         List<EntityAddress> list = new ArrayList<>();
-        String query = _queryGenerator.SelectAddress();
 
-        try (Connection con = _dbConnectProperty.GetConnection(); PreparedStatement ps = con.prepareStatement(query)) {
+        try (Connection con = _dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(_querySelectAddress)) {
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
@@ -45,7 +44,7 @@ public class DbMdmSaveData implements IDbSaveData {
         } catch (DaoException d) {
             throw d;
         } catch (Exception ex) {
-            throw new DaoException(ex.getMessage());
+            throw new DaoException(ex.getMessage(), ex);
         }
 
         return list;
@@ -58,24 +57,23 @@ public class DbMdmSaveData implements IDbSaveData {
 
     @Override
     public boolean TestDb() throws DaoException {
-       ProcessConnect(this::TestBd);
-        return  true;
+        ProcessConnect(this::TestBd);
+        return true;
     }
+    //endregion PublicMethod
 
+    //region PrivateMethod
     private void TestBd(Connection con) throws DaoException {
-        String query = _queryGenerator.TestBd();
-
-        try (PreparedStatement ps = con.prepareStatement(query)) {
+        try (PreparedStatement ps = con.prepareStatement(_queryTestDb)) {
             ps.execute();
         } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + query + " " + ex.getMessage());
+            throw new DaoException("Ошибка обработки запроса: " + _queryTestDb + " " + ex.getMessage(), ex);
         }
     }
 
     private void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
-        String query = _queryGenerator.UpdateAddressInfo();
 
-        try (PreparedStatement ps = con.prepareStatement(query)) {
+        try (PreparedStatement ps = con.prepareStatement(_queryUpdateAddress)) {
             for (AddressInfo a : collectionAddressInfo) {
 
                 ps.setInt(1, a.Id);
@@ -91,14 +89,14 @@ public class DbMdmSaveData implements IDbSaveData {
             }
             ps.executeBatch();
         } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + query + " " + ex.getMessage());
+            throw new DaoException("Ошибка обработки запроса: " + _queryUpdateAddress + " " + ex.getMessage());
         }
     }
 
     private void ProcessConnect(ICheckedConsumer<Connection> callback) throws DaoException {
         try {
 
-            Connection con = _dbConnectProperty.GetConnection();
+            Connection con = _dbConnect.GetConnection();
             try {
                 con.setAutoCommit(false);
 
@@ -119,4 +117,5 @@ public class DbMdmSaveData implements IDbSaveData {
             throw new DaoException(ex.getMessage());
         }
     }
+    //endregion PrivateMethod
 }

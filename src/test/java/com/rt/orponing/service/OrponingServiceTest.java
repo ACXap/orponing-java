@@ -1,27 +1,24 @@
 package com.rt.orponing.service;
 
-import com.rt.orponing.repository.RepositoryOrponSoap;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.repository.data.RepositoryException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class OrponingServiceTest {
 
+    @Autowired
     private OrponingService _service;
-
-    @BeforeEach
-    public void start() throws Exception {
-        PropertyService propertyService = new PropertyService();
-        RepositoryOrponSoap repository = new RepositoryOrponSoap(propertyService);
-        _service = new OrponingService(propertyService, repository);
-    }
 
     @Test
     void orponingAddress() {

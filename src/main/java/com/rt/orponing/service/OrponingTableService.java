@@ -11,6 +11,7 @@ import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,7 @@ import java.util.concurrent.Executors;
 @Lazy
 public class OrponingTableService {
 
-    public OrponingTableService(PropertyService propertyService, IDbSaveData dbSaveData, OrponingService service) {
-        _propertyService = propertyService;
+    public OrponingTableService(IDbSaveData dbSaveData, OrponingService service) {
         _dbSaveData = dbSaveData;
         _service = service;
 
@@ -31,12 +31,14 @@ public class OrponingTableService {
     }
 
     //region PrivateField
-    private final PropertyService _propertyService;
     private final IDbSaveData _dbSaveData;
     private final OrponingService _service;
-    private final Logger _logger = LoggerFactory.getLogger("OrponingTableService");
-
+    private final Logger _logger = LoggerFactory.getLogger(OrponingTableService.class);
     private final Object lock = new Object();
+
+    @Value("${db.partition.size.record}")
+    private int _partitionSize;
+
     private Status _status;
     //endregion PrivateField
 
@@ -67,7 +69,7 @@ public class OrponingTableService {
 
                     if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
 
-                        for (List<EntityAddress> list : Lists.partition(listEntityAddress, _propertyService.PartitionSizePars)) {
+                        for (List<EntityAddress> list : Lists.partition(listEntityAddress, _partitionSize)) {
                             _logger.info("Orponing collection address");
                             List<AddressInfo> response = _service.OrponingAddressList(list);
 

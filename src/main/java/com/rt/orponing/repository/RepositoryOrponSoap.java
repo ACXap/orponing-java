@@ -4,10 +4,11 @@ package com.rt.orponing.repository;
 
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.repository.soap.*;
-import com.rt.orponing.service.PropertyService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,15 +17,9 @@ import java.util.stream.Collectors;
 @Lazy
 public class RepositoryOrponSoap implements IRepositoryOrpon {
 
-    public RepositoryOrponSoap(PropertyService propertyService) throws RepositoryException {
-        try {
-            _wsSearch = new WsSearchAddressElementByFullName2(propertyService.UrlService).getWsSearchAddrElByFullNamePortTypeImpl2Port();
-        } catch (Exception ex) {
-            throw new RepositoryException(ex.getMessage());
-        }
-    }
-
-    private final WsSearchAddrElByFullNamePortType2 _wsSearch;
+    @Value("${soap.url.service}")
+    private String _url;
+    private WsSearchAddrElByFullNamePortType2 _wsSearch;
 
     @Override
     public AddressInfo GetInfo(EntityAddress entityAddress) throws RepositoryException {
@@ -87,5 +82,14 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
         addressElementFullNameGroup1.setSystemCode(Integer.toString(entityAddress.Id));
 
         return addressElementFullNameGroup1;
+    }
+
+    @PostConstruct
+    private void Init() throws RepositoryException{
+        try {
+            _wsSearch = new WsSearchAddressElementByFullName2(_url).getWsSearchAddrElByFullNamePortTypeImpl2Port();
+        } catch (Exception ex) {
+            throw new RepositoryException(ex.getMessage());
+        }
     }
 }

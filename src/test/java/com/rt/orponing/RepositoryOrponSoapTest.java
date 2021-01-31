@@ -4,24 +4,23 @@ import com.rt.orponing.repository.RepositoryOrponSoap;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.repository.data.RepositoryException;
-import com.rt.orponing.service.PropertyService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest
 class RepositoryOrponSoapTest {
 
+    @Autowired
     private RepositoryOrponSoap _repository;
-
-    @BeforeEach
-    public void start() throws Exception {
-
-        _repository = new RepositoryOrponSoap(new PropertyService());
-    }
 
     @Test
     void getInfo_OneAddress() throws RepositoryException {

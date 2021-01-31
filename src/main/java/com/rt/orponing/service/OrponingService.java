@@ -7,6 +7,7 @@ import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -17,14 +18,14 @@ import java.util.List;
 @Lazy
 public class OrponingService {
 
-    public OrponingService(PropertyService propertyService, IRepositoryOrpon repository) {
-        _propertyService = propertyService;
+    public OrponingService( IRepositoryOrpon repository) {
         _repository = repository;
     }
 
-    private final PropertyService _propertyService;
     private final IRepositoryOrpon _repository;
     private final Logger _logger = LoggerFactory.getLogger("OrponingService");
+    @Value("${soap.partition.size}")
+    private int _partitionSizePars;
 
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
         try {
@@ -45,7 +46,7 @@ public class OrponingService {
         List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
 
-        for (List<EntityAddress> list : Lists.partition(entityAddressList, _propertyService.PartitionSizePars)) {
+        for (List<EntityAddress> list : Lists.partition(entityAddressList, _partitionSizePars)) {
             try {
                 addressInfo.addAll(_repository.GetInfo(list));
             } catch (RepositoryException re) {
