@@ -24,6 +24,7 @@ public class OrponingService {
 
     private final IRepositoryOrpon _repository;
     private final Logger _logger = LoggerFactory.getLogger("OrponingService");
+
     @Value("${soap.partition.size}")
     private int _partitionSizePars;
 

@@ -75,6 +75,11 @@ async function updateStatus(idService, getStatus) {
         divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
     } catch (e) {
         console.error(e);
+
+        divMain.querySelectorAll("span")[0].title = "Нет связи с со службой тестирования";
+        divMain.querySelectorAll("span")[0].textContent = "Нет соединения";
+        divMain.querySelectorAll("span")[1].textContent = "";
+        divMain.querySelectorAll("i")[0].style = `color:blue`;
     } finally {
         iconService.classList.remove("fa-spin");
     }
