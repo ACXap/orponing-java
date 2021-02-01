@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -17,7 +18,7 @@ public class LogReadService {
 
     public String readLog() {
         try {
-            return new String(Files.readAllBytes(Paths.get(FILE)));
+            return new String(Files.readAllBytes(Paths.get(FILE)), StandardCharsets.UTF_8);
         } catch (IOException e) {
             System.err.println(e.getMessage());
             return null;

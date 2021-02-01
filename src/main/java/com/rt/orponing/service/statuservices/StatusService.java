@@ -9,7 +9,7 @@ public abstract class StatusService {
     protected String _name;
     protected String _id;
     protected String _icon;
-    protected String _description;
+    protected String _description = "";
     protected Status _status;
     protected boolean _isStartable;
 

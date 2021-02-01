@@ -6,7 +6,7 @@ async function init() {
     const response = await fetch("/orponing_service/all_status");
     const result = await response.json();
 
-    result.forEach(el => getElement("main").innerHTML += getBlock(el.icon, el.id, el.name, el.status.status, el.status.dateStatus, el.status.message));
+    result.forEach(el => getElement("main").innerHTML += getBlock(el));
 
     result.filter(el => el.isStartable).forEach(e => {
         addStartButton(e.id);
@@ -15,21 +15,23 @@ async function init() {
     getElement("loadcomp").remove();
 }
 
-function getBlock(icon, idService, nameService, statusService, dateService, messageService) {
-    return `<div class="col" id=${idService}>
+function getBlock(service) {
+    const st = service.status;
+    const d = new Date(st.dateStatus);
+    return `<div class="col" id=${service.id}>
                 <div class="card shadow-sm">
-                    <i class="fas fa-${icon} fa-5x m-5" style="color:${getColor(statusService)}"></i>
+                    <i class="fas fa-${service.icon} fa-5x m-5" style="color:${getColor(st.status)}" title="${st.status}"></i>
                     <div class="card-body">
-                        <p class="card-text">${nameService}</p>
+                        <p class="card-text" title="${service.description}">${service.name}</p>
                         <div>
-                            <b>Статус: </b><span title="${statusService}">${messageService}</span>
+                            <b>Статус: </b><span title="${st.status}">${st.message}</span>
                             <br>
-                            <b>Дата: </b><span>${dateService}</span>
+                            <b>Дата: </b><span>${d}</span>
                         </div>
                     </div>
                     <div class="container">
                         <div class="row">
-                            <div class="col-2" style="cursor:pointer"><i class="fas fa-sync m-3" onClick="loadStatus('${idService}')"></i></div>
+                            <div class="col-2"><i class="fas fa-sync m-3" title="Обновить статус" onClick="loadStatus('${service.id}')" style="cursor:pointer"></i></div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +46,7 @@ function getColor(status) {
 
 function addStartButton(idService) {
     getElement(idService).querySelector("div.row")
-        .innerHTML += `<div class="col-8" style="cursor:pointer"><i class="fas fa-play m-3" onClick="startService('${idService}')"></i></div>`;
+        .innerHTML += `<div class="col-8"><i class="fas fa-play m-3" title="Запустить сервис" onClick="startService('${idService}')" style="cursor:pointer"></i></div>`;
 }
 
 async function startService(idService) {
