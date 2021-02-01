@@ -23,7 +23,7 @@ public class StatusServiceOrponingTable extends StatusService{
 
     @Override
    public Status getStatus() {
-        _status = _ots.getStatusService();
+        _status = _ots.getStatus();
 
         return _status;
     }

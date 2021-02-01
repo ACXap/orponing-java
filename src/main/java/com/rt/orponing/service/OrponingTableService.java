@@ -43,7 +43,7 @@ public class OrponingTableService {
     //endregion PrivateField
 
     //region PublicProperty
-    public Status getStatusService() {
+    public Status getStatus() {
         return _status;
     }
     //endregion PublicProperty
