@@ -31,7 +31,7 @@ public class OrponingServiceController {
 
     @GetMapping("/orponing_service/start")
     public Status startService() {
-        Status status = _service.startService();
+        Status status = _service.start();
 
         return status;
     }

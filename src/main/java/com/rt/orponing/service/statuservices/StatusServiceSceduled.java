@@ -2,7 +2,9 @@ package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.ScheduledOrponingTableService;
 import com.rt.orponing.service.data.Status;
+import org.springframework.stereotype.Component;
 
+@Component
 public class StatusServiceSceduled extends StatusService{
 
     public StatusServiceSceduled(ScheduledOrponingTableService sch){

@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 @Component
 @Lazy
-public class OrponingTableService {
+public class OrponingTableService implements IStartable{
 
     public OrponingTableService(IDbSaveData dbSaveData, OrponingService service) {
         _dbSaveData = dbSaveData;
@@ -49,7 +49,8 @@ public class OrponingTableService {
     //endregion PublicProperty
 
     //region PublicMethod
-    public Status startService() {
+    @Override
+    public Status start() {
         _logger.info("Start service orponing");
 
         synchronized (lock) {

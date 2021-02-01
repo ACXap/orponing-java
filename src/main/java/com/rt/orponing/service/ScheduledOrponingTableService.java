@@ -2,35 +2,35 @@ package com.rt.orponing.service;
 
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
 
 @Component
 public class ScheduledOrponingTableService {
 
-    public ScheduledOrponingTableService(OrponingTableService ots){
+    public ScheduledOrponingTableService(IStartable ots){
         _ots = ots;
     }
 
-    private final OrponingTableService _ots;
+    private final Logger _logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
+    private final IStartable _ots;
     private final Object _lock = new Object();
     private Status _status;
 
-   // @Value("${background.orponing.service.auto.start}")
-    //private boolean _isStart;
+    @Value("${background.orponing.service.auto.start}")
+    private boolean _isAutoStart;
 
     @Scheduled(fixedRateString = "${background.orponing.service.delay}")
-    void checkVehicle() {
+    void start() {
         if(_status.getStatus() == StatusType.STOP) return;
 
-        System.out.println(new Date());
-
-
-        //_ots.startService();
+        _logger.info("Start scheduled task");
+        _ots.start();
     }
 
     public Status getStatus(){
@@ -38,8 +38,8 @@ public class ScheduledOrponingTableService {
     }
 
     @PostConstruct
-    private void init(@Value("${background.orponing.service.auto.start}") boolean isStart){
-        if(isStart) {
+    private void init(){
+        if(_isAutoStart) {
             _status = Status.Start(Status.StatusMessage.START);
         }
         else {

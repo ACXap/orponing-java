@@ -7,11 +7,11 @@ import com.rt.orponing.service.data.Status;
 public class StatusServiceDefault extends StatusService{
 
     public  StatusServiceDefault(){
-        _name = "def";
-        _id = "def";
-        _icon= "def";
+        _name = "Сервис не найден";
+        _id = "error-service";
+        _icon= "error";
 
-        _status = Status.Error("def");
+        _status = Status.Error("Not found service");
     }
 
     @Override
