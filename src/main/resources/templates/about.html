@@ -15,6 +15,8 @@
 <body>
     <header th:insert="../block/nav.html :: nav"></header>
 
+    <div class="container p-5">
+
     <div class="container">
         <h1 class="mt-5">ОРПОН</h1>
         <p class="lead">Отраслевое решение «паспортизация объектов недвижимости» - система управления адресной информацией и информацией об объектах
@@ -46,7 +48,7 @@
         <p class="lead">Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый адрес}
 
         <div class="form-floating">
-            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 330px; width: 500px;">{
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">{
         Id: 1,
         GlobalId: 21904819,
         ParsingLevelCode: "FIAS_HOUSE",
@@ -62,15 +64,15 @@
 
         <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /get_globalid. Тело запроса при этом:
         <div class="form-floating">
-            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 150px; width: 800px;">
-            [
-                {"Id":"1","Address":"Новосибирск Зорге 1"},
-                {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
-            ]</textarea>
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 150px; width: 800px;">
+[
+    {"Id":"1","Address":"Новосибирск Зорге 1"},
+    {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
+]</textarea>
         </div>
         И ответ:
         <div class="form-floating">
-            <textarea class="form-control" id="floatingTextarea" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
         {
             Id: 1,
             GlobalId: 21904819,
@@ -83,7 +85,7 @@
             AddressOrpon: null
         },
         {
-            "Id":2,
+        "Id":2,
         "GlobalId":-1,
         "ParsingLevelCode":null,
         "UnparsedParts":null,
@@ -93,10 +95,79 @@
         "Error":"Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact
     cause of the failure.",
     "AddressOrpon":null
-}]</textarea>
+    }
+]</textarea>
         </div>
         </p>
 
+    </div>
+
+    <div class="container">
+        <h1 class="mt-5">API служебное</h1>
+        <p class="lead">Получить список компонентов сервиса и их статусы - это GET запрос на адрес /orponing_service/all_status
+
+        <div class="form-floating">
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
+    {
+        "status":
+        {
+            "message":"Мне нечего делать",
+            "status":"STOP",
+            "dateStatus":"2021-02-01T04:08:56.886+00:00"
+        },
+        "name":"Фоновый сервис орпонизации",
+        "id":"orponing-service",
+        "description":null,
+        "isStartable":true,
+        "icon":"server"
+    },
+    {
+        "status":
+        {
+            "message":"Мне недосуг",
+            "status":"START",
+            "dateStatus":"2021-02-01T04:38:50.447+00:00"
+        },
+        "name":"Сервис для разбора адресов",
+        "id":"orponing",
+        "description":null,
+        "isStartable":false,
+        "icon":"server"
+    }...и т.д.
+]</textarea>
+        </div>
+        </p>
+
+        <p class="lead">Получить статус компонента - это GET запрос на адрес /orponing_service/status?service={id требуемого компонента}
+
+        <div class="form-floating">
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 170px; width: 500px;">{
+    "message":"Мне нечего делать",
+    "status":"STOP",
+    "dateStatus":"2021-02-01T04:08:56.886+00:00"
+}</textarea>
+        </div>
+        </p>
+
+        <p class="lead">Запуск компонента - это GET запрос на адрес /orponing_service/{id требуемого компонента}/start
+
+        <div class="form-floating">
+            <textarea class="form-control" tabindex="В ответ получим:" style="height: 170px; width: 500px;">{
+    "message":"Мне недосуг",
+    "status":"START",
+    "dateStatus":"2021-02-01T04:43:49.423+00:00"
+}</textarea>
+        </div>
+        </p>
+
+        <p class="lead">Получить лог сервиса - это POST запрос на адрес /log
+
+        <div class="form-floating">
+            В ответ будет получен полный лог за текущий день простым текстом
+        </div>
+        </p>
+
+    </div>
     </div>
 
 </body>
