@@ -71,10 +71,11 @@ async function updateStatus(idService, getStatus) {
 
     try {
         const status = await getStatus();
+        const d = new Date(status.dateStatus);
 
         divMain.querySelectorAll("span")[0].title = status.status;
         divMain.querySelectorAll("span")[0].textContent = status.message;
-        divMain.querySelectorAll("span")[1].textContent = status.dateStatus;
+        divMain.querySelectorAll("span")[1].textContent = d;
         divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
     } catch (e) {
         console.error(e);
