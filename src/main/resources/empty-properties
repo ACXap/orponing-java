@@ -9,3 +9,7 @@ db.url=
 db.user=
 db.password=
 db.partition.size.record=200
+
+background.orponing.service.auto.start=true
+#background.orponing.service.delay=3600000
+background.orponing.service.delay=1000
