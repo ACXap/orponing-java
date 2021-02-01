@@ -5,10 +5,8 @@ package com.rt.orponing.service;
 import com.google.common.collect.Lists;
 import com.rt.orponing.dao.IDbSaveData;
 import com.rt.orponing.dao.data.DaoException;
-import com.rt.orponing.repository.data.AddressInfo;
-import com.rt.orponing.repository.data.EntityAddress;
-import com.rt.orponing.service.data.Status;
-import com.rt.orponing.service.data.StatusType;
+import com.rt.orponing.repository.data.*;
+import com.rt.orponing.service.data.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +19,7 @@ import java.util.concurrent.Executors;
 
 @Component
 @Lazy
-public class OrponingTableService implements IStartable{
+public class OrponingTableService implements IStartable {
 
     public OrponingTableService(IDbSaveData dbSaveData, OrponingService service) {
         _dbSaveData = dbSaveData;
@@ -49,6 +47,7 @@ public class OrponingTableService implements IStartable{
     //endregion PublicProperty
 
     //region PublicMethod
+
     @Override
     public Status start() {
         _logger.info("Start service orponing");
@@ -91,6 +90,11 @@ public class OrponingTableService implements IStartable{
         service.shutdown();
 
         return _status;
+    }
+
+    @Override
+    public String getId() {
+        return "orponing-service";
     }
 
     //endregion PublicMethod

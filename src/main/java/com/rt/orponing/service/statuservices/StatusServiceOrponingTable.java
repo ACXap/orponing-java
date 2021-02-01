@@ -17,6 +17,7 @@ public class StatusServiceOrponingTable extends StatusService{
         _name = "Фоновый сервис орпонизации";
         _id = "orponing-service";
         _icon= "server";
+        _isStartable = true;
     }
 
     private final OrponingTableService _ots;

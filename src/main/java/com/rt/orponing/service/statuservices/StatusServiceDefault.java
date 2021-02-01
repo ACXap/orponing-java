@@ -4,12 +4,12 @@ package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.data.Status;
 
-public class StatusServiceDefault extends StatusService{
+public class StatusServiceDefault extends StatusService {
 
-    public  StatusServiceDefault(){
+    public StatusServiceDefault() {
         _name = "Сервис не найден";
-        _id = "error-service";
-        _icon= "error";
+        _id = "not-found-service";
+        _icon = "error";
 
         _status = Status.Error("Not found service");
     }

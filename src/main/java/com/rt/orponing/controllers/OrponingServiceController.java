@@ -2,12 +2,15 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.controllers;
 
+import com.rt.orponing.service.IStartable;
+import com.rt.orponing.service.NotFoundStartableService;
 import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.statuservices.StatusService;
 import com.rt.orponing.service.statuservices.StatusServiceDefault;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,19 +24,20 @@ import static java.util.stream.Collectors.toMap;
 @Lazy
 public class OrponingServiceController {
 
-    public OrponingServiceController(OrponingTableService service, List<StatusService> listStatusServices) {
-        _service = service;
+    public OrponingServiceController(List<StatusService> listStatusServices, List<IStartable> listStartableService) {
         _statusServices = listStatusServices.stream().collect(toMap(StatusService::getId, s -> s));
+        _startableService = listStartableService.stream().collect(toMap(IStartable::getId, s -> s));
     }
 
-    private final OrponingTableService _service;
     private final Map<String, StatusService> _statusServices;
+    private final Map<String, IStartable> _startableService;
 
-    @GetMapping("/orponing_service/start")
-    public Status startService() {
-        Status status = _service.start();
+    @GetMapping("/orponing_service/{id}/start")
+    public Status startService(@PathVariable String id) {
+        IStartable service = _startableService.getOrDefault(id, new NotFoundStartableService());
+        service.start();
 
-        return status;
+        return _statusServices.getOrDefault(service.getId(), new StatusServiceDefault()).getStatus();
     }
 
     @GetMapping("/orponing_service/status")
@@ -44,7 +48,7 @@ public class OrponingServiceController {
     }
 
     @GetMapping("/orponing_service/all_status")
-    public List<StatusService> statusService( ) {
+    public List<StatusService> statusService() {
         return new ArrayList<>(_statusServices.values());
     }
 }

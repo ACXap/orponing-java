@@ -8,8 +8,9 @@ async function init() {
 
     result.forEach(el => getElement("main").innerHTML += getBlock(el.icon, el.id, el.name, el.status.status, el.status.dateStatus, el.status.message));
 
-    // тут пока вручную смотрим кому надо кнопку старт
-    addStartButton(result.find(el => el.id == "orponing-service").id);
+    result.filter(el => el.isStartable).forEach(e => {
+        addStartButton(e.id);
+    })
 
     getElement("loadcomp").remove();
 }
@@ -48,7 +49,7 @@ function addStartButton(idService) {
 
 async function startService(idService) {
     updateStatus(idService, async () => {
-        const response = await fetch("/orponing_service/start");
+        const response = await fetch(`/orponing_service/${idService}/start`);
         return response.json();
     })
 }

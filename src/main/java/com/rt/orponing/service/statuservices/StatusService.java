@@ -11,6 +11,7 @@ public abstract class StatusService {
     protected String _icon;
     protected String _description;
     protected Status _status;
+    protected boolean _isStartable;
 
     public String getName() {
         return _name;
@@ -26,6 +27,10 @@ public abstract class StatusService {
 
     public String getDescription() {
         return _description;
+    }
+
+    public boolean getIsStartable() {
+        return _isStartable;
     }
 
     public abstract Status getStatus();

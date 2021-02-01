@@ -5,14 +5,15 @@ import com.rt.orponing.service.data.Status;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StatusServiceSceduled extends StatusService{
+public class StatusServiceScheduled extends StatusService{
 
-    public StatusServiceSceduled(ScheduledOrponingTableService sch){
+    public StatusServiceScheduled(ScheduledOrponingTableService sch){
         _sch = sch;
 
         _name = "Планировщик запуска орпонизации";
         _id = "scheduled-service";
         _icon ="clock";
+        _isStartable = true;
     }
 
     private final ScheduledOrponingTableService _sch;
