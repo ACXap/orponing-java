@@ -5,6 +5,7 @@ package com.rt.orponing.service.statuservices;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingService;
+import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -13,28 +14,25 @@ import org.springframework.stereotype.Component;
 @Lazy
 public class StatusServiceOrponService extends StatusService {
 
-    public StatusServiceOrponService(OrponingService _os) {
-        this._os = _os;
-
-        _name = "Сервис для разбора адресов";
-        _id = "orponing";
-        _icon= "server";
+    public StatusServiceOrponService(OrponingService os) {
+        this.os = os;
+        infoService = new InfoService("Сервис для разбора адресов", "orponing", "server", "", false);
     }
 
-    private final OrponingService _os;
+    private final OrponingService os;
     private static final String _testAddress = "Новосибирск г., Орджоникидзе ул., дом 18";
     private static final long _testGlobalId = 29182486;
 
     @Override
     public Status getStatus() {
-        AddressInfo addressInfo = _os.OrponingAddress(new EntityAddress(1, _testAddress));
+        AddressInfo addressInfo = os.OrponingAddress(new EntityAddress(1, _testAddress));
 
         if (addressInfo.GlobalId == _testGlobalId) {
-            _status = Status.Start(Status.StatusMessage.START);
+            status = Status.Start(Status.StatusMessage.START);
         } else {
-            _status = Status.Error(Status.StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
+            status = Status.Error(Status.StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
         }
 
-        return _status;
+        return status;
     }
 }

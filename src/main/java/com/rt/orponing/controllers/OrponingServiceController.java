@@ -5,6 +5,7 @@ package com.rt.orponing.controllers;
 import com.rt.orponing.service.IStartable;
 import com.rt.orponing.service.NotFoundStartableService;
 import com.rt.orponing.service.OrponingTableService;
+import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.statuservices.StatusService;
 import com.rt.orponing.service.statuservices.StatusServiceDefault;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -25,7 +27,7 @@ import static java.util.stream.Collectors.toMap;
 public class OrponingServiceController {
 
     public OrponingServiceController(List<StatusService> listStatusServices, List<IStartable> listStartableService) {
-        _statusServices = listStatusServices.stream().collect(toMap(StatusService::getId, s -> s));
+        _statusServices = listStatusServices.stream().collect(toMap(s->s.getInfoService().getId(), s -> s));
         _startableService = listStartableService.stream().collect(toMap(IStartable::getId, s -> s));
     }
 
@@ -47,8 +49,8 @@ public class OrponingServiceController {
         return s.getStatus();
     }
 
-    @GetMapping("/orponing_service/all_status")
-    public List<StatusService> statusService() {
-        return new ArrayList<>(_statusServices.values());
+    @GetMapping("/orponing_service/all_services")
+    public List<InfoService> statusService() {
+        return _statusServices.values().stream().map(StatusService::getInfoService).collect(Collectors.toList());
     }
 }

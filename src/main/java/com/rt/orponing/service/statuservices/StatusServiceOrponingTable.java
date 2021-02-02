@@ -3,6 +3,7 @@
 package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.OrponingTableService;
+import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -12,20 +13,16 @@ import org.springframework.stereotype.Component;
 public class StatusServiceOrponingTable extends StatusService{
 
     public StatusServiceOrponingTable(OrponingTableService ots) {
-        _ots = ots;
-
-        _name = "Фоновый сервис орпонизации";
-        _id = "orponing-service";
-        _icon= "server";
-        _isStartable = true;
+        this.ots = ots;
+        infoService = new InfoService("Фоновый сервис орпонизации", "orponing-service", "server", "", true);
     }
 
-    private final OrponingTableService _ots;
+    private final OrponingTableService ots;
 
     @Override
    public Status getStatus() {
-        _status = _ots.getStatus();
+        status = ots.getStatus();
 
-        return _status;
+        return status;
     }
 }

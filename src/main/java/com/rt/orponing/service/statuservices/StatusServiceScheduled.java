@@ -1,26 +1,25 @@
 package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.ScheduledOrponingTableService;
+import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
+@Lazy
 public class StatusServiceScheduled extends StatusService{
 
     public StatusServiceScheduled(ScheduledOrponingTableService sch){
-        _sch = sch;
-
-        _name = "Планировщик запуска орпонизации";
-        _id = "scheduled-service";
-        _icon ="clock";
-        _isStartable = true;
+        this.sch = sch;
+        infoService = new InfoService("Планировщик запуска орпонизации", "scheduled-service", "clock", "", true);
     }
 
-    private final ScheduledOrponingTableService _sch;
+    private final ScheduledOrponingTableService sch;
 
     @Override
     public Status getStatus() {
-        _status = _sch.getStatus();
-        return _status;
+        status = sch.getStatus();
+        return status;
     }
 }

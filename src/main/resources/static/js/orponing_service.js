@@ -3,30 +3,26 @@ function getElement(id) {
 }
 
 async function init() {
-    const response = await fetch("/orponing_service/all_status");
+    const response = await fetch("/orponing_service/all_services");
     const result = await response.json();
 
     result.forEach(el => getElement("main").innerHTML += getBlock(el));
-
-    result.filter(el => el.isStartable).forEach(e => {
-        addStartButton(e.id);
-    })
+    result.filter(el => el.isStartable).forEach(e => addStartButton(e.id));
+    result.forEach(el=>loadStatus(el.id));
 
     getElement("loadcomp").remove();
 }
 
 function getBlock(service) {
-    const st = service.status;
-    const d = new Date(st.dateStatus);
     return `<div class="col" id=${service.id}>
                 <div class="card shadow-sm">
-                    <i class="fas fa-${service.icon} fa-5x m-5" style="color:${getColor(st.status)}" title="${st.status}"></i>
+                    <i class="fas fa-${service.icon} fa-5x m-5" style="color:black" title="$Обработка"></i>
                     <div class="card-body">
                         <p class="card-text" title="${service.description}">${service.name}</p>
                         <div>
-                            <b>Статус: </b><span title="${st.status}">${st.message}</span>
+                            <b>Статус: </b><span title="Обработка">Обработка</span>
                             <br>
-                            <b>Дата: </b><span>${d}</span>
+                            <b>Дата: </b><span>${new Date()}</span>
                         </div>
                     </div>
                     <div class="container">
@@ -62,7 +58,6 @@ async function loadStatus(idService) {
         return response.json();
     });
 }
-
 
 async function updateStatus(idService, getStatus) {
     const divMain = getElement(idService);

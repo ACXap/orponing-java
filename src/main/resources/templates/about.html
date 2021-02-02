@@ -104,17 +104,11 @@
 
     <div class="container">
         <h1 class="mt-5">API служебное</h1>
-        <p class="lead">Получить список компонентов сервиса и их статусы - это GET запрос на адрес /orponing_service/all_status
+        <p class="lead">Получить список компонентов сервиса - это GET запрос на адрес /orponing_service/all_services
 
         <div class="form-floating">
             <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
     {
-        "status":
-        {
-            "message":"Мне нечего делать",
-            "status":"STOP",
-            "dateStatus":"2021-02-01T04:08:56.886+00:00"
-        },
         "name":"Фоновый сервис орпонизации",
         "id":"orponing-service",
         "description":null,
@@ -122,12 +116,6 @@
         "icon":"server"
     },
     {
-        "status":
-        {
-            "message":"Мне недосуг",
-            "status":"START",
-            "dateStatus":"2021-02-01T04:38:50.447+00:00"
-        },
         "name":"Сервис для разбора адресов",
         "id":"orponing",
         "description":null,
