@@ -18,7 +18,7 @@ import java.util.List;
 @Lazy
 public class OrponingService {
 
-    public OrponingService( IRepositoryOrpon repository) {
+    public OrponingService(IRepositoryOrpon repository) {
         _repository = repository;
     }
 
@@ -38,7 +38,7 @@ public class OrponingService {
             return addressInfo;
         } catch (Exception ex) {
 
-            _logger.error(entityAddress.Address + " " +  ex.getMessage());
+            _logger.error(entityAddress.Address + " " + ex.getMessage());
             return new AddressInfo(entityAddress.Id, ex.getMessage());
         }
     }
@@ -55,7 +55,7 @@ public class OrponingService {
             }
         }
 
-        if(!tempAddressError.isEmpty()) {
+        if (!tempAddressError.isEmpty()) {
             _logger.info("Orponing list bad address");
 
             for (EntityAddress address : tempAddressError) {

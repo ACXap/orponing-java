@@ -6,19 +6,19 @@ async function init() {
     const response = await fetch("/orponing_service/all_services");
     const result = await response.json();
 
-    result.forEach(el => getElement("main").innerHTML += getBlock(el));
+    result.forEach(el => getElement("main").insertAdjacentHTML('afterbegin', getBlock(el)));
     result.filter(el => el.isStartable).forEach(e => addStartButton(e.id));
-    result.forEach(el=>loadStatus(el.id));
+    result.forEach(el => loadStatus(el.id));
 
     getElement("loadcomp").remove();
 }
 
-function getBlock(service) {
-    return `<div class="col" id=${service.id}>
+function getBlock({ id, icon, name, description }) {
+    return `<div class="col" id=${id}>
                 <div class="card shadow-sm">
-                    <i class="fas fa-${service.icon} fa-5x m-5" style="color:black" title="$Обработка"></i>
+                    <i class="fas fa-${icon} fa-5x m-5" style="color:black" title="$Обработка"></i>
                     <div class="card-body">
-                        <p class="card-text" title="${service.description}">${service.name}</p>
+                        <p class="card-text" title="${description}">${name}</p>
                         <div>
                             <b>Статус: </b><span title="Обработка">Обработка</span>
                             <br>
@@ -27,7 +27,7 @@ function getBlock(service) {
                     </div>
                     <div class="container">
                         <div class="row">
-                            <div class="col-2"><i class="fas fa-sync m-3" title="Обновить статус" onClick="loadStatus('${service.id}')" style="cursor:pointer"></i></div>
+                            <div class="col-2"><i class="fas fa-sync m-3" title="Обновить статус" onClick="loadStatus('${id}')" style="cursor:pointer"></i></div>
                         </div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@ async function updateStatus(idService, getStatus) {
     } catch (e) {
         console.error(e);
 
-        divMain.querySelectorAll("span")[0].title = "Нет связи с со службой тестирования";
+        divMain.querySelectorAll("span")[0].title = "Нет связи со службой тестирования";
         divMain.querySelectorAll("span")[0].textContent = "Нет соединения";
         divMain.querySelectorAll("span")[1].textContent = "";
         divMain.querySelectorAll("i")[0].style = `color:blue`;
