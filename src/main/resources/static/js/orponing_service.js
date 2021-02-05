@@ -1,7 +1,3 @@
-function getElement(id) {
-    return document.querySelector(`#${id}`);
-}
-
 async function init() {
     const response = await fetch("/orponing_service/all_services");
     const result = await response.json();
@@ -85,3 +81,4 @@ async function updateStatus(idService, getStatus) {
 }
 
 init();
+setActiveLink();

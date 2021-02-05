@@ -1,9 +1,5 @@
 list = [];
 
-function getElement(id) {
-    return document.querySelector(`#${id}`);
-}
-
 getElement("orponing-address").onclick = async () => {
     try {
         const address = getElement("input-address").value;
@@ -16,7 +12,7 @@ getElement("orponing-address").onclick = async () => {
             const json = await response.json();
 
             if (json) {
-                getElement("result").hidden = false;
+                displayElement("result");
                 getElement("errorInfo").hidden = json.IsValid;
                 getElement("gidInfo").hidden = !json.IsValid;
                 getElement("addressInfo").hidden = !json.IsValid;
@@ -60,6 +56,7 @@ getElement("orponing-file").onclick = () => {
 
     getElement("orponing-file").classList.add("disabled");
     startProcessing("div-form-file", "Обработка запроса...");
+    hideElement("result-file");
     try {
         const reader = new FileReader();
         reader.readAsText(file, "UTF-8");
@@ -72,22 +69,22 @@ getElement("orponing-file").onclick = () => {
 }
 
 getElement("tab-orponing-address").onclick = async () => {
-    getElement("div-form-address").hidden = false;
-    getElement("div-form-file").hidden = true;
+    displayElement("div-form-address");
+    hideElement("div-form-file");
 
-    getElement("result-file").hidden = true;
+    hideElement("result-file");
     if (getElement("gid").value) {
-        getElement("result").hidden = false;
+        displayElement("result");
     }
 }
 
 getElement("tab-orponing-file").onclick = async () => {
-    getElement("div-form-address").hidden = true;
-    getElement("div-form-file").hidden = false;
+    hideElement("div-form-address");
+    displayElement("div-form-file");
 
-    getElement("result").hidden = true;
+    hideElement("result");
     if (list.length > 0) {
-        getElement("result-file").hidden = false;
+        displayElement("result-file");
     }
 }
 
@@ -104,11 +101,10 @@ function startProcessing(id, message) {
     if (p) return;
 
     const proc = `<div class="processing row py-2 text-center">
-                    <div class="container" id="loadcomp">
+                    <div class="container">
                         <h5>${message}</h5>
                         <div class="spinner-grow text-primary" role="status"></div>
                     </div>
-                     <div class="row row-cols-md-3 g-4" id="main"></div>
                 </div>`;
 
     getElement(id).insertAdjacentHTML('beforeend', proc);
@@ -118,7 +114,7 @@ function stopProcessing(id) {
     const p = getElement(id).querySelector("div.processing");
 
     if (p) {
-        getElement(id).querySelector("div.processing").remove();
+        p.remove();
     }
 }
 
@@ -127,7 +123,7 @@ function checkTypeFile(file) {
     return false;
 }
 
-function convertDataToAddress(data) {
+function convertStringToAddress(data) {
     list = [];
     if (data) {
         data.split("\r\n").forEach(element => {
@@ -142,20 +138,44 @@ function convertDataToAddress(data) {
     return list;
 }
 
-async function getAddressInfo(list) {
-    const response = await fetch("/get_globalid", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json;charset=utf-8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Content-Encoding': 'gzip, deflate, br'
-        },
-        body: JSON.stringify(list)
+function convertAddressInfoToString(addressInfo) {
+    dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
+
+    data = [];
+    data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
+
+    addressInfo.forEach(el => {
+        data.push(`${el.Id};${list.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
     });
 
-    const result = await response.json();
+    dataForSave += encodeURIComponent(data.join("\r\n"));
 
-    return result;
+    return dataForSave;
+}
+
+async function getAddressInfo(list) {
+    try {
+        const response = await fetch("/get_globalid", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Content-Encoding': 'gzip, deflate, br'
+            },
+            body: JSON.stringify(list)
+        });
+
+        const result = await response.json();
+
+        if (response.status == 200) {
+            return result;
+        }
+
+        throw new Error(result.error);
+    } catch (e) {
+        console.error(e);
+        alert(e);
+    }
 }
 
 function getDownloadFile() {
@@ -167,28 +187,9 @@ function getDownloadFile() {
     return downloadFile;
 }
 
-function convertAddressInfoToString(addressInfo) {
-    dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
-
-    data = [];
-    data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
-
-    addressInfo.forEach(el => {
-        data.push(`${getString(el.Id)};${getString(list.find(e => e.Id == el.Id).Address).replace("\r")};${getString(el.GlobalId)};${getString(el.AddressOrpon)};${getString(el.ParsingLevelCode)};${getString(el.QualityCode)};${getString(el.UnparsedParts)};${getString(el.Error)}`);
-    });
-
-    dataForSave += encodeURIComponent(data.join("\r\n"));
-
-    return dataForSave;
-}
-
-function getString(data) {
-    return data ?? "";
-}
-
 async function orponingFile(data) {
     try {
-        list = convertDataToAddress(data);
+        list = convertStringToAddress(data);
 
         result = await getAddressInfo(list);
 
@@ -202,7 +203,7 @@ async function orponingFile(data) {
             getElement("result-file>a").remove();
         }
 
-        getElement("result-file").hidden = false;
+        displayElement("result-file");
         getElement("result-file").appendChild(downloadFile);
     } catch (e) {
         console.error(e)

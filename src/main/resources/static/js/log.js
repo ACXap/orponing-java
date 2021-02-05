@@ -1,6 +1,7 @@
-function getElement(id) {
-    return document.querySelector(`#${id}`);
-}
+// пока будем получать весь, потом подумаем как получать только обновления
+getElement("loadlog").onclick = () => {
+    loadLog();
+};
 
 async function loadLog() {
     const t = getElement("floatingTextarea");
@@ -20,9 +21,5 @@ async function loadLog() {
     t.scrollTop = Number.MAX_SAFE_INTEGER;
 }
 
-// пока будем получать весь, потом подумаем как получать только обновления
-getElement("loadlog").onclick = () => {
-    loadLog();
-};
-
 loadLog();
+setActiveLink();

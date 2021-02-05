@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,22 +10,21 @@
     <link href="/css/all.min.css" rel="stylesheet">
     <title>Сервис "Орпонизации"</title>
 </head>
+
 <body>
     <header th:insert="../block/nav.html :: nav"></header>
-    <div class="container py-5">
-        <div class="row py-2 text-center">
-            <div class="col-sm-12 pt-5">
-                <h2>Сервис Орпонизации</h2>
-            </div>
-            <div class="container m-5 p-5" id="loadcomp">
-                <p>Загрузка компонентов...</p>
-                <div class="d-flex justify-content-center">
-                    <div class="spinner-grow text-primary" role="status"></div>
-                </div>
-            </div>
-            <div class="row row-cols-md-3 g-4" id="main"></div>
+    <div class="container py-5 text-center">
+        <div class="row py-5">
+            <h2>Сервис Орпонизации</h2>
         </div>
+        <div class="container py-5 my-5" id="loadcomp">
+            <h5>Загрузка компонентов...</h5>
+            <div class="spinner-grow text-primary" role="status"></div>
+        </div>
+        <div class="row row-cols-md-3 g-4" id="main"></div>
     </div>
+    <script src="../js/common.js"></script>
     <script src="../js/orponing_service.js"></script>
 </body>
+
 </html>
