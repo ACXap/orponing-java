@@ -28,6 +28,8 @@ class OrponingServiceTest {
         int id = 1;
         String level = "FIAS_HOUSE";
         String unparsed = "";
+        String checkStatus = "VALIDATED";
+        String qualityCode = "UNDEF_05";
 
         EntityAddress entityAddress = new EntityAddress(id, "Новосибирск г., Орджоникидзе ул., дом 18");
 
@@ -37,6 +39,8 @@ class OrponingServiceTest {
         assertEquals(globalId, addressInfo.GlobalId);
         assertEquals(level, addressInfo.ParsingLevelCode);
         assertEquals(unparsed, addressInfo.UnparsedParts);
+        assertEquals(checkStatus, addressInfo.CheckStatus);
+        assertEquals(qualityCode, addressInfo.QualityCode);
     }
 
     @Test
