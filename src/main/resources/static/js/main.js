@@ -8,8 +8,7 @@ getElement("orponing-address").onclick = async () => {
             getElement("orponing-address").classList.add("disabled");
             startProcessing("div-form-address", "Обработка запроса...");
 
-            const response = await fetch("/get_globalid?address=" + address);
-            const json = await response.json();
+            const json = await apiOrponingAddress(address);
 
             if (json) {
                 displayElement("result");
@@ -36,7 +35,7 @@ getElement("orponing-address").onclick = async () => {
             }
         }
     } catch (e) {
-        console.error(e)
+        notifyError(e);
     } finally {
         stopProcessing("div-form-address");
         getElement("orponing-address").classList.remove("disabled");
@@ -62,7 +61,7 @@ getElement("orponing-file").onclick = () => {
         reader.readAsText(file, "UTF-8");
         reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
     } catch (e) {
-        console.error(e);
+        notifyError(e);
         stopProcessing("div-form-file");
         getElement("orponing-file").classList.remove("disabled");
     }
@@ -127,9 +126,8 @@ function convertStringToAddress(data) {
     list = [];
     if (data) {
         data.split("\r\n").forEach(element => {
-
             if (element) {
-                a = element.split(";");
+                const a = element.split(";");
                 list.push({ Id: a[0], Address: a[1] });
             }
         });
@@ -139,9 +137,9 @@ function convertStringToAddress(data) {
 }
 
 function convertAddressInfoToString(addressInfo) {
-    dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
+    let dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
 
-    data = [];
+    const data = [];
     data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
 
     addressInfo.forEach(el => {
@@ -153,33 +151,8 @@ function convertAddressInfoToString(addressInfo) {
     return dataForSave;
 }
 
-async function getAddressInfo(list) {
-    try {
-        const response = await fetch("/get_globalid", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Content-Encoding': 'gzip, deflate, br'
-            },
-            body: JSON.stringify(list)
-        });
-
-        const result = await response.json();
-
-        if (response.status == 200) {
-            return result;
-        }
-
-        throw new Error(result.error);
-    } catch (e) {
-        console.error(e);
-        alert(e);
-    }
-}
-
 function getDownloadFile() {
-    downloadFile = document.createElement("a");
+    const downloadFile = document.createElement("a");
     downloadFile.className = "btn btn-primary";
     downloadFile.download = `load.csv`;
     downloadFile.textContent = "Скачать";
@@ -191,11 +164,11 @@ async function orponingFile(data) {
     try {
         list = convertStringToAddress(data);
 
-        result = await getAddressInfo(list);
+        const result = await apiOrponingListAddress(list);
 
-        downloadFile = getDownloadFile();
+        const downloadFile = getDownloadFile();
 
-        dataForSave = convertAddressInfoToString(result);
+        const dataForSave = convertAddressInfoToString(result);
 
         downloadFile.href = dataForSave;
 
@@ -206,7 +179,8 @@ async function orponingFile(data) {
         displayElement("result-file");
         getElement("result-file").appendChild(downloadFile);
     } catch (e) {
-        console.error(e)
+        notifyError(e);
+        list = [];
     } finally {
         stopProcessing("div-form-file");
         getElement("orponing-file").classList.remove("disabled");

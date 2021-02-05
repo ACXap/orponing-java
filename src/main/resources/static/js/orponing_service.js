@@ -1,12 +1,16 @@
 async function init() {
-    const response = await fetch("/orponing_service/all_services");
-    const result = await response.json();
+    try {
+        const result = await apiGetListServices();
 
-    result.forEach(el => getElement("main").insertAdjacentHTML('afterbegin', getBlock(el)));
-    result.filter(el => el.isStartable).forEach(e => addStartButton(e.id));
-    result.forEach(el => loadStatus(el.id));
+        result.forEach(el => getElement("main").insertAdjacentHTML('afterbegin', getBlock(el)));
+        result.filter(el => el.isStartable).forEach(e => addStartButton(e.id));
+        result.forEach(el => loadStatus(el.id));
+    } catch (e) {
+        notifyError(e);
+    } finally {
+        getElement("loadcomp").remove();
+    }
 
-    getElement("loadcomp").remove();
 }
 
 function getBlock({ id, icon, name, description }) {
@@ -42,17 +46,11 @@ function addStartButton(idService) {
 }
 
 async function startService(idService) {
-    updateStatus(idService, async () => {
-        const response = await fetch(`/orponing_service/${idService}/start`);
-        return response.json();
-    })
+    updateStatus(idService, async () => apiStartService(idService));
 }
 
 async function loadStatus(idService) {
-    updateStatus(idService, async () => {
-        const response = await fetch("/orponing_service/status?service=" + idService);
-        return response.json();
-    });
+    updateStatus(idService, async () => apiGetStatusService(idService));
 }
 
 async function updateStatus(idService, getStatus) {
@@ -69,7 +67,7 @@ async function updateStatus(idService, getStatus) {
         divMain.querySelectorAll("span")[1].textContent = d;
         divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
     } catch (e) {
-        console.error(e);
+        notifyError(e);
 
         divMain.querySelectorAll("span")[0].title = "Нет связи со службой тестирования";
         divMain.querySelectorAll("span")[0].textContent = "Нет соединения";

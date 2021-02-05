@@ -18,3 +18,8 @@ function hideElement(id) {
 function displayElement(id) {
     getElement(id).hidden = false;
 }
+
+function notifyError(e) {
+    console.error(e);
+    alert(e);
+}
