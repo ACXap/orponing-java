@@ -62,9 +62,9 @@ public class ScheduledOrponingTableService implements IStartable {
         }
     }
 
-    @Scheduled(fixedRateString = "${background.orponing.service.delay}")
-    void startTask() {
-        if (_status.getStatus() == StatusType.STOP) return;
+    @Scheduled(initialDelay = 10000, fixedRateString = "${background.orponing.service.delay}")
+    private void startTask() {
+         if (_status.getStatus() == StatusType.STOP) return;
 
         _logger.info("Start scheduled task");
         _ots.start();
