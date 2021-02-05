@@ -75,16 +75,17 @@ class RepositoryOrponSoapTest {
         assertEquals(unparsed_2, addressInfo_2.UnparsedParts);
     }
 
-    @Test
-    void getInfo_OneAddress_BadResponse() {
-        EntityAddress entityAddress = new EntityAddress(1, "165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14");
-
-        try {
-            _repository.GetInfo(entityAddress);
-        } catch (Exception ex) {
-            assertEquals("Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact cause of the failure.", ex.getMessage());
-        }
-    }
+//    @Test  починили адрес
+//    void getInfo_OneAddress_BadResponse() {
+//        EntityAddress entityAddress = new EntityAddress(1, "165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14");
+//
+//        try {
+//            _repository.GetInfo(entityAddress);
+//            fail();
+//        } catch (Exception ex) {
+//            assertEquals("Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact cause of the failure.", ex.getMessage());
+//        }
+//    }
 
     @Test
     void getInfo_NotFound() throws RepositoryException {
