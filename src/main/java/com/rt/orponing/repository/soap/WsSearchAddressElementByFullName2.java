@@ -7,8 +7,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.WebEndpoint;
 
-public class WsSearchAddressElementByFullName2  extends Service
-{
+public class WsSearchAddressElementByFullName2 extends Service {
     private static final String NAMESPACE_URL = "http://www.informatica.com/dis/ws/ws_";
 
     public WsSearchAddressElementByFullName2(String url) throws Exception {

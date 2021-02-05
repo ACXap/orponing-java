@@ -4,44 +4,48 @@ function getElement(id) {
     return document.querySelector(`#${id}`);
 }
 
-document.querySelector("#orponing-address").onclick = async () => {
-    const address = document.querySelector("#input-address").value;
-    if (address) {
-        const response = await fetch("/get_globalid?address=" + address);
-        const json = await response.json();
+getElement("orponing-address").onclick = async () => {
+    try {
+        const address = getElement("input-address").value;
 
-        if (json) {
-            getElement("result").hidden = false;
-            getElement("errorInfo").hidden = json.IsValid;
-            getElement("gidInfo").hidden = !json.IsValid;
-            getElement("addressInfo").hidden = !json.IsValid;
+        if (address) {
+            getElement("orponing-address").classList.add("disabled");
+            startProcessing("div-form-address", "Обработка запроса...");
 
-            getElement("gid").value = json.GlobalId;
-            getElement("addressOrpon").value = json.AddressOrpon;
-            getElement("parsingLevelCode").value = json.ParsingLevelCode;
-            getElement("unparsedParts").value = json.UnparsedParts;
-            getElement("qualityCode").value = json.QualityCode;
-            getElement("checkStatus").value = json.CheckStatus;
-            getElement("error").value = json.Error;
+            const response = await fetch("/get_globalid?address=" + address);
+            const json = await response.json();
 
-            header = getElement("headerInfoAddress");
-            if (json.IsValid) {
-                header.textContent = "Адрес разобран";
-                header.style = "color:green";
-            } else {
-                header.textContent = "Адрес разобран c ошибками";
-                header.style = "color:red";
+            if (json) {
+                getElement("result").hidden = false;
+                getElement("errorInfo").hidden = json.IsValid;
+                getElement("gidInfo").hidden = !json.IsValid;
+                getElement("addressInfo").hidden = !json.IsValid;
+
+                getElement("gid").value = json.GlobalId;
+                getElement("addressOrpon").value = json.AddressOrpon;
+                getElement("parsingLevelCode").value = json.ParsingLevelCode;
+                getElement("unparsedParts").value = json.UnparsedParts;
+                getElement("qualityCode").value = json.QualityCode;
+                getElement("checkStatus").value = json.CheckStatus;
+                getElement("error").value = json.Error;
+
+                header = getElement("headerInfoAddress");
+                if (json.IsValid) {
+                    header.textContent = "Адрес разобран";
+                    header.style = "color:green";
+                } else {
+                    header.textContent = "Адрес разобран c ошибками";
+                    header.style = "color:red";
+                }
             }
         }
+    } catch (e) {
+        console.error(e)
+    } finally {
+        stopProcessing("div-form-address");
+        getElement("orponing-address").classList.remove("disabled");
     }
 }
-
-getElement("input-address").addEventListener("keyup", (event) => {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        getElement("orponing-address").click();
-    }
-})
 
 getElement("orponing-file").onclick = () => {
     const file = getElement("formFile").files[0];
@@ -54,16 +58,20 @@ getElement("orponing-file").onclick = () => {
         return;
     }
 
-    getElement("await-file").hidden = false;
-    getElement("result-file").hidden = false;
-    getElement("div-file-load").hidden = true;
-
-    const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-    reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
+    getElement("orponing-file").classList.add("disabled");
+    startProcessing("div-form-file", "Обработка запроса...");
+    try {
+        const reader = new FileReader();
+        reader.readAsText(file, "UTF-8");
+        reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
+    } catch (e) {
+        console.error(e);
+        stopProcessing("div-form-file");
+        getElement("orponing-file").classList.remove("disabled");
+    }
 }
 
-getElement("button-orponing-address").onclick = async () => {
+getElement("tab-orponing-address").onclick = async () => {
     getElement("div-form-address").hidden = false;
     getElement("div-form-file").hidden = true;
 
@@ -73,13 +81,44 @@ getElement("button-orponing-address").onclick = async () => {
     }
 }
 
-getElement("button-orponing-file").onclick = async () => {
+getElement("tab-orponing-file").onclick = async () => {
     getElement("div-form-address").hidden = true;
     getElement("div-form-file").hidden = false;
 
     getElement("result").hidden = true;
     if (list.length > 0) {
         getElement("result-file").hidden = false;
+    }
+}
+
+getElement("input-address").addEventListener("keyup", (event) => {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        getElement("orponing-address").click();
+    }
+})
+
+function startProcessing(id, message) {
+    const p = getElement(id).querySelector("div.processing");
+
+    if (p) return;
+
+    const proc = `<div class="processing row py-2 text-center">
+                    <div class="container" id="loadcomp">
+                        <h5>${message}</h5>
+                        <div class="spinner-grow text-primary" role="status"></div>
+                    </div>
+                     <div class="row row-cols-md-3 g-4" id="main"></div>
+                </div>`;
+
+    getElement(id).insertAdjacentHTML('beforeend', proc);
+}
+
+function stopProcessing(id) {
+    const p = getElement(id).querySelector("div.processing");
+
+    if (p) {
+        getElement(id).querySelector("div.processing").remove();
     }
 }
 
@@ -108,8 +147,8 @@ async function getAddressInfo(list) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json;charset=utf-8',
-             'Accept-Encoding': 'gzip, deflate, br',
-             'Content-Encoding': 'gzip, deflate, br'
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Content-Encoding': 'gzip, deflate, br'
         },
         body: JSON.stringify(list)
     });
@@ -121,7 +160,7 @@ async function getAddressInfo(list) {
 
 function getDownloadFile() {
     downloadFile = document.createElement("a");
-    downloadFile.className = "btn btn-primary text-center";
+    downloadFile.className = "btn btn-primary";
     downloadFile.download = `load.csv`;
     downloadFile.textContent = "Скачать";
 
@@ -144,28 +183,31 @@ function convertAddressInfoToString(addressInfo) {
 }
 
 function getString(data) {
-    if (data) {
-        return data;
-    }
-
-    return "";
+    return data ?? "";
 }
 
 async function orponingFile(data) {
-    list = convertDataToAddress(data);
+    try {
+        list = convertDataToAddress(data);
 
-    result = await getAddressInfo(list);
+        result = await getAddressInfo(list);
 
-    downloadFile = getDownloadFile();
+        downloadFile = getDownloadFile();
 
-    dataForSave = convertAddressInfoToString(result);
+        dataForSave = convertAddressInfoToString(result);
 
-    downloadFile.href = dataForSave;
+        downloadFile.href = dataForSave;
 
-    if (getElement("div-file-load>a")) {
-        getElement("div-file-load>a").remove();
+        if (getElement("result-file>a")) {
+            getElement("result-file>a").remove();
+        }
+
+        getElement("result-file").hidden = false;
+        getElement("result-file").appendChild(downloadFile);
+    } catch (e) {
+        console.error(e)
+    } finally {
+        stopProcessing("div-form-file");
+        getElement("orponing-file").classList.remove("disabled");
     }
-    getElement("await-file").hidden = true;
-    getElement("div-file-load").hidden = false;
-    getElement("div-file-load").appendChild(downloadFile);
 }

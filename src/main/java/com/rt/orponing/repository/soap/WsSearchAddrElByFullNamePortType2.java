@@ -11,13 +11,11 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 
 @WebService(name = "wsSearchAddrElByFullNamePortType2", targetNamespace = "http://www.informatica.com/dis/ws/ws_")
 @SOAPBinding(parameterStyle = SOAPBinding.ParameterStyle.BARE)
-@XmlSeeAlso({
-    ObjectFactory.class
-})
+@XmlSeeAlso({ObjectFactory.class})
 public interface WsSearchAddrElByFullNamePortType2 {
     @WebMethod(operationName = "SearchAddressElementByFullName")
     @WebResult(name = "AddressElementNameResponse2", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
     AddressElementNameResponse2 searchAddressElementByFullName(
-        @WebParam(name = "AddressElementNameData", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
-                AddressElementNameData parameter) throws FaultMessage;
+            @WebParam(name = "AddressElementNameData", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
+                                                                       AddressElementNameData parameter) throws FaultMessage;
 }
