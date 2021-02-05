@@ -2,15 +2,16 @@ async function init() {
     try {
         const result = await apiGetListServices();
 
-        result.forEach(el => getElement("main").insertAdjacentHTML('afterbegin', getBlock(el)));
-        result.filter(el => el.isStartable).forEach(e => addStartButton(e.id));
-        result.forEach(el => loadStatus(el.id));
+        result.forEach(el => {
+            getElement("main").insertAdjacentHTML('afterbegin', getBlock(el));
+            if (el.isStartable) addStartButton(el.id);
+            loadStatus(el.id);
+        });
     } catch (e) {
         notifyError(e);
     } finally {
         getElement("loadcomp").remove();
     }
-
 }
 
 function getBlock({ id, icon, name, description }) {
@@ -60,11 +61,10 @@ async function updateStatus(idService, getStatus) {
 
     try {
         const status = await getStatus();
-        const d = new Date(status.dateStatus);
 
         divMain.querySelectorAll("span")[0].title = status.status;
         divMain.querySelectorAll("span")[0].textContent = status.message;
-        divMain.querySelectorAll("span")[1].textContent = d;
+        divMain.querySelectorAll("span")[1].textContent = new Date(status.dateStatus);
         divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
     } catch (e) {
         notifyError(e);
@@ -72,7 +72,7 @@ async function updateStatus(idService, getStatus) {
         divMain.querySelectorAll("span")[0].title = "Нет связи со службой тестирования";
         divMain.querySelectorAll("span")[0].textContent = "Нет соединения";
         divMain.querySelectorAll("span")[1].textContent = "";
-        divMain.querySelectorAll("i")[0].style = `color:blue`;
+        divMain.querySelectorAll("i")[0].style = "color:blue";
     } finally {
         iconService.classList.remove("fa-spin");
     }

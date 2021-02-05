@@ -5,7 +5,7 @@ getElement("orponing-address").onclick = async () => {
         const address = getElement("input-address").value;
 
         if (address) {
-            getElement("orponing-address").classList.add("disabled");
+            disableElement("orponing-address");
             startProcessing("div-form-address", "Обработка запроса...");
 
             const json = await apiOrponingAddress(address);
@@ -44,7 +44,7 @@ getElement("orponing-address").onclick = async () => {
 
 getElement("orponing-file").onclick = () => {
     const file = getElement("formFile").files[0];
-    if (!file || checkTypeFile(file) === false) {
+    if (!checkTypeFile(file)) {
         if (!file) {
             alert("А кто файл то будет добавлять?");
         } else {
@@ -53,7 +53,7 @@ getElement("orponing-file").onclick = () => {
         return;
     }
 
-    getElement("orponing-file").classList.add("disabled");
+    disableElement("orponing-file");
     startProcessing("div-form-file", "Обработка запроса...");
     hideElement("result-file");
     try {
@@ -118,8 +118,7 @@ function stopProcessing(id) {
 }
 
 function checkTypeFile(file) {
-    if (file.type === "text/plain" || (file.type === "application/vnd.ms-excel" && file.name.includes(".csv"))) return true;
-    return false;
+    return !file || file.type === "text/plain" || (file.type === "application/vnd.ms-excel" && file.name.includes(".csv"));
 }
 
 function convertStringToAddress(data) {
@@ -168,13 +167,9 @@ async function orponingFile(data) {
 
         const downloadFile = getDownloadFile();
 
-        const dataForSave = convertAddressInfoToString(result);
+        downloadFile.href = convertAddressInfoToString(result);
 
-        downloadFile.href = dataForSave;
-
-        if (getElement("result-file>a")) {
-            getElement("result-file>a").remove();
-        }
+        removeElement("result-file>a");
 
         displayElement("result-file");
         getElement("result-file").appendChild(downloadFile);

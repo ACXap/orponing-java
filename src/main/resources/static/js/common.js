@@ -19,6 +19,16 @@ function displayElement(id) {
     getElement(id).hidden = false;
 }
 
+function removeElement(id) {
+    if (getElement(id)) {
+        getElement(id).remove();
+    }
+}
+
+function disableElement(id) {
+    getElement(id).classList.add("disabled");
+}
+
 function notifyError(e) {
     console.error(e);
     alert(e);
