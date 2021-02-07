@@ -159,24 +159,46 @@ function getDownloadFile() {
     return downloadFile;
 }
 
+async function requestTask(id) {
+    try {
+        console.log("get status task id = " + idTask);
+
+        let result = await apiGetStatusTask(idTask);
+        console.log(result);
+
+        if (result.status === "COMPLETED") {
+
+            result = await apiGetResultTask(idTask);
+            const downloadFile = getDownloadFile();
+            downloadFile.href = convertAddressInfoToString(result);
+            removeElement("result-file>a");
+
+            displayElement("result-file");
+            getElement("result-file").appendChild(downloadFile);
+
+            stopProcessing("div-form-file");
+            getElement("orponing-file").classList.remove("disabled");
+        } else {
+            timerId = setTimeout(() => requestTask(id), 2000);
+        }
+    } catch (e) {
+        notifyError(e);
+        stopProcessing("div-form-file");
+        getElement("orponing-file").classList.remove("disabled");
+    }
+}
+
 async function orponingFile(data) {
     try {
         list = convertStringToAddress(data);
 
-        const result = await apiOrponingListAddress(list);
+        idTask = await apiOrponingListAddress(list);
 
-        const downloadFile = getDownloadFile();
-
-        downloadFile.href = convertAddressInfoToString(result);
-
-        removeElement("result-file>a");
-
-        displayElement("result-file");
-        getElement("result-file").appendChild(downloadFile);
+        setTimeout(() => requestTask(idTask), 2000);
     } catch (e) {
         notifyError(e);
         list = [];
-    } finally {
+
         stopProcessing("div-form-file");
         getElement("orponing-file").classList.remove("disabled");
     }

@@ -59,7 +59,7 @@ public class OrponingTableService implements IStartable {
             _status = Status.Start(Status.StatusMessage.START);
         }
 
-        ExecutorService service = Executors.newCachedThreadPool();
+        ExecutorService service = Executors.newSingleThreadExecutor();
 
         service.execute(() -> {
             while (_status.getStatus() == StatusType.START) {

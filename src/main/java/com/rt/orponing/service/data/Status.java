@@ -9,7 +9,7 @@ public class Status {
     private final Date _dateStatus;
     private final String _message;
 
-    private Status(StatusType status, Date date, String message) {
+    public Status(StatusType status, Date date, String message) {
         _status = status;
         _dateStatus = date;
         _message = message;
@@ -50,5 +50,6 @@ public class Status {
         public final static String START = "Мне недосуг";
         public final static String NO_WORK = "Мне нечего делать";
         public final static String ERROR = "Ой, я упал. Поднимите меня";
+        public final static String COMPLETED = "Я все завершил. Я КрасафчеГ!";
     }
 }

@@ -65,7 +65,9 @@
             </div>
             </p>
 
-            <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /get_globalid. Тело запроса при этом:
+            <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /api/get_global_id.
+                <br> И в ответ будет уникальный GIUD задачи, пример: deb74f17-d553-45ed-b45c-24cd5c9c3406.<br>
+                Тело запроса при этом:
             <div class="form-floating">
                 <textarea class="form-control" tabindex="В ответ получим:" style="height: 150px; width: 800px;">
 [
@@ -73,7 +75,20 @@
     {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
 ]</textarea>
             </div>
-            И ответ:
+
+
+
+            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученый ранее}.
+            <div class="form-floating">
+                <textarea class="form-control" tabindex="В ответ получим:" style="height: 180px; width: 800px;">{
+    "message":"Я все завершил. Я КрасафчеГ!",
+    "status":"COMPLETED",
+    "dateStatus":"2021-02-07T07:44:38.768+00:00"
+}
+</textarea>
+            </div>
+
+            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученый ранее}.
             <div class="form-floating">
                 <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
         {

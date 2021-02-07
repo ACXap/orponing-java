@@ -11,15 +11,6 @@ async function apiOrponingAddress(address) {
     return _getJson(response);
 }
 
-async function apiOrponingListAddress(listAddress) {
-    const response = await fetch("/get_globalid", {
-        method: 'POST',
-        headers: _getHeadersPost(),
-        body: JSON.stringify(listAddress)
-    });
-    return _getJson(response);
-}
-
 async function apiGetListServices() {
     const response = await fetch("/orponing_service/all_services");
     return _getJson(response);
@@ -35,6 +26,25 @@ async function apiGetStatusService(id) {
     return _getJson(response);
 }
 
+async function apiOrponingListAddress(listAddress) {
+    const response = await fetch("/api/get_global_id", {
+        method: 'POST',
+        headers: _getHeadersPost(),
+        body: JSON.stringify(listAddress)
+    });
+    return _getText(response);
+}
+
+async function apiGetStatusTask(id) {
+    const response = await fetch(`/api/get_global_id/status?id=${id}`);
+    return _getJson(response);
+}
+
+async function apiGetResultTask(id) {
+    const response = await fetch(`/api/get_global_id/result?id=${id}`);
+    return _getJson(response);
+}
+
 async function _getJson(response) {
     const result = await response.json();
 
@@ -42,7 +52,7 @@ async function _getJson(response) {
         return result;
     }
 
-    throw new Error(result.error);
+    throw new Error(result.message);
 }
 
 async function _getText(response) {
@@ -52,11 +62,13 @@ async function _getText(response) {
         return result;
     }
 
-    throw new Error(result.error);
+    throw new Error(result);
 }
 
-function _getHeadersPost(){
-    return {'Content-Type': 'application/json;charset=utf-8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Content-Encoding': 'gzip, deflate, br'};
+function _getHeadersPost() {
+    return {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Encoding': 'gzip, deflate, br'
+    };
 }
