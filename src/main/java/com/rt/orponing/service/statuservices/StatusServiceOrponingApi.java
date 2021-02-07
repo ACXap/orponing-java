@@ -12,7 +12,7 @@ public class StatusServiceOrponingApi extends StatusService{
 
     public StatusServiceOrponingApi(OrponingApiService oas){
         this.oas = oas;
-        infoService = new InfoService("Фоновый сервис API", "orponing-service-api", "server", "", false);
+        infoService = new InfoService("Фоновый сервис API", "orponing-service-api", "server", "Все обрабатываемые файлы файлы попадают в очередь и обрабатываются поочереди, данный сервис обрабатывает эту очередь", false);
     }
 
     private final OrponingApiService oas;

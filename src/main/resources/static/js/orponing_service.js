@@ -17,7 +17,7 @@ async function init() {
 function getBlock({ id, icon, name, description }) {
     return `<div class="col" id=${id}>
                 <div class="card shadow-sm">
-                    <i class="fas fa-${icon} fa-5x m-5" style="color:black" title="$Обработка"></i>
+                    <i class="fas fa-${icon} fa-5x m-5" style="color:black" title="${name}"></i>
                     <div class="card-body">
                         <p class="card-text" title="${description}">${name}</p>
                         <div>

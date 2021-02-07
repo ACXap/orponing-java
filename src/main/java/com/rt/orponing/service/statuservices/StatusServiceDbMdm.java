@@ -14,7 +14,7 @@ public class StatusServiceDbMdm extends StatusService {
 
     public StatusServiceDbMdm(DbMdmSaveData db) {
         this.db = db;
-        infoService = new InfoService("БД для хранения разобранных адресов", "db", "database", "", false);
+        infoService = new InfoService("БД для хранения разобранных адресов", "db", "database", "БД где хранятся адреса для орпонизации", false);
     }
 
     private final DbMdmSaveData db;

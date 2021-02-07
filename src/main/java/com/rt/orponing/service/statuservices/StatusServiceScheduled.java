@@ -14,7 +14,7 @@ public class StatusServiceScheduled extends StatusService{
 
     public StatusServiceScheduled(ScheduledOrponingTableService sch){
         this.sch = sch;
-        infoService = new InfoService("Планировщик запуска орпонизации", "scheduled-service", "clock", "", true);
+        infoService = new InfoService("Планировщик запуска орпонизации", "scheduled-service", "clock", "Планировщик запуска обработки таблицы с адресами", true);
     }
 
     private final ScheduledOrponingTableService sch;

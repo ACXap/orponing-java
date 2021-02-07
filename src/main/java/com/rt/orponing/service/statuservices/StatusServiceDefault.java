@@ -8,7 +8,7 @@ import com.rt.orponing.service.data.Status;
 public class StatusServiceDefault extends StatusService {
 
     public StatusServiceDefault() {
-        infoService = new InfoService("Сервис не найден", "not-found-service", "error", "", false);
+        infoService = new InfoService("Сервис не найден", "not-found-service", "error", "Увы, сервиса с таким ID не существует", false);
         status = Status.Error("Not found service");
     }
 

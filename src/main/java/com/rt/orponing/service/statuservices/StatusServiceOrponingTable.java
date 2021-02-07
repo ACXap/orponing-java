@@ -14,7 +14,7 @@ public class StatusServiceOrponingTable extends StatusService{
 
     public StatusServiceOrponingTable(OrponingTableService ots) {
         this.ots = ots;
-        infoService = new InfoService("Фоновый сервис орпонизации", "orponing-service", "server", "", true);
+        infoService = new InfoService("Фоновый сервис орпонизации", "orponing-service", "server", "Сервис который по графику отслеживает наполнение таблицы с адресами и орпонизирует их", true);
     }
 
     private final OrponingTableService ots;

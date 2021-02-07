@@ -16,7 +16,7 @@ public class StatusServiceOrponService extends StatusService {
 
     public StatusServiceOrponService(OrponingService os) {
         this.os = os;
-        infoService = new InfoService("Сервис для разбора адресов", "orponing", "server", "", false);
+        infoService = new InfoService("Сервис для разбора адресов", "orponing", "server", "Основной сервис который по адресу предоставляет информацию", false);
     }
 
     private final OrponingService os;
