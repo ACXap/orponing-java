@@ -5,6 +5,7 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -57,14 +58,6 @@ public class OrponingApiService {
         return uuid.toString();
     }
 
-    private void start() {
-        synchronized (lock) {
-            if (status.getStatus() != StatusType.START) {
-                status = Status.Start(Status.StatusMessage.START);
-            }
-        }
-    }
-
     public List<AddressInfo> getResultTask(String taskId) throws Exception {
 
         TaskOrponing taskOrponing = getTask(taskId);
@@ -86,13 +79,21 @@ public class OrponingApiService {
         }
 
         mapFuture.clear();
-        status = Status.Stop(Status.StatusMessage.STOP);
+        status = Status.Stop(Status.StatusMessage.NO_WORK);
         return status;
     }
 
     //endregion PublicMethod
 
     //region PrivateMethod
+
+    private void start() {
+        synchronized (lock) {
+            if (status.getStatus() != StatusType.START) {
+                status = Status.Start(Status.StatusMessage.START);
+            }
+        }
+    }
 
     private UUID getId(String id) throws Exception {
         try {
