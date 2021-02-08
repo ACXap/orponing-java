@@ -5,7 +5,6 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class OrponingApiService {
 
     public OrponingApiService(OrponingService orponingService) {
-        status = Status.Stop(Status.StatusMessage.STOP);
+        status = Status.Stop(StatusMessage.STOP);
         this.orponingService = orponingService;
     }
 
@@ -79,7 +78,7 @@ public class OrponingApiService {
         }
 
         mapFuture.clear();
-        status = Status.Stop(Status.StatusMessage.NO_WORK);
+        status = Status.Stop(StatusMessage.NO_WORK);
         return status;
     }
 
@@ -90,7 +89,7 @@ public class OrponingApiService {
     private void start() {
         synchronized (lock) {
             if (status.getStatus() != StatusType.START) {
-                status = Status.Start(Status.StatusMessage.START);
+                status = Status.Start(StatusMessage.START);
             }
         }
     }

@@ -7,6 +7,7 @@ import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingService;
 import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
+import com.rt.orponing.service.data.StatusMessage;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -28,9 +29,9 @@ public class StatusServiceOrponService extends StatusService {
         AddressInfo addressInfo = os.OrponingAddress(new EntityAddress(1, _testAddress));
 
         if (addressInfo.GlobalId == _testGlobalId) {
-            status = Status.Start(Status.StatusMessage.START);
+            status = Status.Start(StatusMessage.START);
         } else {
-            status = Status.Error(Status.StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
+            status = Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
         }
 
         return status;

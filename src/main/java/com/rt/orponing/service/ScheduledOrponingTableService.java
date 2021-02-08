@@ -40,7 +40,7 @@ public class ScheduledOrponingTableService implements IStartable {
     public Status start() {
         if (_status.getStatus() == StatusType.START) return _status;
 
-        _status = Status.Start(Status.StatusMessage.START);
+        _status = Status.Start(StatusMessage.START);
         startTask();
 
         return _status;
@@ -56,9 +56,9 @@ public class ScheduledOrponingTableService implements IStartable {
     @PostConstruct
     private void init() {
         if (_isAutoStart) {
-            _status = Status.Start(Status.StatusMessage.START);
+            _status = Status.Start(StatusMessage.START);
         } else {
-            _status = Status.Stop(Status.StatusMessage.STOP);
+            _status = Status.Stop(StatusMessage.STOP);
         }
     }
 

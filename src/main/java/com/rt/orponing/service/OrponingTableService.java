@@ -25,7 +25,7 @@ public class OrponingTableService implements IStartable {
         _dbSaveData = dbSaveData;
         _service = service;
 
-        _status = Status.Stop(Status.StatusMessage.STOP);
+        _status = Status.Stop(StatusMessage.STOP);
     }
 
     //region PrivateField
@@ -56,7 +56,7 @@ public class OrponingTableService implements IStartable {
             if (_status.getStatus() == StatusType.START) {
                 return _status;
             }
-            _status = Status.Start(Status.StatusMessage.START);
+            _status = Status.Start(StatusMessage.START);
         }
 
         ExecutorService service = Executors.newSingleThreadExecutor();
@@ -78,11 +78,11 @@ public class OrponingTableService implements IStartable {
                         }
                     } else {
                         _logger.info("Not found address for orponing");
-                        _status = Status.Stop(Status.StatusMessage.NO_WORK);
+                        _status = Status.Stop(StatusMessage.NO_WORK);
                     }
                 } catch (DaoException de) {
                     _logger.error(de.getMessage());
-                    _status = Status.Error(Status.StatusMessage.ERROR + ". " + de.getMessage());
+                    _status = Status.Error(StatusMessage.ERROR + ". " + de.getMessage());
                 }
             }
         });

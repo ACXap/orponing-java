@@ -16,7 +16,7 @@ public class TaskOrponing {
     public TaskOrponing(UUID id, List<EntityAddress> listAddressRequest) {
         this.id = id;
         this.listAddressRequest = listAddressRequest;
-        statusTask = Status.Stop(Status.StatusMessage.STOP);
+        statusTask = Status.Stop(StatusMessage.STOP);
     }
 
     //region PrivateField
@@ -39,17 +39,17 @@ public class TaskOrponing {
 
     //region PublicMethod
     public void startTask(){
-        statusTask = Status.Start(Status.StatusMessage.START);
+        statusTask = Status.Start(StatusMessage.START);
         dateStart = new Date();
     }
 
     public void errorTask(String message){
-        statusTask = Status.Error(Status.StatusMessage.ERROR + " " + message);
+        statusTask = Status.Error(StatusMessage.ERROR + " " + message);
         dateStop = new Date();
     }
 
     public void stopTask(){
-        statusTask = new Status(StatusType.COMPLETED, new Date(), Status.StatusMessage.COMPLETED);
+        statusTask = new Status(StatusType.COMPLETED, new Date(), StatusMessage.COMPLETED);
         dateStop = new Date();
     }
     //endregion PublicMethod
