@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
@@ -27,7 +28,7 @@ import static java.util.stream.Collectors.toMap;
 public class OrponingServiceController {
 
     public OrponingServiceController(List<StatusService> listStatusServices, List<IStartable> listStartableService) {
-        _statusServices = listStatusServices.stream().collect(toMap(s->s.getInfoService().getId(), s -> s));
+        _statusServices = listStatusServices.stream().collect(toMap(s -> s.getInfoService().getId(), s -> s));
         _startableService = listStartableService.stream().collect(toMap(IStartable::getId, s -> s));
     }
 
@@ -43,10 +44,12 @@ public class OrponingServiceController {
     }
 
     @GetMapping("/orponing_service/status")
-    public Status updateStatusService(@RequestParam("service") String service) {
-        StatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());
+    public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) throws InterruptedException {
 
-        return s.getStatus();
+        return CompletableFuture.supplyAsync(() -> {
+            StatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());
+            return s.getStatus();
+        });
     }
 
     @GetMapping("/orponing_service/all_services")

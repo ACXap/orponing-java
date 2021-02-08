@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Lazy
@@ -27,8 +28,9 @@ public class AddressOrponingController {
     private final OrponingApiService _oas;
 
     @GetMapping("/get_globalid")
-    public AddressInfo getGlobalIdPage(@RequestParam("address") String address) {
-        return _service.OrponingAddress(new EntityAddress(1, address));
+    public CompletableFuture<AddressInfo> getGlobalIdPage(@RequestParam("address") String address) {
+
+        return CompletableFuture.supplyAsync(()-> _service.OrponingAddress(new EntityAddress(1, address)));
     }
 
     @PostMapping(path = "/api/get_global_id", consumes = "application/json", produces = "application/json")
