@@ -12,17 +12,17 @@ import java.sql.DriverManager;
 public class DbConnect{
 
     @Value("${db.url}")
-    private String _url;
+    private String url;
 
     @Value("${db.user}")
-    private String _user;
+    private String user;
 
     @Value("${db.password}")
-    private String _password;
+    private String password;
 
     public Connection GetConnection() throws DaoException {
         try {
-            return DriverManager.getConnection(_url, _user, _password);
+            return DriverManager.getConnection(url, user, password);
         } catch (Exception ex) {
             throw new DaoException(ex.getMessage());
         }
