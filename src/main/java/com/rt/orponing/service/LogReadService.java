@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 @Lazy
 public class LogReadService {
 
-    private static final String FILE = "logs/spring-boot-logger.log";
+    private static final String FILE = "logs/logger.log";
 
     public String readLog() {
         try {
