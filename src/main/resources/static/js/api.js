@@ -7,7 +7,7 @@ async function apiGetLog() {
 }
 
 async function apiOrponingAddress(address) {
-    const response = await fetch("/get_globalid?address=" + address);
+    const response = await fetch("/api/get_global_id?address=" + address);
     return _getJson(response);
 }
 
@@ -36,12 +36,12 @@ async function apiOrponingListAddress(listAddress) {
 }
 
 async function apiGetStatusTask(id) {
-    const response = await fetch(`/api/get_global_id/status?id=${id}`);
+    const response = await fetch("/api/get_global_id/status?id=" + id);
     return _getJson(response);
 }
 
 async function apiGetResultTask(id) {
-    const response = await fetch(`/api/get_global_id/result?id=${id}`);
+    const response = await fetch("/api/get_global_id/result?id=" + id);
     return _getJson(response);
 }
 
