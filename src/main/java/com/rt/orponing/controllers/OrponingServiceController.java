@@ -53,7 +53,7 @@ public class OrponingServiceController {
     }
 
     @GetMapping("/orponing_service/all_services")
-    public List<InfoService> statusService() {
+    public List<InfoService> allService() {
         return _statusServices.values().stream().map(StatusService::getInfoService).collect(Collectors.toList());
     }
 }
