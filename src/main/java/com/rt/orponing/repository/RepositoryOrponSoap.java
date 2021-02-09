@@ -17,17 +17,21 @@ import java.util.stream.Collectors;
 @Lazy
 public class RepositoryOrponSoap implements IRepositoryOrpon {
 
+    //region PrivateField
+
     @Value("${soap.url.service}")
     private String _url;
     private WsSearchAddrElByFullNamePortType2 _wsSearch;
 
+    //endregion PrivateField
+
+    //region PublicMethod
     @Override
     public AddressInfo GetInfo(EntityAddress entityAddress) throws RepositoryException {
         try {
             AddressElementNameResponse2 addressElementNameResponse2 = GetAddressElementNameResponse(new ArrayList<EntityAddress>() {{
                 add(entityAddress);
             }});
-
             return ParsAddressInfo(addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().get(0));
         } catch (Exception ex) {
             throw new RepositoryException(ex.getMessage(), ex);
@@ -44,6 +48,10 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
             throw new RepositoryException(ex.getMessage(), ex);
         }
     }
+
+    //endregion PublicMethod
+
+    //region PrivateMethod
 
     private AddressElementNameResponse2 GetAddressElementNameResponse(List<EntityAddress> entityAddressList) throws FaultMessage {
         AddressElementNameData.AddressElementFullNameList addressElementFullNameList = new AddressElementNameData.AddressElementFullNameList();
@@ -92,4 +100,6 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
             throw new RepositoryException(ex.getMessage());
         }
     }
+
+    //endregion PrivateMethod
 }

@@ -44,7 +44,7 @@ public class OrponingServiceController {
     }
 
     @GetMapping("/orponing_service/status")
-    public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) throws InterruptedException {
+    public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) {
 
         return CompletableFuture.supplyAsync(() -> {
             StatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());

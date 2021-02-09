@@ -8,6 +8,7 @@ import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -109,6 +110,11 @@ public class OrponingApiService {
         if (!isContains) throw new Exception("Id not found");
 
         return mapTask.get(uuid);
+    }
+
+    @PreDestroy
+    private void end(){
+        executor.shutdownNow();
     }
 
     //endregion PrivateMethod

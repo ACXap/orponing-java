@@ -29,6 +29,7 @@ public class ScheduledOrponingTableService implements IStartable {
     //endregion PrivateField
 
     //region PublicProperty
+
     public Status getStatus() {
         return _status;
     }
