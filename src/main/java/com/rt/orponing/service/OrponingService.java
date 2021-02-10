@@ -34,9 +34,9 @@ public class OrponingService {
     private int _partitionSizePars;
 
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
+        AddressInfo addressInfo = getAddressInfo(entityAddress);
+
         try {
-            _logger.info("Orponing address");
-            AddressInfo addressInfo = repository.GetInfo(entityAddress);
 
             if (addressInfo.IsValid && addressInfo.GlobalId > 0) {
                 addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
@@ -45,6 +45,16 @@ public class OrponingService {
             return addressInfo;
         } catch (Exception ex) {
 
+            _logger.error(entityAddress.Address + " " + ex.getMessage());
+            return new AddressInfo(entityAddress.Id, ex.getMessage());
+        }
+    }
+
+    private AddressInfo getAddressInfo(EntityAddress entityAddress) {
+        try {
+            _logger.info("Orponing address");
+            return repository.GetInfo(entityAddress);
+        } catch (Exception ex) {
             _logger.error(entityAddress.Address + " " + ex.getMessage());
             return new AddressInfo(entityAddress.Id, ex.getMessage());
         }
@@ -66,7 +76,7 @@ public class OrponingService {
             _logger.info("Orponing list bad address");
 
             for (EntityAddress address : tempAddressError) {
-                addressInfo.add(OrponingAddress(address));
+                addressInfo.add(getAddressInfo(address));
             }
         }
 
