@@ -4,6 +4,8 @@ package com.rt.orponing.service;
 
 import com.google.common.collect.Lists;
 import com.rt.orponing.dao.IDbAddress;
+import com.rt.orponing.dao.data.AddressGid;
+import com.rt.orponing.dao.data.DaoException;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Lazy
@@ -23,7 +26,6 @@ public class OrponingService {
     public OrponingService(IRepositoryOrpon repository, IDbAddress db) {
         this.repository = repository;
         this.db = db;
-
     }
 
     private final IRepositoryOrpon repository;
@@ -36,24 +38,11 @@ public class OrponingService {
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
         AddressInfo addressInfo = getAddressInfo(entityAddress);
 
+        if (!addressInfo.IsValid && addressInfo.GlobalId < 1) return addressInfo;
+
         try {
-
-            if (addressInfo.IsValid && addressInfo.GlobalId > 0) {
-                addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
-            }
-
+            addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
             return addressInfo;
-        } catch (Exception ex) {
-
-            _logger.error(entityAddress.Address + " " + ex.getMessage());
-            return new AddressInfo(entityAddress.Id, ex.getMessage());
-        }
-    }
-
-    private AddressInfo getAddressInfo(EntityAddress entityAddress) {
-        try {
-            _logger.info("Orponing address");
-            return repository.GetInfo(entityAddress);
         } catch (Exception ex) {
             _logger.error(entityAddress.Address + " " + ex.getMessage());
             return new AddressInfo(entityAddress.Id, ex.getMessage());
@@ -81,5 +70,30 @@ public class OrponingService {
         }
 
         return addressInfo;
+    }
+
+    public void setAddressById(List<AddressInfo> collectionAddressInfo)  {
+      _logger.info("Get address by global id");
+
+       try{
+           List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a->a.IsValid).map(a->a.GlobalId).collect(Collectors.toList()));
+
+           address.parallelStream().forEach(a->{
+               collectionAddressInfo.stream().filter(c->c.GlobalId == a.GlobalId).forEach(x->x.AddressOrpon = a.Address);
+           });
+
+       } catch (Exception ex){
+           _logger.error(ex.getMessage());
+       }
+    }
+
+    private AddressInfo getAddressInfo(EntityAddress entityAddress) {
+        try {
+            _logger.info("Orponing address");
+            return repository.GetInfo(entityAddress);
+        } catch (Exception ex) {
+            _logger.error(entityAddress.Address + " " + ex.getMessage());
+            return new AddressInfo(entityAddress.Id, ex.getMessage());
+        }
     }
 }
