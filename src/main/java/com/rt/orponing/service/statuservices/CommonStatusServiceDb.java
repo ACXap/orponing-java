@@ -12,7 +12,7 @@ public abstract class CommonStatusServiceDb extends StatusService {
         this.db = db;
     }
 
-    protected CommonDb db;
+    protected final CommonDb db;
 
     @Override
     public Status getStatus() {

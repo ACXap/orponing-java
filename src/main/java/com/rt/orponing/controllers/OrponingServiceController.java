@@ -4,7 +4,6 @@ package com.rt.orponing.controllers;
 
 import com.rt.orponing.service.IStartable;
 import com.rt.orponing.service.NotFoundStartableService;
-import com.rt.orponing.service.OrponingTableService;
 import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.statuservices.StatusService;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

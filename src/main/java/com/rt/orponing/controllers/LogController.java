@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogController {
 
     public LogController(LogReadService service) {
-        _service = service;
+        this.service = service;
     }
 
-    private final LogReadService _service;
+    private final LogReadService service;
 
     @PostMapping(path="/log", consumes = "application/json", produces = "application/json")
     public String getAllLog() {
-        return _service.readLog();
+        return service.readLog();
     }
 }

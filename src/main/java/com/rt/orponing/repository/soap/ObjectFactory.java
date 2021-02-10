@@ -41,6 +41,6 @@ public class ObjectFactory {
 
     @XmlElementDecl(namespace = "http://www.informatica.com/dis/ws/ws_", name = "ErrorField")
     public JAXBElement<String> createErrorField(String value) {
-        return new JAXBElement<String>(_ErrorField_QNAME, String.class, null, value);
+        return new JAXBElement<>(_ErrorField_QNAME, String.class, null, value);
     }
 }

@@ -5,7 +5,6 @@ package com.rt.orponing.service;
 import com.google.common.collect.Lists;
 import com.rt.orponing.dao.IDbAddress;
 import com.rt.orponing.dao.data.AddressGid;
-import com.rt.orponing.dao.data.DaoException;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import org.slf4j.Logger;

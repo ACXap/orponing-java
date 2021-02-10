@@ -15,7 +15,6 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public interface WsSearchAddrElByFullNamePortType2 {
     @WebMethod(operationName = "SearchAddressElementByFullName")
     @WebResult(name = "AddressElementNameResponse2", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
-    AddressElementNameResponse2 searchAddressElementByFullName(
-            @WebParam(name = "AddressElementNameData", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
+    AddressElementNameResponse2 searchAddressElementByFullName(@WebParam(name = "AddressElementNameData", targetNamespace = "http://www.informatica.com/dis/ws/ws_", partName = "parameter")
                                                                        AddressElementNameData parameter) throws FaultMessage;
 }
