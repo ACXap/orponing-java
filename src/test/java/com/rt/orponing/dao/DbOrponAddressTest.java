@@ -16,7 +16,12 @@ class DbOrponAddressTest {
     private IDbAddress db;
 
     @Test
-    void getAddress() throws DaoException {
+    void getAddressHouse() throws DaoException {
         assertEquals("630099, Новосибирская обл, Новосибирск г., Орджоникидзе ул., дом 18", db.getAddress(29182486L));
+    }
+
+    @Test
+    void getAddressStreet() throws DaoException {
+        assertEquals("Новосибирская обл, Новосибирск г., Орджоникидзе ул.", db.getAddress(5916420L));
     }
 }
