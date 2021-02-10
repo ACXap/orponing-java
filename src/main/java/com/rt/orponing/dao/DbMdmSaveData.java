@@ -5,6 +5,7 @@ package com.rt.orponing.dao;
 import com.rt.orponing.dao.data.*;
 import com.rt.orponing.repository.data.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +17,21 @@ import java.util.List;
 
 @Component
 @Lazy
-public class DbMdmSaveData implements IDbSaveData {
+public class DbMdmSaveData extends CommonDb implements IDbSaveData {
+
+    public DbMdmSaveData(@Qualifier("dbConnectSaveData") DbConnect dbConnect){
+        this.dbConnect = dbConnect;
+        queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
+    }
 
     //region PrivateField
-    @Autowired
-    private DbConnect _dbConnect;
+//    @Autowired
+//    @Qualifier("dbConnectSaveData")
+//    private DbConnect dbConnect;
 
     private static final String _querySelectAddress = "Select * from public.nsi_temp_orponing_select_input_data();";
     private static final String _queryUpdateAddress = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";
-    private static final String _queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
+   // private static final String _queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
 
     //endregion PrivateField
 
@@ -33,7 +40,7 @@ public class DbMdmSaveData implements IDbSaveData {
     public List<EntityAddress> GetEntityAddress() throws DaoException {
         List<EntityAddress> list = new ArrayList<>();
 
-        try (Connection con = _dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(_querySelectAddress)) {
+        try (Connection con = dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(_querySelectAddress)) {
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
@@ -54,22 +61,16 @@ public class DbMdmSaveData implements IDbSaveData {
     public void UpdateEntityAddress(List<AddressInfo> collectionAddressInfo) throws DaoException {
         ProcessConnect(con -> AddAddressInfo(con, collectionAddressInfo));
     }
-
-    @Override
-    public boolean TestDb() throws DaoException {
-        ProcessConnect(this::TestBd);
-        return true;
-    }
     //endregion PublicMethod
 
     //region PrivateMethod
-    private void TestBd(Connection con) throws DaoException {
-        try (PreparedStatement ps = con.prepareStatement(_queryTestDb)) {
-            ps.execute();
-        } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + _queryTestDb + " " + ex.getMessage(), ex);
-        }
-    }
+//    private void TestBd(Connection con) throws DaoException {
+//        try (PreparedStatement ps = con.prepareStatement(_queryTestDb)) {
+//            ps.execute();
+//        } catch (Exception ex) {
+//            throw new DaoException("Ошибка обработки запроса: " + _queryTestDb + " " + ex.getMessage(), ex);
+//        }
+//    }
 
     private void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
 
@@ -93,29 +94,29 @@ public class DbMdmSaveData implements IDbSaveData {
         }
     }
 
-    private void ProcessConnect(ICheckedConsumer<Connection> callback) throws DaoException {
-        try {
-
-            Connection con = _dbConnect.GetConnection();
-            try {
-                con.setAutoCommit(false);
-
-                callback.accept(con);
-
-                con.commit();
-            } catch (Exception ex) {
-                con.rollback();
-                con.close();
-
-                throw ex;
-            } finally {
-                con.close();
-            }
-        } catch (DaoException d) {
-            throw d;
-        } catch (Exception ex) {
-            throw new DaoException(ex.getMessage());
-        }
-    }
+//    private void ProcessConnect(ICheckedConsumer<Connection> callback) throws DaoException {
+//        try {
+//
+//            Connection con = dbConnect.GetConnection();
+//            try {
+//                con.setAutoCommit(false);
+//
+//                callback.accept(con);
+//
+//                con.commit();
+//            } catch (Exception ex) {
+//                con.rollback();
+//                con.close();
+//
+//                throw ex;
+//            } finally {
+//                con.close();
+//            }
+//        } catch (DaoException d) {
+//            throw d;
+//        } catch (Exception ex) {
+//            throw new DaoException(ex.getMessage());
+//        }
+//    }
     //endregion PrivateMethod
 }

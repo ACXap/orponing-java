@@ -2,23 +2,19 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.dao.data;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-@Component
-public class DbConnect{
+@AllArgsConstructor
+public class DbConnect {
 
-    @Value("${db.url}")
-    private String url;
-
-    @Value("${db.user}")
-    private String user;
-
-    @Value("${db.password}")
-    private String password;
+    private final String url;
+    private final String user;
+    private final String password;
 
     public Connection GetConnection() throws DaoException {
         try {

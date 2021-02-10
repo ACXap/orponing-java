@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Lazy
-public class StatusServiceOrponingTable extends StatusService{
+public class StatusServiceOrponingTable extends StatusService {
 
     public StatusServiceOrponingTable(OrponingTableService ots) {
         this.ots = ots;
@@ -20,7 +20,7 @@ public class StatusServiceOrponingTable extends StatusService{
     private final OrponingTableService ots;
 
     @Override
-   public Status getStatus() {
+    public Status getStatus() {
         status = ots.getStatus();
 
         return status;

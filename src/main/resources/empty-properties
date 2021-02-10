@@ -11,6 +11,10 @@ db.user=
 db.password=
 db.partition.size.record=200
 
+db.orpon.url=
+db.orpon.user=
+db.orpon.password=
+
 background.orponing.service.auto.start=true
 #background.orponing.service.delay=3600000
 background.orponing.service.delay=1000

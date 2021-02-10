@@ -3,6 +3,7 @@
 package com.rt.orponing.service;
 
 import com.google.common.collect.Lists;
+import com.rt.orponing.dao.IDbAddress;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import org.slf4j.Logger;
@@ -18,11 +19,15 @@ import java.util.List;
 @Lazy
 public class OrponingService {
 
-    public OrponingService(IRepositoryOrpon repository) {
-        _repository = repository;
+
+    public OrponingService(IRepositoryOrpon repository, IDbAddress db) {
+        this.repository = repository;
+        this.db = db;
+
     }
 
-    private final IRepositoryOrpon _repository;
+    private final IRepositoryOrpon repository;
+    private final IDbAddress db;
     private final Logger _logger = LoggerFactory.getLogger("OrponingService");
 
     @Value("${soap.partition.size}")
@@ -31,9 +36,11 @@ public class OrponingService {
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
         try {
             _logger.info("Orponing address");
-            AddressInfo addressInfo = _repository.GetInfo(entityAddress);
+            AddressInfo addressInfo = repository.GetInfo(entityAddress);
 
-            // тут еще надо получить строку адреса из орпон
+            if (addressInfo.IsValid && addressInfo.GlobalId > 0) {
+                addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
+            }
 
             return addressInfo;
         } catch (Exception ex) {
@@ -49,7 +56,7 @@ public class OrponingService {
 
         for (List<EntityAddress> list : Lists.partition(entityAddressList, _partitionSizePars)) {
             try {
-                addressInfo.addAll(_repository.GetInfo(list));
+                addressInfo.addAll(repository.GetInfo(list));
             } catch (RepositoryException re) {
                 tempAddressError.addAll(list);
             }
