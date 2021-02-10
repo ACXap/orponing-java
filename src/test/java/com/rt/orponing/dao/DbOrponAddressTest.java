@@ -2,6 +2,7 @@ package com.rt.orponing.dao;
 
 import com.rt.orponing.dao.data.AddressGid;
 import com.rt.orponing.dao.data.DaoException;
+import com.rt.orponing.dao.interfaces.IDbAddress;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +11,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
