@@ -89,7 +89,7 @@ public class OrponingApiService {
     public AddressInfo orponingAddress(EntityAddress entityAddress) {
         AddressInfo addressInfo = orponingService.OrponingAddress(entityAddress);
 
-        if (!addressInfo.IsValid && addressInfo.GlobalId < 1) return addressInfo;
+        if (!addressInfo.IsValid) return addressInfo;
 
         try {
             addressInfo.AddressOrpon = orponingService.getAddressById(addressInfo.GlobalId);

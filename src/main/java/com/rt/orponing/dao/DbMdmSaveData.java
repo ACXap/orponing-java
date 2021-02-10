@@ -4,7 +4,6 @@ package com.rt.orponing.dao;
 
 import com.rt.orponing.dao.data.*;
 import com.rt.orponing.repository.data.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -25,22 +24,19 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
     }
 
     //region PrivateField
-//    @Autowired
-//    @Qualifier("dbConnectSaveData")
-//    private DbConnect dbConnect;
 
-    private static final String _querySelectAddress = "Select * from public.nsi_temp_orponing_select_input_data();";
-    private static final String _queryUpdateAddress = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";
-   // private static final String _queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
+    private static final String QUERY_SELECT_ADDRESS = "Select * from public.nsi_temp_orponing_select_input_data();";
+    private static final String QUERY_UPDATE_ADDRESS = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";
 
     //endregion PrivateField
 
     //region PublicMethod
+
     @Override
     public List<EntityAddress> GetEntityAddress() throws DaoException {
         List<EntityAddress> list = new ArrayList<>();
 
-        try (Connection con = dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(_querySelectAddress)) {
+        try (Connection con = dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(QUERY_SELECT_ADDRESS)) {
             ResultSet resultSet = ps.executeQuery();
 
             while (resultSet.next()) {
@@ -61,20 +57,14 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
     public void UpdateEntityAddress(List<AddressInfo> collectionAddressInfo) throws DaoException {
         ProcessConnect(con -> AddAddressInfo(con, collectionAddressInfo));
     }
+
     //endregion PublicMethod
 
     //region PrivateMethod
-//    private void TestBd(Connection con) throws DaoException {
-//        try (PreparedStatement ps = con.prepareStatement(_queryTestDb)) {
-//            ps.execute();
-//        } catch (Exception ex) {
-//            throw new DaoException("Ошибка обработки запроса: " + _queryTestDb + " " + ex.getMessage(), ex);
-//        }
-//    }
 
     private void AddAddressInfo(Connection con, List<AddressInfo> collectionAddressInfo) throws DaoException {
 
-        try (PreparedStatement ps = con.prepareStatement(_queryUpdateAddress)) {
+        try (PreparedStatement ps = con.prepareStatement(QUERY_UPDATE_ADDRESS)) {
             for (AddressInfo a : collectionAddressInfo) {
 
                 ps.setInt(1, a.Id);
@@ -90,33 +80,9 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
             }
             ps.executeBatch();
         } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + _queryUpdateAddress + " " + ex.getMessage());
+            throw new DaoException("Ошибка обработки запроса: " + QUERY_UPDATE_ADDRESS + " " + ex.getMessage());
         }
     }
 
-//    private void ProcessConnect(ICheckedConsumer<Connection> callback) throws DaoException {
-//        try {
-//
-//            Connection con = dbConnect.GetConnection();
-//            try {
-//                con.setAutoCommit(false);
-//
-//                callback.accept(con);
-//
-//                con.commit();
-//            } catch (Exception ex) {
-//                con.rollback();
-//                con.close();
-//
-//                throw ex;
-//            } finally {
-//                con.close();
-//            }
-//        } catch (DaoException d) {
-//            throw d;
-//        } catch (Exception ex) {
-//            throw new DaoException(ex.getMessage());
-//        }
-//    }
     //endregion PrivateMethod
 }

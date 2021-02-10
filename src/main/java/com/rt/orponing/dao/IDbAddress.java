@@ -1,7 +1,6 @@
 package com.rt.orponing.dao;
 
-import com.rt.orponing.dao.data.AddressGid;
-import com.rt.orponing.dao.data.DaoException;
+import com.rt.orponing.dao.data.*;
 
 import java.util.List;
 

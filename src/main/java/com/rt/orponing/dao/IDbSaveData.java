@@ -3,8 +3,7 @@
 package com.rt.orponing.dao;
 
 import com.rt.orponing.dao.data.DaoException;
-import com.rt.orponing.repository.data.AddressInfo;
-import com.rt.orponing.repository.data.EntityAddress;
+import com.rt.orponing.repository.data.*;
 
 import java.util.List;
 
