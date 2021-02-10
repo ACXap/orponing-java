@@ -31,7 +31,7 @@ public class OrponingTableService implements IStartable {
     //region PrivateField
     private final IDbSaveData _dbSaveData;
     private final OrponingService _service;
-    private final Logger _logger = LoggerFactory.getLogger(OrponingTableService.class);
+    private final Logger logger = LoggerFactory.getLogger(OrponingTableService.class);
     private final Object lock = new Object();
 
     @Value("${db.partition.size.record}")
@@ -50,7 +50,7 @@ public class OrponingTableService implements IStartable {
 
     @Override
     public Status start() {
-        _logger.info("Start service orponing");
+        logger.info("Start service orponing");
 
         synchronized (lock) {
             if (_status.getStatus() == StatusType.START) {
@@ -64,26 +64,26 @@ public class OrponingTableService implements IStartable {
         service.execute(() -> {
             while (_status.getStatus() == StatusType.START) {
                 try {
-                    _logger.info("Load address for orponing");
+                    logger.info("Load address for orponing");
                     List<EntityAddress> listEntityAddress = _dbSaveData.GetEntityAddress();
 
                     if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
 
                         for (List<EntityAddress> list : Lists.partition(listEntityAddress, _partitionSize)) {
-                            _logger.info("Orponing collection address");
+                            logger.info("Orponing collection address");
                             List<AddressInfo> response = _service.OrponingAddressList(list);
 
                             _service.setAddressById(response);
 
-                            _logger.info("Write collection address info to bd");
+                            logger.info("Write collection address info to bd");
                             _dbSaveData.UpdateEntityAddress(response);
                         }
                     } else {
-                        _logger.info("Not found address for orponing");
+                        logger.info("Not found address for orponing");
                         _status = Status.Stop(StatusMessage.NO_WORK);
                     }
                 } catch (DaoException de) {
-                    _logger.error(de.getMessage());
+                    logger.error(de.getMessage());
                     _status = Status.Error(StatusMessage.ERROR + ". " + de.getMessage());
                 }
             }

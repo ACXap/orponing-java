@@ -40,6 +40,6 @@ public class AddressInfo {
     public final String QualityCode;
     public final String CheckStatus;
     public final boolean IsValid;
-    public final String Error;
+    public String Error;
     public String AddressOrpon;
 }

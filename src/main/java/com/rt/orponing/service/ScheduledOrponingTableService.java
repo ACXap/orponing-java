@@ -15,16 +15,16 @@ import javax.annotation.PostConstruct;
 public class ScheduledOrponingTableService implements IStartable {
 
     public ScheduledOrponingTableService(IStartable ots) {
-        _ots = ots;
+        this.ots = ots;
     }
 
     //region PrivateField
-    private final Logger _logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
-    private final IStartable _ots;
+    private final Logger logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
+    private final IStartable ots;
     private Status _status;
 
     @Value("${background.orponing.service.auto.start}")
-    private boolean _isAutoStart;
+    private boolean isAutoStart;
 
     //endregion PrivateField
 
@@ -56,7 +56,7 @@ public class ScheduledOrponingTableService implements IStartable {
     //region PrivateMethod
     @PostConstruct
     private void init() {
-        if (_isAutoStart) {
+        if (isAutoStart) {
             _status = Status.Start(StatusMessage.START);
         } else {
             _status = Status.Stop(StatusMessage.STOP);
@@ -67,8 +67,8 @@ public class ScheduledOrponingTableService implements IStartable {
     private void startTask() {
          if (_status.getStatus() == StatusType.STOP) return;
 
-        _logger.info("Start scheduled task");
-        _ots.start();
+        logger.info("Start scheduled task");
+        ots.start();
     }
     //endregion PrivateMethod
 }

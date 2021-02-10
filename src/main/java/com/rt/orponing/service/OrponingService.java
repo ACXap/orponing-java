@@ -22,29 +22,30 @@ import java.util.stream.Collectors;
 @Lazy
 public class OrponingService {
 
-
     public OrponingService(IRepositoryOrpon repository, IDbAddress db) {
         this.repository = repository;
         this.db = db;
     }
 
+    //region PrivateField
+
     private final IRepositoryOrpon repository;
     private final IDbAddress db;
-    private final Logger _logger = LoggerFactory.getLogger("OrponingService");
+    private final Logger logger = LoggerFactory.getLogger("OrponingService");
 
     @Value("${soap.partition.size}")
-    private int _partitionSizePars;
+    private int partitionSizePars;
+
+    //endregion PrivateField
+
+    //region PublicMethod
 
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
-        AddressInfo addressInfo = getAddressInfo(entityAddress);
-
-        if (!addressInfo.IsValid && addressInfo.GlobalId < 1) return addressInfo;
-
         try {
-            addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
-            return addressInfo;
+            logger.info("Orponing address");
+            return repository.GetInfo(entityAddress);
         } catch (Exception ex) {
-            _logger.error(entityAddress.Address + " " + ex.getMessage());
+            logger.error(entityAddress.Address + " " + ex.getMessage());
             return new AddressInfo(entityAddress.Id, ex.getMessage());
         }
     }
@@ -53,7 +54,7 @@ public class OrponingService {
         List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
 
-        for (List<EntityAddress> list : Lists.partition(entityAddressList, _partitionSizePars)) {
+        for (List<EntityAddress> list : Lists.partition(entityAddressList, partitionSizePars)) {
             try {
                 addressInfo.addAll(repository.GetInfo(list));
             } catch (RepositoryException re) {
@@ -62,38 +63,30 @@ public class OrponingService {
         }
 
         if (!tempAddressError.isEmpty()) {
-            _logger.info("Orponing list bad address");
+            logger.info("Orponing list bad address");
 
             for (EntityAddress address : tempAddressError) {
-                addressInfo.add(getAddressInfo(address));
+                addressInfo.add(OrponingAddress(address));
             }
         }
 
         return addressInfo;
     }
 
-    public void setAddressById(List<AddressInfo> collectionAddressInfo)  {
-      _logger.info("Get address by global id");
+    public void setAddressById(List<AddressInfo> collectionAddressInfo) {
+        logger.info("Get address by global id");
 
-       try{
-           List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a->a.IsValid).map(a->a.GlobalId).collect(Collectors.toList()));
-
-           address.parallelStream().forEach(a->{
-               collectionAddressInfo.stream().filter(c->c.GlobalId == a.GlobalId).forEach(x->x.AddressOrpon = a.Address);
-           });
-
-       } catch (Exception ex){
-           _logger.error(ex.getMessage());
-       }
-    }
-
-    private AddressInfo getAddressInfo(EntityAddress entityAddress) {
         try {
-            _logger.info("Orponing address");
-            return repository.GetInfo(entityAddress);
+            List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a -> a.IsValid).map(a -> a.GlobalId).collect(Collectors.toList()));
+            address.parallelStream().forEach(a -> collectionAddressInfo.stream().filter(c -> c.GlobalId == a.GlobalId).forEach(x -> x.AddressOrpon = a.Address));
         } catch (Exception ex) {
-            _logger.error(entityAddress.Address + " " + ex.getMessage());
-            return new AddressInfo(entityAddress.Id, ex.getMessage());
+            logger.error(ex.getMessage());
         }
     }
+
+    public String getAddressById(Long globalId) throws Exception {
+        return db.getAddress(globalId);
+    }
+
+    //endregion PublicMethod
 }

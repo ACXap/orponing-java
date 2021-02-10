@@ -36,6 +36,7 @@ public class OrponingApiService {
     //endregion PrivateField
 
     //region PublicMethod
+
     public String addTask(List<EntityAddress> entityAddressList) {
         start();
 
@@ -78,13 +79,25 @@ public class OrponingApiService {
     }
 
     public Status getStatus() {
-        if (mapFuture.values().stream().anyMatch(f -> !f.isDone())) {
-            return status;
-        }
+        if (mapFuture.values().stream().anyMatch(f -> !f.isDone())) return status;
 
         mapFuture.clear();
         status = Status.Stop(StatusMessage.NO_WORK);
         return status;
+    }
+
+    public AddressInfo orponingAddress(EntityAddress entityAddress) {
+        AddressInfo addressInfo = orponingService.OrponingAddress(entityAddress);
+
+        if (!addressInfo.IsValid && addressInfo.GlobalId < 1) return addressInfo;
+
+        try {
+            addressInfo.AddressOrpon = orponingService.getAddressById(addressInfo.GlobalId);
+        } catch (Exception ex) {
+            addressInfo.Error = ex.getMessage();
+        }
+
+        return addressInfo;
     }
 
     //endregion PublicMethod
@@ -117,7 +130,7 @@ public class OrponingApiService {
     }
 
     @PreDestroy
-    private void end(){
+    private void end() {
         executor.shutdownNow();
     }
 

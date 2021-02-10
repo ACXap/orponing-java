@@ -5,7 +5,6 @@ package com.rt.orponing.controllers;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingApiService;
-import com.rt.orponing.service.OrponingService;
 import com.rt.orponing.service.data.Status;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -19,18 +18,16 @@ import java.util.concurrent.CompletableFuture;
 @Lazy
 public class AddressOrponingController {
 
-    public AddressOrponingController(OrponingService service, OrponingApiService oas) {
-        _service = service;
+    public AddressOrponingController(OrponingApiService oas) {
         _oas = oas;
     }
 
-    private final OrponingService _service;
     private final OrponingApiService _oas;
 
     @GetMapping("/api/get_global_id")
     public CompletableFuture<AddressInfo> getGlobalIdPage(@RequestParam("address") String address) {
 
-        return CompletableFuture.supplyAsync(()-> _service.OrponingAddress(new EntityAddress(1, address)));
+        return CompletableFuture.supplyAsync(() -> _oas.orponingAddress(new EntityAddress(1, address)));
     }
 
     @PostMapping(path = "/api/get_global_id", consumes = "application/json", produces = "application/json")
@@ -38,21 +35,21 @@ public class AddressOrponingController {
         try {
             return _oas.addTask(list);
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
         }
     }
 
     @GetMapping(path = "/api/get_global_id/status")
-    public Status apiGetStatusTask(@RequestParam("id") String id) throws Exception {
+    public Status apiGetStatusTask(@RequestParam("id") String id) {
         try {
             return _oas.getStatusTask(id);
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
         }
     }
 
     @GetMapping(path = "/api/get_global_id/result")
-    public List<AddressInfo> getgetResultTask(@RequestParam("id") String id) throws Exception {
+    public List<AddressInfo> apiGetResultTask(@RequestParam("id") String id) {
         try {
             return _oas.getResultTask(id);
         } catch (Exception ex) {
