@@ -48,7 +48,10 @@ public class OrponingApiService {
             try {
                 taskOrponing.startTask();
 
-                taskOrponing.setResult(orponingService.OrponingAddressList(taskOrponing.getListAddressRequest()));
+                List<AddressInfo> addressInfo = orponingService.OrponingAddressList(taskOrponing.getListAddressRequest());
+                orponingService.setAddressById(addressInfo);
+
+                taskOrponing.setResult(addressInfo);
 
                 taskOrponing.stopTask();
             } catch (Exception e) {

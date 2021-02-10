@@ -73,6 +73,8 @@ public class OrponingTableService implements IStartable {
                             _logger.info("Orponing collection address");
                             List<AddressInfo> response = _service.OrponingAddressList(list);
 
+                            _service.setAddressById(response);
+
                             _logger.info("Write collection address info to bd");
                             _dbSaveData.UpdateEntityAddress(response);
                         }
