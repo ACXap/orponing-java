@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.CompletableFuture;
+
 @RestController
 @Lazy
 public class LogController {
@@ -18,7 +20,7 @@ public class LogController {
     private final LogReadService service;
 
     @PostMapping(path="/log", consumes = "application/json", produces = "application/json")
-    public String getAllLog() {
-        return service.readLog();
+    public CompletableFuture<String> getAllLog() {
+        return CompletableFuture.supplyAsync(service::readLog);
     }
 }
