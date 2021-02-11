@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class ScheduledOrponingTableService implements IStartable {
+public class ScheduledOrponingTableService implements IStartable, IStatus {
 
     public ScheduledOrponingTableService(IStartable ots) {
         this.ots = ots;
@@ -27,14 +27,6 @@ public class ScheduledOrponingTableService implements IStartable {
     private boolean isAutoStart;
 
     //endregion PrivateField
-
-    //region PublicProperty
-
-    public Status getStatus() {
-        return _status;
-    }
-
-    //endregion PublicProperty
 
     //region PublicMethod
     @Override
@@ -51,16 +43,17 @@ public class ScheduledOrponingTableService implements IStartable {
     public String getId() {
         return "scheduled-service";
     }
+
+    @Override
+    public Status getStatus() {
+        return _status;
+    }
     //endregion PublicMethod
 
     //region PrivateMethod
     @PostConstruct
     private void init() {
-        if (isAutoStart) {
-            _status = Status.Start(StatusMessage.START);
-        } else {
-            _status = Status.Stop(StatusMessage.STOP);
-        }
+        _status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
     }
 
     @Scheduled(initialDelay = 10000, fixedRateString = "${background.orponing.service.delay}")

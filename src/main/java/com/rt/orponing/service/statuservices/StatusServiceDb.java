@@ -3,13 +3,15 @@
 package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.dao.CommonDb;
+import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusMessage;
 
-public abstract class CommonStatusServiceDb extends StatusService {
+public class StatusServiceDb extends AbstractStatusService {
 
-    public CommonStatusServiceDb(CommonDb db){
+    public StatusServiceDb(CommonDb db, InfoService infoService){
         this.db = db;
+        this.infoService = infoService;
     }
 
     protected final CommonDb db;
@@ -17,12 +19,7 @@ public abstract class CommonStatusServiceDb extends StatusService {
     @Override
     public Status getStatus() {
         try {
-            boolean result = db.TestDb();
-            if (result) {
-                status = Status.Start(StatusMessage.START);
-            } else {
-                status = Status.Error(StatusMessage.ERROR + " Тестовый прогон завершен некорректно.");
-            }
+            status = db.TestDb() ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовый прогон завершен некорректно.");
         } catch (Exception ex) {
             status = Status.Error(StatusMessage.ERROR + " " + ex.getMessage());
         }

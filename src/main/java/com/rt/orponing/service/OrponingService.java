@@ -7,6 +7,8 @@ import com.rt.orponing.dao.interfaces.IDbAddress;
 import com.rt.orponing.dao.data.AddressGid;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
+import com.rt.orponing.service.data.Status;
+import com.rt.orponing.service.data.StatusMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Lazy
-public class OrponingService {
+public class OrponingService implements IStatus {
 
     public OrponingService(IRepositoryOrpon repository, IDbAddress db) {
         this.repository = repository;
@@ -86,6 +88,27 @@ public class OrponingService {
     public String getAddressById(Long globalId) throws Exception {
         return db.getAddress(globalId);
     }
+
+    @Override
+    public Status getStatus() {
+        String testAddress = "Новосибирск г., Орджоникидзе ул., дом 18";
+        long testGlobalId = 29182486;
+
+        Status status;
+        try {
+            AddressInfo addressInfo = OrponingAddress(new EntityAddress(1, testAddress));
+
+            if (addressInfo.GlobalId == testGlobalId) {
+                status = Status.Start(StatusMessage.START);
+            } else {
+                status = Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
+            }
+        } catch (Exception ex) {
+            status = Status.Error(StatusMessage.ERROR + " " + ex.getMessage());
+        }
+        return status;
+    }
+
 
     //endregion PublicMethod
 }

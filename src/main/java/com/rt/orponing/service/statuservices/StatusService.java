@@ -2,17 +2,22 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.service.statuservices;
 
+import com.rt.orponing.service.IStatus;
 import com.rt.orponing.service.data.InfoService;
 import com.rt.orponing.service.data.Status;
 
-public abstract class StatusService {
+public class StatusService extends AbstractStatusService {
 
-    protected InfoService infoService;
-    protected Status status;
-
-    public InfoService getInfoService(){
-        return  infoService;
+    public StatusService(IStatus iStatus, InfoService infoService) {
+        this.iStatus = iStatus;
+        this.infoService = infoService;
     }
 
-    public abstract Status getStatus();
+    private final IStatus iStatus;
+
+    @Override
+    public Status getStatus() {
+        status = iStatus.getStatus();
+        return status;
+    }
 }

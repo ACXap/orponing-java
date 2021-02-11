@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 
 @Component
 @Lazy
-public class OrponingTableService implements IStartable {
+public class OrponingTableService implements IStartable, IStatus {
 
     public OrponingTableService(IDbSaveData dbSaveData, OrponingService service) {
         _dbSaveData = dbSaveData;
@@ -41,6 +41,7 @@ public class OrponingTableService implements IStartable {
     //endregion PrivateField
 
     //region PublicProperty
+    @Override
     public Status getStatus() {
         return _status;
     }

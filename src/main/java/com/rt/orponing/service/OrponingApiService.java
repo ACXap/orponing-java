@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Lazy
-public class OrponingApiService {
+public class OrponingApiService implements IStatus {
 
     public OrponingApiService(OrponingService orponingService) {
         status = Status.Stop(StatusMessage.STOP);
@@ -78,6 +78,7 @@ public class OrponingApiService {
         return getTask(taskId).getStatusTask();
     }
 
+    @Override
     public Status getStatus() {
         if (mapFuture.values().stream().anyMatch(f -> !f.isDone())) return status;
 

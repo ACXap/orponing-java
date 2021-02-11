@@ -23,12 +23,12 @@ import static java.util.stream.Collectors.toMap;
 @Lazy
 public class OrponingServiceController {
 
-    public OrponingServiceController(List<StatusService> listStatusServices, List<IStartable> listStartableService) {
-        _statusServices = listStatusServices.stream().collect(toMap(s -> s.getInfoService().getId(), s -> s));
+    public OrponingServiceController(List<AbstractStatusService> listAbstractStatusServices, List<IStartable> listStartableService) {
+        _statusServices = listAbstractStatusServices.stream().collect(toMap(s -> s.getInfoService().getId(), s -> s));
         _startableService = listStartableService.stream().collect(toMap(IStartable::getId, s -> s));
     }
 
-    private final Map<String, StatusService> _statusServices;
+    private final Map<String, AbstractStatusService> _statusServices;
     private final Map<String, IStartable> _startableService;
 
     @GetMapping("/orponing_service/{id}/start")
@@ -43,13 +43,13 @@ public class OrponingServiceController {
     public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) {
 
         return CompletableFuture.supplyAsync(() -> {
-            StatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());
+            AbstractStatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());
             return s.getStatus();
         });
     }
 
     @GetMapping("/orponing_service/all_services")
     public List<InfoService> allService() {
-        return _statusServices.values().stream().map(StatusService::getInfoService).collect(Collectors.toList());
+        return _statusServices.values().stream().map(AbstractStatusService::getInfoService).collect(Collectors.toList());
     }
 }
