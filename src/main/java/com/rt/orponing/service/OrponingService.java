@@ -9,6 +9,7 @@ import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusMessage;
+import com.rt.orponing.service.interfaces.IStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,6 +53,8 @@ public class OrponingService implements IStatus {
     }
 
     public List<AddressInfo> OrponingAddressList(List<EntityAddress> entityAddressList) {
+        logger.info("Orponing collection address");
+
         List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
 
@@ -75,10 +78,10 @@ public class OrponingService implements IStatus {
     }
 
     public void setAddressById(List<AddressInfo> collectionAddressInfo) {
-        logger.info("Get address by global id");
+        logger.info("Get address by gid");
 
         try {
-            List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a -> a.IsValid).map(a -> a.GlobalId).collect(Collectors.toList()));
+            List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a -> a.IsValid).map(a -> a.GlobalId).distinct().collect(Collectors.toList()));
             address.parallelStream().forEach(a -> collectionAddressInfo.stream().filter(c -> c.GlobalId == a.GlobalId).forEach(x -> x.AddressOrpon = a.Address));
         } catch (Exception ex) {
             logger.error(ex.getMessage());
@@ -97,18 +100,12 @@ public class OrponingService implements IStatus {
         Status status;
         try {
             AddressInfo addressInfo = OrponingAddress(new EntityAddress(1, testAddress));
-
-            if (addressInfo.GlobalId == testGlobalId) {
-                status = Status.Start(StatusMessage.START);
-            } else {
-                status = Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
-            }
+            status = addressInfo.GlobalId == testGlobalId ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
         } catch (Exception ex) {
             status = Status.Error(StatusMessage.ERROR + " " + ex.getMessage());
         }
         return status;
     }
-
 
     //endregion PublicMethod
 }

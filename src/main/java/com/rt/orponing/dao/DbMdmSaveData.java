@@ -5,6 +5,9 @@ package com.rt.orponing.dao;
 import com.rt.orponing.dao.data.*;
 import com.rt.orponing.dao.interfaces.IDbSaveData;
 import com.rt.orponing.repository.data.*;
+import com.rt.orponing.service.OrponingTableService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,7 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
     }
 
     //region PrivateField
+    private final Logger logger = LoggerFactory.getLogger(DbMdmSaveData.class);
 
     private static final String QUERY_SELECT_ADDRESS = "Select * from public.nsi_temp_orponing_select_input_data();";
     private static final String QUERY_UPDATE_ADDRESS = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";
@@ -35,6 +39,7 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
 
     @Override
     public List<EntityAddress> GetEntityAddress() throws DaoException {
+        logger.info("Load address for orponing");
         List<EntityAddress> list = new ArrayList<>();
 
         try (Connection con = dbConnect.GetConnection(); PreparedStatement ps = con.prepareStatement(QUERY_SELECT_ADDRESS)) {
@@ -56,6 +61,7 @@ public class DbMdmSaveData extends CommonDb implements IDbSaveData {
 
     @Override
     public void UpdateEntityAddress(List<AddressInfo> collectionAddressInfo) throws DaoException {
+        logger.info("Write collection address info to bd");
         ProcessConnect(con -> AddAddressInfo(con, collectionAddressInfo));
     }
 
