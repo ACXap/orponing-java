@@ -63,7 +63,6 @@ public class OrponingTableService implements IStartable, IStatus {
 
         ExecutorService service = Executors.newSingleThreadExecutor();
 
-        logger.info("Start service orponing");
         service.execute(this::run);
 
         service.shutdown();
@@ -77,11 +76,12 @@ public class OrponingTableService implements IStartable, IStatus {
     }
 
     private void run() {
+        logger.info("Start service orponing");
         while (_status.getStatus() == StatusType.START) {
             try {
                 List<EntityAddress> listEntityAddress = _dbSaveData.GetEntityAddress();
 
-                if (listEntityAddress != null && !listEntityAddress.isEmpty()) {
+                if (!listEntityAddress.isEmpty()) {
 
                     for (List<EntityAddress> list : Lists.partition(listEntityAddress, _partitionSize)) {
                         List<AddressInfo> response = _service.OrponingAddressList(list);
