@@ -3,6 +3,7 @@
 package com.rt.orponing.controllers;
 
 import com.rt.orponing.service.IStartable;
+import com.rt.orponing.service.ManagerService;
 import com.rt.orponing.service.NotFoundStartableService;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.statuservices.*;
@@ -23,33 +24,31 @@ import static java.util.stream.Collectors.toMap;
 @Lazy
 public class OrponingServiceController {
 
-    public OrponingServiceController(List<AbstractStatusService> listAbstractStatusServices, List<IStartable> listStartableService) {
-        _statusServices = listAbstractStatusServices.stream().collect(toMap(s -> s.getInfoService().getId(), s -> s));
-        _startableService = listStartableService.stream().collect(toMap(IStartable::getId, s -> s));
+    public OrponingServiceController(ManagerService managerService) {
+        this.managerService = managerService;
     }
 
-    private final Map<String, AbstractStatusService> _statusServices;
-    private final Map<String, IStartable> _startableService;
+    private final ManagerService managerService;
 
     @GetMapping("/orponing_service/{id}/start")
     public Status startService(@PathVariable String id) {
-        IStartable service = _startableService.getOrDefault(id, new NotFoundStartableService());
+        IStartable service = managerService.getStartableService(id);
         service.start();
 
-        return _statusServices.getOrDefault(service.getId(), new StatusServiceDefault()).getStatus();
+        return managerService.getStatus(id);
     }
 
     @GetMapping("/orponing_service/status")
     public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) {
 
         return CompletableFuture.supplyAsync(() -> {
-            AbstractStatusService s = _statusServices.getOrDefault(service, new StatusServiceDefault());
+            AbstractStatusService s = managerService.getStatusService(service);
             return s.getStatus();
         });
     }
 
     @GetMapping("/orponing_service/all_services")
     public List<InfoService> allService() {
-        return _statusServices.values().stream().map(AbstractStatusService::getInfoService).collect(Collectors.toList());
+        return managerService.getAllInfoService();
     }
 }
