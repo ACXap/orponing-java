@@ -15,8 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import java.nio.charset.StandardCharsets;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.asyncDispatch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,14 +40,11 @@ class AddressOrponingControllerTest {
         Mockito.when(service.orponingAddress(ArgumentMatchers.any(EntityAddress.class))).thenReturn(adr);
 
         MvcResult mvcResult = mockMvc.perform(get("/api/get_global_id").param("address", "Новосибирск г., Орджоникидзе ул., дом 18"))
-
                 .andExpect(request().asyncStarted())
-
                 .andDo(MockMvcResultHandlers.log())
                 .andReturn();
 
         mockMvc.perform(asyncDispatch(mvcResult))
-
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith("application/json"))
                 .andExpect(content().json("{'GlobalId':29182486}"))
