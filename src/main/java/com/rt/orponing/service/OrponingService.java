@@ -10,6 +10,7 @@ import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusMessage;
 import com.rt.orponing.service.interfaces.IStatus;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,12 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 @Lazy
+@RequiredArgsConstructor
 public class OrponingService implements IStatus {
-
-    public OrponingService(IRepositoryOrpon repository, IDbAddress db) {
-        this.repository = repository;
-        this.db = db;
-    }
 
     //region PrivateField
 
@@ -97,14 +94,9 @@ public class OrponingService implements IStatus {
         String testAddress = "Новосибирск г., Орджоникидзе ул., дом 18";
         long testGlobalId = 29182486;
 
-        Status status;
-        try {
-            AddressInfo addressInfo = OrponingAddress(new EntityAddress(1, testAddress));
-            status = addressInfo.GlobalId == testGlobalId ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
-        } catch (Exception ex) {
-            status = Status.Error(StatusMessage.ERROR + " " + ex.getMessage());
-        }
-        return status;
+        AddressInfo addressInfo = OrponingAddress(new EntityAddress(1, testAddress));
+
+        return addressInfo.GlobalId == testGlobalId ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
     }
 
     //endregion PublicMethod

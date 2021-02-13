@@ -7,6 +7,7 @@ import com.rt.orponing.service.ManagerService;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.statuservices.*;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Lazy
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/orponing_service/")
 public class OrponingServiceController {
     private final ManagerService managerService;

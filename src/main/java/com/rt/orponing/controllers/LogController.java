@@ -4,6 +4,7 @@ package com.rt.orponing.controllers;
 
 import com.rt.orponing.service.LogReadService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Lazy
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LogController {
     private final LogReadService service;
 

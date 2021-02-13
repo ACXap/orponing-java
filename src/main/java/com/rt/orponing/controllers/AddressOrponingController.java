@@ -7,6 +7,7 @@ import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingApiService;
 import com.rt.orponing.service.data.Status;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @Lazy
 @RequestMapping("/api/get_global_id")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AddressOrponingController {
     private final OrponingApiService service;
 
