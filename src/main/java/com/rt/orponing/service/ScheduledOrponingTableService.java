@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-@Component
+@Service
 public class ScheduledOrponingTableService implements IStartable, IStatus {
 
     public ScheduledOrponingTableService(IStartable ots) {
@@ -23,7 +23,7 @@ public class ScheduledOrponingTableService implements IStartable, IStatus {
     //region PrivateField
     private final Logger logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
     private final IStartable ots;
-    private Status _status;
+    private Status status;
 
     @Value("${background.orponing.service.auto.start}")
     private boolean isAutoStart;
@@ -33,12 +33,12 @@ public class ScheduledOrponingTableService implements IStartable, IStatus {
     //region PublicMethod
     @Override
     public Status start() {
-        if (_status.getStatus() == StatusType.START) return _status;
+        if (status.getStatus() == StatusType.START) return status;
 
-        _status = Status.Start(StatusMessage.START);
+        status = Status.Start(StatusMessage.START);
         startTask();
 
-        return _status;
+        return status;
     }
 
     @Override
@@ -48,19 +48,19 @@ public class ScheduledOrponingTableService implements IStartable, IStatus {
 
     @Override
     public Status getStatus() {
-        return _status;
+        return status;
     }
     //endregion PublicMethod
 
     //region PrivateMethod
     @PostConstruct
     private void init() {
-        _status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
+        status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
     }
 
     @Scheduled(initialDelay = 10000, fixedRateString = "${background.orponing.service.delay}")
     private void startTask() {
-         if (_status.getStatus() == StatusType.STOP) return;
+         if (status.getStatus() == StatusType.STOP) return;
 
         logger.info("Start scheduled task");
         ots.start();

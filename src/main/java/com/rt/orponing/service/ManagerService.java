@@ -10,6 +10,7 @@ import com.rt.orponing.service.statuservices.AbstractStatusService;
 import com.rt.orponing.service.statuservices.StatusServiceDefault;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
-@Component
+@Service
 @Lazy
 public class ManagerService {
     public ManagerService(List<AbstractStatusService> listAbstractStatusServices, List<IStartable> listStartableService) {

@@ -5,9 +5,11 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
+import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.util.*;
@@ -16,7 +18,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Service
 @Lazy
 public class OrponingApiService implements IStatus {
 

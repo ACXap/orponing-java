@@ -3,8 +3,7 @@
 package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.interfaces.IStatus;
-import com.rt.orponing.service.data.InfoService;
-import com.rt.orponing.service.data.Status;
+import com.rt.orponing.service.data.*;
 
 public class StatusService extends AbstractStatusService {
 

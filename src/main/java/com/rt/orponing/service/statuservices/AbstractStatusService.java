@@ -2,8 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.service.statuservices;
 
-import com.rt.orponing.service.data.InfoService;
-import com.rt.orponing.service.data.Status;
+import com.rt.orponing.service.data.*;
 
 public abstract class AbstractStatusService {
 

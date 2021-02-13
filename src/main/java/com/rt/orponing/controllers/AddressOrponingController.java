@@ -6,6 +6,7 @@ import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingApiService;
 import com.rt.orponing.service.data.Status;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,21 +17,18 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Lazy
+@RequestMapping("/api/get_global_id")
+@AllArgsConstructor
 public class AddressOrponingController {
-
-    public AddressOrponingController(OrponingApiService service) {
-        this.service = service;
-    }
-
     private final OrponingApiService service;
 
-    @GetMapping("/api/get_global_id")
+    @GetMapping("")
     public CompletableFuture<AddressInfo> getGlobalIdPage(@RequestParam("address") String address) {
 
         return CompletableFuture.supplyAsync(() -> service.orponingAddress(new EntityAddress(1, address)));
     }
 
-    @PostMapping(path = "/api/get_global_id", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "", consumes = "application/json", produces = "application/json")
     public String apiAddTask(@RequestBody List<EntityAddress> list) {
         try {
             return service.addTask(list);
@@ -39,7 +37,7 @@ public class AddressOrponingController {
         }
     }
 
-    @GetMapping(path = "/api/get_global_id/status")
+    @GetMapping(path = "/status")
     public Status apiGetStatusTask(@RequestParam("id") String id) {
         try {
             return service.getStatusTask(id);
@@ -48,7 +46,7 @@ public class AddressOrponingController {
         }
     }
 
-    @GetMapping(path = "/api/get_global_id/result")
+    @GetMapping(path = "/result")
     public List<AddressInfo> apiGetResultTask(@RequestParam("id") String id) {
         try {
             return service.getResultTask(id);

@@ -2,12 +2,13 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.controllers;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@Lazy
 public class MainController {
-
     @GetMapping
     public String mainPage() {
         return "main";

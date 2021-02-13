@@ -6,28 +6,21 @@ import com.rt.orponing.service.interfaces.IStartable;
 import com.rt.orponing.service.ManagerService;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.statuservices.*;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.stream.Collectors.toMap;
-
 @RestController
 @Lazy
+@AllArgsConstructor
+@RequestMapping("/orponing_service/")
 public class OrponingServiceController {
-
-    public OrponingServiceController(ManagerService managerService) {
-        this.managerService = managerService;
-    }
-
     private final ManagerService managerService;
 
-    @GetMapping("/orponing_service/{id}/start")
+    @GetMapping("{id}/start")
     public Status startService(@PathVariable String id) {
         IStartable service = managerService.getStartableService(id);
         service.start();
@@ -35,7 +28,7 @@ public class OrponingServiceController {
         return managerService.getStatus(id);
     }
 
-    @GetMapping("/orponing_service/status")
+    @GetMapping("status")
     public CompletableFuture<Status> updateStatusService(@RequestParam("service") String service) {
 
         return CompletableFuture.supplyAsync(() -> {
@@ -44,7 +37,7 @@ public class OrponingServiceController {
         });
     }
 
-    @GetMapping("/orponing_service/all_services")
+    @GetMapping("all_services")
     public List<InfoService> allService() {
         return managerService.getAllInfoService();
     }
