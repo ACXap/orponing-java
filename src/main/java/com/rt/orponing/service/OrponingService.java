@@ -41,7 +41,7 @@ public class OrponingService implements IStatus {
 
     public AddressInfo OrponingAddress(EntityAddress entityAddress) {
         try {
-            logger.info("Orponing address");
+            logger.info("Orponing address: " + entityAddress.Address);
             return repository.GetInfo(entityAddress);
         } catch (Exception ex) {
             logger.error(entityAddress.Address + " " + ex.getMessage());
