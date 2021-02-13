@@ -4,6 +4,10 @@ package com.rt.orponing.repository;
 
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.repository.soap.*;
+import com.rt.orponing.service.OrponingTableService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
@@ -17,11 +21,13 @@ import java.util.stream.Collectors;
 @Lazy
 public class RepositoryOrponSoap implements IRepositoryOrpon {
 
+    public RepositoryOrponSoap(@Value("${soap.url.service}") String url) throws Exception {
+        wsSearch = new WsSearchAddressElementByFullName2(url).getWsSearchAddrElByFullNamePortTypeImpl2Port();
+    }
+
     //region PrivateField
 
-    @Value("${soap.url.service}")
-    private String _url;
-    private WsSearchAddrElByFullNamePortType2 _wsSearch;
+    private final WsSearchAddrElByFullNamePortType2 wsSearch;
 
     //endregion PrivateField
 
@@ -29,12 +35,13 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
     @Override
     public AddressInfo GetInfo(EntityAddress entityAddress) throws RepositoryException {
         try {
+
             AddressElementNameResponse2 addressElementNameResponse2 = GetAddressElementNameResponse(new ArrayList<EntityAddress>() {{
                 add(entityAddress);
             }});
             return ParsAddressInfo(addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().get(0));
         } catch (Exception ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
+            throw new RepositoryException(createMessageError(ex), ex);
         }
     }
 
@@ -45,7 +52,7 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
 
             return addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().stream().map(this::ParsAddressInfo).collect(Collectors.toList());
         } catch (Exception ex) {
-            throw new RepositoryException(ex.getMessage(), ex);
+            throw new RepositoryException(createMessageError(ex), ex);
         }
     }
 
@@ -64,7 +71,7 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
         AddressElementNameData addressElementNameData = new AddressElementNameData();
         addressElementNameData.setAddressElementFullNameList(addressElementFullNameList);
 
-        return _wsSearch.searchAddressElementByFullName(addressElementNameData);
+        return wsSearch.searchAddressElementByFullName(addressElementNameData);
     }
 
     private AddressInfo ParsAddressInfo(AddressElementNameResponse2.AddressElementResponseList2.AddressElementNameGroup2 adr) {
@@ -92,13 +99,8 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
         return addressElementFullNameGroup1;
     }
 
-    @PostConstruct
-    private void Init() throws RepositoryException{
-        try {
-            _wsSearch = new WsSearchAddressElementByFullName2(_url).getWsSearchAddrElByFullNamePortTypeImpl2Port();
-        } catch (Exception ex) {
-            throw new RepositoryException(ex.getMessage());
-        }
+    private String createMessageError(Exception ex) {
+        return "Error orponing soap repo: " + wsSearch + " Error: " + ex.getMessage();
     }
 
     //endregion PrivateMethod

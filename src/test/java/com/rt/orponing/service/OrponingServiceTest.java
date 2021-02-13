@@ -1,10 +1,16 @@
 package com.rt.orponing.service;
 
+import com.rt.orponing.dao.data.DaoException;
+import com.rt.orponing.dao.interfaces.IDbAddress;
+import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
+import com.rt.orponing.repository.data.RepositoryException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -17,20 +23,30 @@ import static org.junit.jupiter.api.Assertions.*;
 class OrponingServiceTest {
 
     @Autowired
-    private OrponingService _service;
+    private OrponingService service;
+
+    @MockBean
+    private IDbAddress db;
+    @MockBean
+    private IRepositoryOrpon soap;
 
     @Test
-    void orponingAddress() {
+    void orponingAddress() throws RepositoryException, DaoException {
         long globalId = 29182486;
         int id = 1;
         String level = "FIAS_HOUSE";
         String unparsed = "";
         String checkStatus = "VALIDATED";
         String qualityCode = "UNDEF_05";
+        String addressOrpon = "630099, Новосибирская обл, Новосибирск г., Орджоникидзе ул., дом 18";
 
         EntityAddress entityAddress = new EntityAddress(id, "Новосибирск г., Орджоникидзе ул., дом 18");
 
-        AddressInfo addressInfo = _service.OrponingAddress(entityAddress);
+        Mockito.when(soap.GetInfo(entityAddress)).thenReturn(new AddressInfo(id, globalId, level, unparsed, qualityCode,checkStatus));
+        Mockito.when(db.getAddress(29182486L)).thenReturn(addressOrpon);
+
+
+        AddressInfo addressInfo = service.OrponingAddress(entityAddress);
 
         assertEquals(id, addressInfo.Id);
         assertEquals(globalId, addressInfo.GlobalId);
@@ -38,6 +54,7 @@ class OrponingServiceTest {
         assertEquals(unparsed, addressInfo.UnparsedParts);
         assertEquals(checkStatus, addressInfo.CheckStatus);
         assertEquals(qualityCode, addressInfo.QualityCode);
+        assertEquals(addressOrpon, addressInfo.AddressOrpon);
     }
 
     @Test
@@ -59,7 +76,7 @@ class OrponingServiceTest {
         list.add(entityAddress_1);
         list.add(entityAddress_2);
 
-        List<AddressInfo> response  = _service.OrponingAddressList(list);
+        List<AddressInfo> response  = service.OrponingAddressList(list);
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().orElse(null);
         AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().orElse(null);
 
@@ -92,7 +109,7 @@ class OrponingServiceTest {
         list.add(entityAddress_1);
         list.add(entityAddress_2);
 
-        List<AddressInfo> response  = _service.OrponingAddressList(list);
+        List<AddressInfo> response  = service.OrponingAddressList(list);
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().orElse(null);
 
         AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().orElse(null);
