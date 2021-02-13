@@ -24,7 +24,7 @@ public class AddressOrponingController {
     private final OrponingApiService service;
 
     @GetMapping("")
-    public CompletableFuture<AddressInfo> getGlobalIdPage(@RequestParam("address") String address) {
+    public CompletableFuture<AddressInfo> apiGetGlobalId(@RequestParam("address") String address) {
 
         return CompletableFuture.supplyAsync(() -> service.orponingAddress(new EntityAddress(1, address)));
     }
