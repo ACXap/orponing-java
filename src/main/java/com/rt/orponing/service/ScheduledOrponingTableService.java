@@ -5,8 +5,10 @@ package com.rt.orponing.service;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStartable;
 import com.rt.orponing.service.interfaces.IStatus;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,19 +16,16 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
+@RequiredArgsConstructor
 public class ScheduledOrponingTableService implements IStartable, IStatus {
 
-    public ScheduledOrponingTableService(IStartable ots) {
-        this.ots = ots;
-    }
-
     //region PrivateField
-    private final Logger logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
     private final IStartable ots;
-    private Status status;
+    private final Logger logger = LoggerFactory.getLogger(ScheduledOrponingTableService.class);
+    private Status status = Status.Stop(StatusMessage.STOP);
 
-    @Value("${background.orponing.service.auto.start}")
-    private boolean isAutoStart;
+    //@Value("${background.orponing.service.auto.start}")
+   // private boolean isAutoStart;
 
     //endregion PrivateField
 
@@ -53,17 +52,23 @@ public class ScheduledOrponingTableService implements IStartable, IStatus {
     //endregion PublicMethod
 
     //region PrivateMethod
-    @PostConstruct
-    private void init() {
-        status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
-    }
+//    @PostConstruct
+//    private void init() {
+//        status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
+//    }
 
     @Scheduled(initialDelay = 10000, fixedRateString = "${background.orponing.service.delay}")
     private void startTask() {
-         if (status.getStatus() == StatusType.STOP) return;
+        if (status.getStatus() == StatusType.STOP) return;
 
         logger.info("Start scheduled task");
         ots.start();
+    }
+
+    @Autowired
+    private void setAutoStart(@Value("${background.orponing.service.auto.start}") boolean isAutoStart) {
+        //this.isAutoStart = isAutoStart;
+        status = isAutoStart ? Status.Start(StatusMessage.START) : Status.Stop(StatusMessage.STOP);
     }
     //endregion PrivateMethod
 }

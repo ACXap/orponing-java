@@ -9,7 +9,6 @@ import com.rt.orponing.service.interfaces.IStartable;
 import com.rt.orponing.service.statuservices.AbstractStatusService;
 import com.rt.orponing.service.statuservices.StatusServiceDefault;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -39,8 +39,8 @@ public class OrponingService implements IStatus {
 
     public AddressInfo orponingAddress(EntityAddress entityAddress) {
         if (!isValidAddress(entityAddress)) return new AddressInfo(entityAddress.Id, "Address is empty");
-        logger.info("Orponing address: " + entityAddress.Address);
 
+        logger.info("Orponing address: " + entityAddress.Address);
         return orponing(entityAddress);
     }
 
@@ -90,7 +90,7 @@ public class OrponingService implements IStatus {
         String testAddress = "Новосибирск г., Орджоникидзе ул., дом 18";
         long testGlobalId = 29182486;
 
-        AddressInfo addressInfo = orponingAddress(new EntityAddress(1, testAddress));
+        AddressInfo addressInfo = orponing(new EntityAddress(1, testAddress));
 
         return addressInfo.GlobalId == testGlobalId ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
     }
