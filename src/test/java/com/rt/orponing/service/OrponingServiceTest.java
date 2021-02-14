@@ -27,6 +27,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {ServiceTestConfig.class, ServiceTestStopConfig.class})
@@ -92,6 +94,9 @@ class OrponingServiceTest {
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().get();
         AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().get();
 
+        verify(soap, times(1)).GetInfo(list);
+        verify(soap, times(0)).GetInfo(ArgumentMatchers.any(EntityAddress.class));
+
         assertEquals(id_1, addressInfo_1.Id);
         assertEquals(globalId_1, addressInfo_1.GlobalId);
         assertEquals(level_1, addressInfo_1.ParsingLevelCode);
@@ -155,6 +160,28 @@ class OrponingServiceTest {
         assertEquals(1, adr.Id);
         assertEquals("Test error", adr.Error);
         assertFalse(adr.IsValid);
+    }
+
+    @Test
+    void getErrorListAddress() throws RepositoryException {
+        List<EntityAddress> address = Arrays.asList(
+                new EntityAddress(1, "error"),
+                new EntityAddress(1, "error"));
+
+       Mockito.doThrow(new RepositoryException("Test error"))
+               .when(soap).GetInfo(address);
+
+        Mockito.doThrow(new RepositoryException("Test error"))
+                .when(soap).GetInfo(ArgumentMatchers.any(EntityAddress.class));
+
+        List<AddressInfo> adr = service.orponingAddressList(address);
+
+        verify(soap, times(1)).GetInfo(address);
+        verify(soap, times(2)).GetInfo(ArgumentMatchers.any(EntityAddress.class));
+
+        assertEquals(2, adr.size());
+        assertEquals("Test error", adr.get(0).Error);
+        assertFalse(adr.get(0).IsValid);
     }
 
     @Test
