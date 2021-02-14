@@ -29,7 +29,6 @@ public class ManagerService {
     private final Map<String, AbstractStatusService> statusServices;
     private final Map<String, IStartable> startableService;
 
-
     public AbstractStatusService getStatusService(String id) {
         return statusServices.getOrDefault(id, new StatusServiceDefault());
     }

@@ -4,16 +4,11 @@ package com.rt.orponing.repository;
 
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.repository.soap.*;
-import com.rt.orponing.service.OrponingTableService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,10 +30,8 @@ public class RepositoryOrponSoap implements IRepositoryOrpon {
     @Override
     public AddressInfo GetInfo(EntityAddress entityAddress) throws RepositoryException {
         try {
+            AddressElementNameResponse2 addressElementNameResponse2 = GetAddressElementNameResponse(Collections.singletonList(entityAddress));
 
-            AddressElementNameResponse2 addressElementNameResponse2 = GetAddressElementNameResponse(new ArrayList<EntityAddress>() {{
-                add(entityAddress);
-            }});
             return ParsAddressInfo(addressElementNameResponse2.getAddressElementResponseList2().getAddressElementNameGroup2().get(0));
         } catch (Exception ex) {
             throw new RepositoryException(createMessageError(ex), ex);

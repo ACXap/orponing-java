@@ -11,7 +11,6 @@ import com.rt.orponing.service.interfaces.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
-@Lazy
 public class OrponingTableService implements IStartable, IStatus {
 
     public OrponingTableService(IDbSaveData dbSaveData, OrponingService service,  @Value("${db.partition.size.record}") int partitionSize) {
@@ -83,7 +81,7 @@ public class OrponingTableService implements IStartable, IStatus {
                 if (!listEntityAddress.isEmpty()) {
 
                     for (List<EntityAddress> list : Lists.partition(listEntityAddress, partitionSize)) {
-                        List<AddressInfo> response = service.OrponingAddressList(list);
+                        List<AddressInfo> response = service.orponingAddressList(list);
                         service.setAddressById(response);
                         dbSaveData.UpdateEntityAddress(response);
                     }

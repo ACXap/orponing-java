@@ -5,7 +5,6 @@ package com.rt.orponing.dao;
 import com.rt.orponing.dao.data.*;
 import com.rt.orponing.dao.interfaces.IDbSaveData;
 import com.rt.orponing.repository.data.*;
-import com.rt.orponing.service.OrponingTableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,15 +19,15 @@ import java.util.List;
 
 @Component
 @Lazy
-public class DbMdmSaveData extends CommonDb implements IDbSaveData {
+public class DbMdm extends CommonDb implements IDbSaveData {
 
-    public DbMdmSaveData(@Qualifier("dbConnectSaveData") DbConnect dbConnect){
+    public DbMdm(@Qualifier("dbConnectSaveData") DbConnect dbConnect){
         this.dbConnect = dbConnect;
         queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
     }
 
     //region PrivateField
-    private final Logger logger = LoggerFactory.getLogger(DbMdmSaveData.class);
+    private final Logger logger = LoggerFactory.getLogger(DbMdm.class);
 
     private static final String QUERY_SELECT_ADDRESS = "Select * from public.nsi_temp_orponing_select_input_data();";
     private static final String QUERY_UPDATE_ADDRESS = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";

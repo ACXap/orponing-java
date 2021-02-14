@@ -16,9 +16,9 @@ import java.util.List;
 
 @Component
 @Lazy
-public class DbOrponAddress extends CommonDb implements IDbAddress {
+public class DbOrpon extends CommonDb implements IDbAddress {
 
-    public DbOrponAddress(@Qualifier("dbConnectAddress") DbConnect dbConnect) {
+    public DbOrpon(@Qualifier("dbConnectAddress") DbConnect dbConnect) {
         this.dbConnect = dbConnect;
         queryTestDb = "SELECT 'public.nsi_mrf_geocoding_stat'::regclass";
     }

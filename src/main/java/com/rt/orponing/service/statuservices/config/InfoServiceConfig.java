@@ -5,7 +5,6 @@ package com.rt.orponing.service.statuservices.config;
 import com.rt.orponing.service.data.InfoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class InfoServiceConfig {

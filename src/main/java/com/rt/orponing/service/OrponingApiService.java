@@ -5,10 +5,8 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
-import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -52,7 +50,7 @@ public class OrponingApiService implements IStatus {
             try {
                 taskOrponing.startTask();
 
-                List<AddressInfo> addressInfo = orponingService.OrponingAddressList(taskOrponing.getListAddressRequest());
+                List<AddressInfo> addressInfo = orponingService.orponingAddressList(taskOrponing.getListAddressRequest());
                 orponingService.setAddressById(addressInfo);
 
                 taskOrponing.setResult(addressInfo);
@@ -91,15 +89,9 @@ public class OrponingApiService implements IStatus {
     }
 
     public AddressInfo orponingAddress(EntityAddress entityAddress) {
-        AddressInfo addressInfo = orponingService.OrponingAddress(entityAddress);
+        AddressInfo addressInfo = orponingService.orponingAddress(entityAddress);
 
-        if (!addressInfo.IsValid) return addressInfo;
-
-        try {
-            addressInfo.AddressOrpon = orponingService.getAddressById(addressInfo.GlobalId);
-        } catch (Exception ex) {
-            addressInfo.Error = ex.getMessage();
-        }
+        orponingService.setAddressById(addressInfo);
 
         return addressInfo;
     }

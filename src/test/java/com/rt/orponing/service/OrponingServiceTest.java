@@ -10,12 +10,10 @@ import com.rt.orponing.repository.data.RepositoryException;
 import com.rt.orponing.service.config.ServiceTestConfig;
 import com.rt.orponing.service.config.ServiceTestStopConfig;
 import com.rt.orponing.service.data.Status;
-import com.rt.orponing.service.data.StatusMessage;
 import com.rt.orponing.service.data.StatusType;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,8 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,12 +37,12 @@ class OrponingServiceTest {
     private IDbAddress db;
     @MockBean
     private IRepositoryOrpon soap;
-
     @Autowired
     private OrponingService service;
 
     @Test
     void orponingAddress() throws RepositoryException {
+
         long globalId = 29182486;
         int id = 1;
         String level = "FIAS_HOUSE";
@@ -56,7 +54,7 @@ class OrponingServiceTest {
 
         Mockito.doReturn(new AddressInfo(id, globalId, level, unparsed, qualityCode, checkStatus)).when(soap).GetInfo(entityAddress);
 
-        AddressInfo addressInfo = service.OrponingAddress(entityAddress);
+        AddressInfo addressInfo = service.orponingAddress(entityAddress);
 
         assertEquals(id, addressInfo.Id);
         assertEquals(globalId, addressInfo.GlobalId);
@@ -89,9 +87,9 @@ class OrponingServiceTest {
         ai.add(new AddressInfo(id_1, globalId_1, level_1, unparsed_1, "UNDEF_05", "VALIDATED"));
         ai.add(new AddressInfo(id_2, globalId_2, level_2, unparsed_2, "UNDEF_05", "VALIDATED"));
 
-        Mockito.when(service.OrponingAddressList(list)).thenReturn(ai);
+        Mockito.when(service.orponingAddressList(list)).thenReturn(ai);
 
-        List<AddressInfo> response = service.OrponingAddressList(list);
+        List<AddressInfo> response = service.orponingAddressList(list);
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().get();
         AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().get();
 
@@ -113,7 +111,9 @@ class OrponingServiceTest {
 
         Mockito.when(db.getAddress(29182486L)).thenReturn(addressOrpon);
 
-        assertEquals(addressOrpon, service.getAddressById(globalId));
+        AddressInfo address = new AddressInfo(1, 29182486, "", "", "", "");
+        service.setAddressById(address);
+        assertEquals(addressOrpon, address.AddressOrpon);
     }
 
     @Test
@@ -152,7 +152,7 @@ class OrponingServiceTest {
         EntityAddress address = new EntityAddress(1, "error");
 
         Mockito.doThrow(new RepositoryException("Test error")).when(soap).GetInfo(address);
-        AddressInfo adr = service.OrponingAddress(address);
+        AddressInfo adr = service.orponingAddress(address);
 
         assertEquals(1, adr.Id);
         assertEquals("Test error", adr.Error);
@@ -161,7 +161,7 @@ class OrponingServiceTest {
 
     @Test
     void getStatusGood() throws RepositoryException {
-        Mockito.doReturn(new AddressInfo(1, 29182486, "","","","")).when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
+        Mockito.doReturn(new AddressInfo(1, 29182486, "", "", "", "")).when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
         Status status = service.getStatus();
 
         assertEquals(StatusType.START, status.getStatus());
@@ -174,5 +174,19 @@ class OrponingServiceTest {
 
         assertEquals(StatusType.ERROR, status.getStatus());
         assertEquals("Ой, я упал. Поднимите меня Тестовые данные не совпадают. Сервис работает некорректно. Test error", status.getMessage());
+    }
+
+    @Test
+    void orponingAddressList_NotValidAddress() {
+        List<EntityAddress> entityAddress = Arrays.asList(
+                new EntityAddress(1, ""),
+                new EntityAddress(1, null),
+                new EntityAddress(1, "   "));
+
+        List<AddressInfo> addressInfo = service.orponingAddressList(entityAddress);
+
+        Mockito.verifyNoInteractions(soap);
+        assertEquals(3, addressInfo.size());
+        assertEquals("Address is empty", addressInfo.get(0).Error);
     }
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @ActiveProfiles("application-test")
-class DbOrponAddressTest {
+class DbOrponTest {
 
     @Autowired
     private IDbAddress db;

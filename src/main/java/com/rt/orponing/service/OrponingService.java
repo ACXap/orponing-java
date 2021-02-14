@@ -10,19 +10,18 @@ import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusMessage;
 import com.rt.orponing.service.interfaces.IStatus;
+import com.sun.istack.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Lazy
 @RequiredArgsConstructor
 public class OrponingService implements IStatus {
 
@@ -39,43 +38,38 @@ public class OrponingService implements IStatus {
 
     //region PublicMethod
 
-    public AddressInfo OrponingAddress(EntityAddress entityAddress) {
+    public AddressInfo orponingAddress(EntityAddress entityAddress) {
+        if (!isValidAddress(entityAddress)) return new AddressInfo(entityAddress.Id, "Address is empty");
+        logger.info("Orponing address: " + entityAddress.Address);
+
         try {
-            logger.info("Orponing address: " + entityAddress.Address);
             return repository.GetInfo(entityAddress);
         } catch (Exception ex) {
-            logger.error(entityAddress.Address + " " + ex.getMessage());
+            logger.error(ex.getMessage());
             return new AddressInfo(entityAddress.Id, ex.getMessage());
         }
     }
 
-    public List<AddressInfo> OrponingAddressList(List<EntityAddress> entityAddressList) {
-        logger.info("Orponing collection address");
+    public List<AddressInfo> orponingAddressList(@NonNull List<EntityAddress> entityAddressList) {
+        if (entityAddressList.isEmpty()) return Collections.emptyList();
 
-        List<AddressInfo> addressInfo = new ArrayList<>();
         List<EntityAddress> tempAddressError = new ArrayList<>();
 
-        for (List<EntityAddress> list : Lists.partition(entityAddressList, partitionSizePars)) {
-            try {
-                addressInfo.addAll(repository.GetInfo(list));
-            } catch (RepositoryException re) {
-                tempAddressError.addAll(list);
-            }
-        }
+        logger.info("Orponing list address with valid address");
+        List<AddressInfo> addressInfo = new ArrayList<>(orponingListAddressValidAddress(entityAddressList, tempAddressError));
 
-        if (!tempAddressError.isEmpty()) {
-            logger.info("Orponing list bad address");
+        logger.info("Orponing list address with error");
+        addressInfo.addAll(orponingListAddressOneByOne(tempAddressError));
 
-            for (EntityAddress address : tempAddressError) {
-                addressInfo.add(OrponingAddress(address));
-            }
-        }
+        logger.info("Orponing list address with empty address");
+        addressInfo.addAll(orponingListAddressWithEmptyAddress(entityAddressList));
 
         return addressInfo;
     }
 
-    public void setAddressById(List<AddressInfo> collectionAddressInfo) {
+    public void setAddressById(@NonNull List<AddressInfo> collectionAddressInfo) {
         logger.info("Get address by gid");
+        if (collectionAddressInfo.isEmpty()) return;
 
         try {
             List<AddressGid> address = db.getAddress(collectionAddressInfo.stream().filter(a -> a.IsValid).map(a -> a.GlobalId).distinct().collect(Collectors.toList()));
@@ -84,9 +78,17 @@ public class OrponingService implements IStatus {
             logger.error(ex.getMessage());
         }
     }
+    
+    public void setAddressById(@NotNull AddressInfo addressInfo){
+        logger.info("Get address by gid");
+        if(!addressInfo.IsValid) return;
 
-    public String getAddressById(Long globalId) throws Exception {
-        return db.getAddress(globalId);
+        try{
+            addressInfo.AddressOrpon = db.getAddress(addressInfo.GlobalId);
+        } catch (Exception ex){
+            logger.error(ex.getMessage());
+            addressInfo.Error = ex.getMessage();
+        }
     }
 
     @Override
@@ -94,10 +96,58 @@ public class OrponingService implements IStatus {
         String testAddress = "Новосибирск г., Орджоникидзе ул., дом 18";
         long testGlobalId = 29182486;
 
-        AddressInfo addressInfo = OrponingAddress(new EntityAddress(1, testAddress));
+        AddressInfo addressInfo = orponingAddress(new EntityAddress(1, testAddress));
 
         return addressInfo.GlobalId == testGlobalId ? Status.Start(StatusMessage.START) : Status.Error(StatusMessage.ERROR + " Тестовые данные не совпадают. Сервис работает некорректно. " + addressInfo.Error);
     }
 
     //endregion PublicMethod
+
+    //region PrivateMethod
+    private List<AddressInfo> orponingListAddressWithEmptyAddress(@NonNull List<EntityAddress> entityAddressList) {
+        if (entityAddressList.isEmpty()) return Collections.emptyList();
+
+        List<AddressInfo> addressEmpty = entityAddressList
+                .stream()
+                .filter(a -> !isValidAddress(a))
+                .map(a -> new AddressInfo(a.Id, "Address is empty"))
+                .collect(Collectors.toList());
+
+        if (addressEmpty.isEmpty()) return Collections.emptyList();
+
+        return addressEmpty;
+    }
+
+    private List<AddressInfo> orponingListAddressOneByOne(@NonNull List<EntityAddress> entityAddressList) {
+        if (entityAddressList.isEmpty()) return Collections.emptyList();
+
+        List<AddressInfo> addressInfo = new ArrayList<>();
+
+        for (EntityAddress address : entityAddressList) {
+            addressInfo.add(orponingAddress(address));
+        }
+
+        return addressInfo;
+    }
+
+    private List<AddressInfo> orponingListAddressValidAddress(@NotNull List<EntityAddress> entityAddressList, @NotNull List<EntityAddress> tempAddressError) {
+        if(entityAddressList.isEmpty()) return Collections.emptyList();
+
+        List<AddressInfo> addressInfo = new ArrayList<>();
+
+        for (List<EntityAddress> list : Lists.partition(entityAddressList.stream().filter(this::isValidAddress).collect(Collectors.toList()), partitionSizePars)) {
+            try {
+                addressInfo.addAll(repository.GetInfo(list));
+            } catch (RepositoryException re) {
+                tempAddressError.addAll(list);
+            }
+        }
+
+        return  addressInfo;
+    }
+
+    private boolean isValidAddress(EntityAddress entityAddress) {
+        return entityAddress != null && entityAddress.Address != null && !entityAddress.Address.trim().isEmpty();
+    }
+    //endregion PrivateMethod
 }
