@@ -1,7 +1,7 @@
 package com.rt.orponing.service.config;
 
-import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.context.annotation.Configuration;
 
-@SpringBootConfiguration
+@Configuration
 public class ServiceTestStopConfig {
 }

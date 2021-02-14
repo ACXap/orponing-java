@@ -52,7 +52,8 @@ class OrponingServiceTest {
 
         EntityAddress entityAddress = new EntityAddress(id, "Новосибирск г., Орджоникидзе ул., дом 18");
 
-        Mockito.doReturn(new AddressInfo(id, globalId, level, unparsed, qualityCode, checkStatus)).when(soap).GetInfo(entityAddress);
+        Mockito.doReturn(new AddressInfo(id, globalId, level, unparsed, qualityCode, checkStatus))
+                .when(soap).GetInfo(entityAddress);
 
         AddressInfo addressInfo = service.orponingAddress(entityAddress);
 
@@ -65,29 +66,27 @@ class OrponingServiceTest {
     }
 
     @Test
-    void orponingAddressList() {
+    void orponingAddressList() throws RepositoryException {
         long globalId_1 = 29182486;
         int id_1 = 1;
         String level_1 = "FIAS_HOUSE";
         String unparsed_1 = "";
-
-        EntityAddress entityAddress_1 = new EntityAddress(id_1, "Новосибирск г., Орджоникидзе ул., дом 18");
 
         long globalId_2 = 3963807;
         int id_2 = 2;
         String level_2 = "FIAS_HOUSE";
         String unparsed_2 = "АТС";
 
-        EntityAddress entityAddress_2 = new EntityAddress(id_2, "АТС Новосибирск  Орджоникидзе 19");
-        List<EntityAddress> list = new ArrayList<>();
-        list.add(entityAddress_1);
-        list.add(entityAddress_2);
+        List<EntityAddress> list = Arrays.asList(
+                new EntityAddress(id_1, "Новосибирск г., Орджоникидзе ул., дом 18"),
+                new EntityAddress(id_2, "АТС Новосибирск  Орджоникидзе 19"));
 
-        List<AddressInfo> ai = new ArrayList<>();
-        ai.add(new AddressInfo(id_1, globalId_1, level_1, unparsed_1, "UNDEF_05", "VALIDATED"));
-        ai.add(new AddressInfo(id_2, globalId_2, level_2, unparsed_2, "UNDEF_05", "VALIDATED"));
+        List<AddressInfo> ai = Arrays.asList(
+                new AddressInfo(id_1, globalId_1, level_1, unparsed_1, "UNDEF_05", "VALIDATED"),
+                new AddressInfo(id_2, globalId_2, level_2, unparsed_2, "UNDEF_05", "VALIDATED"));
 
-        Mockito.when(service.orponingAddressList(list)).thenReturn(ai);
+        Mockito.when(soap.GetInfo(list))
+                .thenReturn(ai);
 
         List<AddressInfo> response = service.orponingAddressList(list);
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().get();
@@ -105,11 +104,12 @@ class OrponingServiceTest {
     }
 
     @Test
-    void getAddressById() throws Exception {
+    void setAddressById_OneAddress() throws Exception {
         long globalId = 29182486;
         String addressOrpon = "630099, Новосибирская обл, Новосибирск г., Орджоникидзе ул., дом 18";
 
-        Mockito.when(db.getAddress(29182486L)).thenReturn(addressOrpon);
+        Mockito.when(db.getAddress(globalId))
+                .thenReturn(addressOrpon);
 
         AddressInfo address = new AddressInfo(1, 29182486, "", "", "", "");
         service.setAddressById(address);
@@ -117,41 +117,39 @@ class OrponingServiceTest {
     }
 
     @Test
-    void setAddressById() throws DaoException {
+    void setAddressById_ListAddress() throws DaoException {
         String addressOrpon1 = "630099, Новосибирская обл, Новосибирск г., Орджоникидзе ул., дом 18";
         String addressOrpon2 = "Новосибирская обл, Новосибирск г., Орджоникидзе ул.";
 
         long gid1 = 29182486L;
         long gid2 = 5916420L;
 
-        List<AddressInfo> list = new ArrayList<>();
-        list.add(new AddressInfo(29182486, gid1, "", "", "", ""));
-        list.add(new AddressInfo(5916420, gid2, "", "", "", ""));
+        List<AddressInfo> list = Arrays.asList(
+                new AddressInfo(29182486, gid1, "", "", "", ""),
+                new AddressInfo(5916420, gid2, "", "", "", ""));
 
-        Mockito.when(db.getAddress(29182486L)).thenReturn(addressOrpon1);
-        Mockito.when(db.getAddress(5916420L)).thenReturn(addressOrpon2);
+        List<Long> ids = Arrays.asList(gid1, gid2);
 
-        List<Long> ids = new ArrayList<>();
-        ids.add(29182486L);
-        ids.add(5916420L);
+        List<AddressGid> ag = Arrays.asList(
+                new AddressGid(gid1, addressOrpon1),
+                new AddressGid(gid2, addressOrpon2));
 
-        List<AddressGid> ag = new ArrayList<>();
-        ag.add(new AddressGid(gid1, addressOrpon1));
-        ag.add(new AddressGid(gid2, addressOrpon2));
-
-        Mockito.when(db.getAddress(ids)).thenReturn(ag);
+        Mockito.when(db.getAddress(ids))
+                .thenReturn(ag);
 
         service.setAddressById(list);
 
-        assertEquals(addressOrpon1, list.stream().filter(a -> a.GlobalId == 29182486).findFirst().get().AddressOrpon);
-        assertEquals(addressOrpon2, list.stream().filter(a -> a.GlobalId == 5916420).findFirst().get().AddressOrpon);
+        assertEquals(addressOrpon1, list.stream().filter(a -> a.GlobalId == gid1).findFirst().get().AddressOrpon);
+        assertEquals(addressOrpon2, list.stream().filter(a -> a.GlobalId == gid2).findFirst().get().AddressOrpon);
     }
 
     @Test
     void getErrorAddress() throws RepositoryException {
         EntityAddress address = new EntityAddress(1, "error");
 
-        Mockito.doThrow(new RepositoryException("Test error")).when(soap).GetInfo(address);
+        Mockito.doThrow(new RepositoryException("Test error"))
+                .when(soap).GetInfo(address);
+
         AddressInfo adr = service.orponingAddress(address);
 
         assertEquals(1, adr.Id);
@@ -161,7 +159,9 @@ class OrponingServiceTest {
 
     @Test
     void getStatusGood() throws RepositoryException {
-        Mockito.doReturn(new AddressInfo(1, 29182486, "", "", "", "")).when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
+        Mockito.doReturn(new AddressInfo(1, 29182486, "", "", "", ""))
+                .when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
+
         Status status = service.getStatus();
 
         assertEquals(StatusType.START, status.getStatus());
@@ -169,7 +169,9 @@ class OrponingServiceTest {
 
     @Test
     void getStatusError() throws RepositoryException {
-        Mockito.doThrow(new RepositoryException("Test error")).when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
+        Mockito.doThrow(new RepositoryException("Test error"))
+                .when(soap).GetInfo((EntityAddress) ArgumentMatchers.any());
+
         Status status = service.getStatus();
 
         assertEquals(StatusType.ERROR, status.getStatus());
