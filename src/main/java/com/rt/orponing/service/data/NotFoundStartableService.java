@@ -6,11 +6,11 @@ import com.rt.orponing.service.interfaces.IStartable;
 
 public class NotFoundStartableService implements IStartable {
 
-    private final Status _status = Status.Error("Not found service");
+    private final Status status = Status.Error("Not found service");
 
     @Override
     public Status start() {
-        return _status;
+        return status;
     }
 
     @Override

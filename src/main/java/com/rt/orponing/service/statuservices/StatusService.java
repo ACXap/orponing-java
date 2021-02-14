@@ -4,6 +4,7 @@ package com.rt.orponing.service.statuservices;
 
 import com.rt.orponing.service.interfaces.IStatus;
 import com.rt.orponing.service.data.*;
+import lombok.RequiredArgsConstructor;
 
 public class StatusService extends AbstractStatusService {
 

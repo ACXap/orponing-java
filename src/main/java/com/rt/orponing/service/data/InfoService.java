@@ -2,31 +2,20 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.service.data;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InfoService {
+    @Getter
     private final String name;
+    @Getter
     private final String id;
+    @Getter
     private final String icon;
+    @Getter
     private final String description;
     private final boolean isStartable;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 
     public boolean getIsStartable() {
         return isStartable;

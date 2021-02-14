@@ -5,24 +5,20 @@ package com.rt.orponing.service.data;
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
+@RequiredArgsConstructor
 public class TaskOrponing {
-
-    public TaskOrponing(UUID id, List<EntityAddress> listAddressRequest) {
-        this.id = id;
-        this.listAddressRequest = listAddressRequest;
-        statusTask = Status.Stop(StatusMessage.STOP);
-    }
 
     //region PrivateField
 
     private final UUID id;
-    private Status statusTask;
+    private Status statusTask = Status.Stop(StatusMessage.STOP);
     private final Date dataCreate = new Date();
     private Date dateStart;
     private Date dateStop;

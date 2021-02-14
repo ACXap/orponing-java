@@ -5,6 +5,7 @@ package com.rt.orponing.service;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -18,12 +19,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Lazy
+@RequiredArgsConstructor
 public class OrponingApiService implements IStatus {
-
-    public OrponingApiService(OrponingService orponingService) {
-        status = Status.Stop(StatusMessage.STOP);
-        this.orponingService = orponingService;
-    }
 
     //region PrivateField;
 
@@ -32,7 +29,7 @@ public class OrponingApiService implements IStatus {
     private final ExecutorService executor = new ThreadPoolExecutor(2, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(10));
     private final Map<UUID, Future<?>> mapFuture = new HashMap<>();
     private final Object lock = new Object();
-    private Status status;
+    private Status status = Status.Stop(StatusMessage.STOP);
 
     //endregion PrivateField
 

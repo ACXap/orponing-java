@@ -8,8 +8,11 @@ import com.rt.orponing.dao.data.DaoException;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,22 +21,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Service
+@RequiredArgsConstructor
 public class OrponingTableService implements IStartable, IStatus {
 
-    public OrponingTableService(IDbSaveData dbSaveData, OrponingService service,  @Value("${db.partition.size.record}") int partitionSize) {
-        this.dbSaveData = dbSaveData;
-        this.service = service;
-        this.partitionSize = partitionSize;
-    }
-
     //region PrivateField
+
     private final IDbSaveData dbSaveData;
     private final OrponingService service;
     private final Logger logger = LoggerFactory.getLogger(OrponingTableService.class);
     private final Object lock = new Object();
-    private final int partitionSize;
-
+    @Getter
+    private final String id = "orponing-service";
+    @Value("${db.partition.size.record}")
+    private int partitionSize;
+    @Getter
     private Status status = Status.Stop(StatusMessage.STOP);
+
     //endregion PrivateField
 
     //region PublicMethod
@@ -43,9 +46,7 @@ public class OrponingTableService implements IStartable, IStatus {
         if (status.getStatus() == StatusType.START) return status;
 
         synchronized (lock) {
-            if (status.getStatus() == StatusType.START) {
-                return status;
-            }
+            if (status.getStatus() == StatusType.START) return status;
             status = Status.Start(StatusMessage.START);
         }
 
@@ -55,16 +56,6 @@ public class OrponingTableService implements IStartable, IStatus {
 
         service.shutdown();
 
-        return status;
-    }
-
-    @Override
-    public String getId() {
-        return "orponing-service";
-    }
-
-    @Override
-    public Status getStatus() {
         return status;
     }
 

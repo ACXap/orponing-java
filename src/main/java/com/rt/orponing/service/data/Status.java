@@ -2,21 +2,17 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.service.data;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class Status {
     private final StatusType status;
     private final Date dateStatus;
     private final String message;
-
-    public String getMessage() {
-        return message;
-    }
 
     public static Status Start(String message) {
         if(message == null) message = StatusMessage.START;
