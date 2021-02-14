@@ -7,8 +7,7 @@ import com.rt.orponing.dao.interfaces.IDbAddress;
 import com.rt.orponing.dao.data.AddressGid;
 import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
-import com.rt.orponing.service.data.Status;
-import com.rt.orponing.service.data.StatusMessage;
+import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
 import com.sun.istack.NotNull;
 import lombok.NonNull;
@@ -42,12 +41,7 @@ public class OrponingService implements IStatus {
         if (!isValidAddress(entityAddress)) return new AddressInfo(entityAddress.Id, "Address is empty");
         logger.info("Orponing address: " + entityAddress.Address);
 
-        try {
-            return repository.GetInfo(entityAddress);
-        } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            return new AddressInfo(entityAddress.Id, ex.getMessage());
-        }
+        return orponing(entityAddress);
     }
 
     public List<AddressInfo> orponingAddressList(@NonNull List<EntityAddress> entityAddressList) {
@@ -124,7 +118,7 @@ public class OrponingService implements IStatus {
         List<AddressInfo> addressInfo = new ArrayList<>();
 
         for (EntityAddress address : entityAddressList) {
-            addressInfo.add(orponingAddress(address));
+            addressInfo.add(orponing(address));
         }
 
         return addressInfo;
@@ -144,6 +138,15 @@ public class OrponingService implements IStatus {
         }
 
         return  addressInfo;
+    }
+
+    private AddressInfo orponing(EntityAddress entityAddress) {
+        try {
+            return repository.GetInfo(entityAddress);
+        } catch (Exception ex) {
+            logger.error(ex.getMessage());
+            return new AddressInfo(entityAddress.Id, ex.getMessage());
+        }
     }
 
     private boolean isValidAddress(EntityAddress entityAddress) {
