@@ -19,6 +19,6 @@ public class LogController {
 
     @PostMapping(path="/log", consumes = "application/json", produces = "application/json")
     public CompletableFuture<String> getAllLog() {
-        return CompletableFuture.supplyAsync(service::readLog);
+        return CompletableFuture.supplyAsync(service::readLogToday);
     }
 }

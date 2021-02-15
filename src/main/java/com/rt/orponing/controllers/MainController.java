@@ -19,10 +19,7 @@ public class MainController {
         return "about";
     }
 
-    @GetMapping("/log")
-    public String logPage() {
-        return "log";
-    }
+
 
     @GetMapping("/orponing_service")
     public String orponingServicePage() {
