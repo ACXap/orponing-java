@@ -32,10 +32,11 @@ public class OrponingTableService implements IStartable, IStatus {
     private final Object lock = new Object();
     @Getter
     private final String id = "orponing-service";
-    @Value("${db.partition.size.record}")
-    private int partitionSize;
     @Getter
     private Status status = Status.Stop(StatusMessage.STOP);
+
+    @Value("${db.partition.size.record}")
+    private int partitionSize;
 
     //endregion PrivateField
 
