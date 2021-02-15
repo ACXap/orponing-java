@@ -19,8 +19,6 @@ public class MainController {
         return "about";
     }
 
-
-
     @GetMapping("/orponing_service")
     public String orponingServicePage() {
         return "orponing_service";

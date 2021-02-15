@@ -2,6 +2,7 @@ package com.rt.orponing.service.config;
 
 import com.rt.orponing.dao.interfaces.IDbAddress;
 import com.rt.orponing.repository.IRepositoryOrpon;
+import com.rt.orponing.service.LogReadService;
 import com.rt.orponing.service.OrponingApiService;
 import com.rt.orponing.service.OrponingService;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -19,4 +20,6 @@ public class ServiceTestConfig {
     public OrponingApiService orponingApiService(OrponingService service ){
         return new OrponingApiService(service);
     }
+
+
 }

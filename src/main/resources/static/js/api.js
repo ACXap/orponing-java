@@ -6,6 +6,19 @@ async function apiGetLog() {
     return await _getText(response);
 }
 
+async function apiGetLogFile(file) {
+    const response = await fetch("/log/read?file=" + file, {
+        method: 'GET',
+        headers: _getHeadersPost()
+    });
+    return _getText(response);
+}
+
+async function apiClearArchive(password) {
+    const response = await fetch("/log/clear?password=" + password);
+    return _getJson(response);
+}
+
 async function apiOrponingAddress(address) {
     const response = await fetch("/api/get_global_id?address=" + address);
     return _getJson(response);

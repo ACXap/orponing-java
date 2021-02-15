@@ -78,7 +78,8 @@
 
 
 
-            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученый ранее}.
+            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученый
+                ранее}.
             <div class="form-floating">
                 <textarea class="form-control" tabindex="В ответ получим:" style="height: 180px; width: 800px;">{
     "message":"Я все завершил. Я КрасафчеГ!",
@@ -88,7 +89,8 @@
 </textarea>
             </div>
 
-            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученый ранее}.
+            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученый
+                ранее}.
             <div class="form-floating">
                 <textarea class="form-control" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
         {
@@ -172,6 +174,31 @@
 
             <div class="form-floating">
                 В ответ будет получен полный лог за текущий день простым текстом
+            </div>
+            </p>
+
+            <p class="lead">Получить список фалов архива - это GET запрос на адрес /log/files
+
+            <div class="form-floating">
+                ["2021-02-10.0","2021-02-11.0","2021-02-13.0","2021-02-14.0"]
+            </div>
+            </p>
+
+            <p class="lead">Получить лог из архива - это GET запрос на адрес /log/read?file={имя требуемого файла}
+
+            <div class="form-floating">
+                В ответ будет получен полный лог из указанного файла
+            </div>
+            </p>
+
+            <p class="lead">Очистить архив логов - это GET запрос на адрес /log/clear?password={пароль от операции}
+
+            <div class="form-floating">
+                <textarea class="form-control" tabindex="В ответ получим:" style="height: 170px; width: 500px;">{
+    "message":"Я все завершил. Я КрасафчеГ!",
+    "status":"COMPLETED",
+    "dateStatus":"2021-02-01T04:43:49.423+00:00"
+}</textarea>
             </div>
             </p>
 

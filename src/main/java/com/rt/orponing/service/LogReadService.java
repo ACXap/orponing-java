@@ -2,6 +2,11 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 package com.rt.orponing.service;
 
+import com.rt.orponing.service.data.Status;
+import com.rt.orponing.service.data.StatusMessage;
+import com.rt.orponing.service.data.StatusType;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -20,7 +26,7 @@ import java.util.stream.Collectors;
 public class LogReadService {
 
     private static final String PATH_LOGS = "logs";
-    private static final String PATH_ARCHIVED = "logs/archived/";
+    private static final String PATH_ARCHIVED = "logs/archived";
     private static final String FILE = "logs/logger.log";
 
     public String readLogToday() {
@@ -39,22 +45,23 @@ public class LogReadService {
 
     public List<String> getDayLog() {
         try {
-            return Files.walk(Paths.get(PATH_ARCHIVED)).filter(Files::isRegularFile).map(Path::toString).collect(Collectors.toList());
+            return Files.walk(Paths.get(PATH_ARCHIVED)).filter(Files::isRegularFile).map(p -> p.getFileName().toString().replace(".log", "")).collect(Collectors.toList());
         } catch (IOException e) {
             return null;
         }
     }
 
-    public void clearArchive() {
-        CompletableFuture.runAsync(() -> {
-            try {
-                Files.walk(Paths.get(PATH_ARCHIVED))
-                        .filter(Files::isRegularFile)
-                        .map(Path::toFile)
-                        .forEach(File::deleteOnExit);
-            } catch (IOException ignored) {
-            }
-        });
+    public Status clearArchive() throws RuntimeException {
+        try {
+            Files.walk(Paths.get(PATH_ARCHIVED))
+                    .filter(Files::isRegularFile)
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+
+            return new Status(StatusType.COMPLETED, new Date(), StatusMessage.COMPLETED);
+        } catch (IOException e) {
+            return new Status(StatusType.ERROR, new Date(), e.getMessage());
+        }
     }
 
     private String read(String file) {
