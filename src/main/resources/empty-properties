@@ -3,18 +3,19 @@ server.compression.mime-types=text/html,text/xml,text/plain,text/css,text/javasc
 server.compression.min-response-size=1024
 server.error.include-message=always
 
-soap.url.service=
+soap.url.service=test
 soap.partition.size=200
 
-db.url=
-db.user=
-db.password=
+db.url=test
+db.user=test
+db.password=test
 db.partition.size.record=200
 
-db.orpon.url=
-db.orpon.user=
-db.orpon.password=
+db.orpon.url=test
+db.orpon.user=test
+db.orpon.password=test
 
 background.orponing.service.auto.start=true
-#background.orponing.service.delay=3600000
-background.orponing.service.delay=1000
+background.orponing.service.delay=3600000
+
+log.clear.password=No

@@ -6,7 +6,6 @@ import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
 import com.rt.orponing.service.OrponingApiService;
 import com.rt.orponing.service.data.Status;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;

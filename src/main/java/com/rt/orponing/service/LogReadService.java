@@ -5,8 +5,6 @@ package com.rt.orponing.service;
 import com.rt.orponing.service.data.Status;
 import com.rt.orponing.service.data.StatusMessage;
 import com.rt.orponing.service.data.StatusType;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +16,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @Lazy
 public class LogReadService {
 
+    //region PrivateField
+
     private static final String PATH_LOGS = "logs";
     private static final String PATH_ARCHIVED = "logs/archived";
     private static final String FILE = "logs/logger.log";
+
+    //endregion PrivateField
+
+    //region PublicMethod
 
     public String readLogToday() {
         return read(FILE);
@@ -64,6 +67,10 @@ public class LogReadService {
         }
     }
 
+    //endregion PublicMethod
+
+    //region PrivateMethod
+
     private String read(String file) {
         try {
             return new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
@@ -71,4 +78,6 @@ public class LogReadService {
             return null;
         }
     }
+
+    //endregion PrivateMethod
 }

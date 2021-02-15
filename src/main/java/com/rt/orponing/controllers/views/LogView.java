@@ -1,4 +1,4 @@
-package com.rt.orponing.controllers;
+package com.rt.orponing.controllers.views;
 
 import com.rt.orponing.service.LogReadService;
 import lombok.RequiredArgsConstructor;

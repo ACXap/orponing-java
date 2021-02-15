@@ -12,7 +12,8 @@ async function loadLog() {
 }
 
 async function clearArchive() {
-    if (window.prompt("Укажите пароль для операции:")) {
+    const password = window.prompt("Укажите пароль для операции:");
+    if (password) {
         const result = await apiClearArchive(password);
 
         if (result.status === "COMPLETED") {
@@ -25,9 +26,7 @@ async function clearArchive() {
 
 function setTextLog(log) {
     const t = getElement("floatingTextarea");
-    t.value = "";
     t.value = log
-    t.focus();
     t.scrollTop = Number.MAX_SAFE_INTEGER;
 }
 
