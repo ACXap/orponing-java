@@ -28,8 +28,8 @@
 <!--                <div>1</div>-->
 <!--                <div>2</div>-->
 
-                <div class="portfolio usado escambolivre" data-cat="usado escambolivre" th:each="archive : ${log}">
-                    <div class="portfolio-wrapper">
+                <div th:each="archive : ${log}">
+                    <div>
 <!--                        <a rel="group" title=""  th:href="'/lo='+${log}">-->
 <!--                            <img th:src="'images/'+${produto.id}+'.jpg'" alt=""  class="img-responsive caixa-img-produto" />-->
 <!--                        </a>-->
@@ -37,12 +37,9 @@
                             <div class="label-text">
                                 <span class="text-category" th:text="${log}"></span>
                             </div>
-                            <div class="label-bg"></div>
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
     </div>
