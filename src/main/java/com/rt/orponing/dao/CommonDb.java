@@ -3,25 +3,38 @@
 package com.rt.orponing.dao;
 
 import com.rt.orponing.dao.data.*;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
+@RequiredArgsConstructor
 public abstract class CommonDb {
 
-    protected DbConnect dbConnect;
-    protected String queryTestDb;
+    //region PrivateField
 
+    protected final DbConnect dbConnect;
+    protected final String queryTestDb;
+    protected final Logger logger;
+
+    //endregion PrivateField
+
+    //region PublicMethod
     public boolean TestDb() throws DaoException {
         ProcessConnect(this::TestBd);
         return true;
     }
+    //endregion PublicMethod
 
+    //region PrivateMethod
     protected void TestBd(Connection con) throws DaoException {
         try (PreparedStatement ps = con.prepareStatement(queryTestDb)) {
             ps.execute();
         } catch (Exception ex) {
-            throw new DaoException("Ошибка обработки запроса: " + queryTestDb + " " + ex.getMessage(), ex);
+            String error = "Ошибка обработки запроса: " + queryTestDb + " " + ex.getMessage();
+            logger.error(error);
+            throw new DaoException(error, ex);
         }
     }
 
@@ -42,9 +55,13 @@ public abstract class CommonDb {
                 con.close();
             }
         } catch (DaoException d) {
+            logger.error(d.getMessage());
             throw d;
         } catch (Exception ex) {
+            logger.error(ex.getMessage());
             throw new DaoException(ex.getMessage());
         }
     }
+
+    //endregion PrivateMethod
 }

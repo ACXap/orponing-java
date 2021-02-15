@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,17 +18,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Repository
 @Lazy
 public class DbMdm extends CommonDb implements IDbSaveData {
 
-    public DbMdm(@Qualifier("dbConnectSaveData") DbConnect dbConnect){
-        this.dbConnect = dbConnect;
-        queryTestDb = "Select public.nsi_temp_orponing_test_bd();";
+    public DbMdm(@Qualifier("dbConnectSaveData") DbConnect dbConnect) {
+        super(dbConnect,
+                "Select public.nsi_temp_orponing_test_bd();",
+                LoggerFactory.getLogger(DbMdm.class));
     }
 
     //region PrivateField
-    private final Logger logger = LoggerFactory.getLogger(DbMdm.class);
 
     private static final String QUERY_SELECT_ADDRESS = "Select * from public.nsi_temp_orponing_select_input_data();";
     private static final String QUERY_UPDATE_ADDRESS = "Call public.nsi_temp_orponing_update_output_data(?,?,?,?,?,?,?,?);";

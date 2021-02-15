@@ -4,9 +4,11 @@ package com.rt.orponing.dao;
 
 import com.rt.orponing.dao.data.*;
 import com.rt.orponing.dao.interfaces.IDbAddress;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,13 +16,14 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Repository
 @Lazy
 public class DbOrpon extends CommonDb implements IDbAddress {
 
     public DbOrpon(@Qualifier("dbConnectAddress") DbConnect dbConnect) {
-        this.dbConnect = dbConnect;
-        queryTestDb = "SELECT 'public.nsi_mrf_geocoding_stat'::regclass";
+        super(dbConnect,
+                "SELECT 'public.nsi_mrf_geocoding_stat'::regclass",
+                LoggerFactory.getLogger(DbOrpon.class));
     }
 
     //region PrivateField

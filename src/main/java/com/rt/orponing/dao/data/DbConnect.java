@@ -16,6 +16,7 @@ public class DbConnect {
 
     public Connection GetConnection() throws DaoException {
         try {
+            Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(url, user, password);
         } catch (Exception ex) {
             throw new DaoException(ex.getMessage());

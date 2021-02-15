@@ -9,7 +9,6 @@ import com.rt.orponing.repository.IRepositoryOrpon;
 import com.rt.orponing.repository.data.*;
 import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
-import com.sun.istack.NotNull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -73,7 +72,7 @@ public class OrponingService implements IStatus {
         }
     }
     
-    public void setAddressById(@NotNull AddressInfo addressInfo){
+    public void setAddressById(@NonNull AddressInfo addressInfo){
         logger.info("Get address by gid");
         if(!addressInfo.IsValid) return;
 
@@ -124,7 +123,7 @@ public class OrponingService implements IStatus {
         return addressInfo;
     }
 
-    private List<AddressInfo> orponingListAddressValidAddress(@NotNull List<EntityAddress> entityAddressList, @NotNull List<EntityAddress> tempAddressError) {
+    private List<AddressInfo> orponingListAddressValidAddress(@NonNull List<EntityAddress> entityAddressList, @NonNull List<EntityAddress> tempAddressError) {
         if(entityAddressList.isEmpty()) return Collections.emptyList();
 
         List<AddressInfo> addressInfo = new ArrayList<>();
