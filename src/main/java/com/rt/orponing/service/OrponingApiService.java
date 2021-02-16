@@ -49,7 +49,7 @@ public class OrponingApiService implements IStatus {
         mapFuture.put(uuid, executor.submit(() -> {
             try {
                 taskOrponing.startTask();
-                logger.info("Start task id: " + taskOrponing.getId() + "Count address: " + taskOrponing.getListAddressRequest().size());
+                logger.info("Start task id: " + taskOrponing.getId() + " Count address: " + taskOrponing.getListAddressRequest().size());
 
                 List<AddressInfo> addressInfo = orponingService.orponingAddressList(taskOrponing.getListAddressRequest());
                 orponingService.setAddressById(addressInfo);

@@ -15,38 +15,35 @@
 <body>
     <header th:insert="../block/nav.html :: nav"></header>
 
-    <div class="container p-5">
+    <div class="container p-4">
 
-        <div class="container">
-            <h1 class="mt-5">ОРПОН</h1>
+        <div class="container mt-5">
+            <h1>ОРПОН</h1>
             <p class="lead">Отраслевое решение «паспортизация объектов недвижимости» - система управления адресной
-                информацией и информацией об объектах
-                недвижимости</p>
+                информацией и информацией об объектах недвижимости</p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">Орпонизация</h1>
-            <p class="lead">Процесс получения глобального идентификатора системы ОРПОН (по простому: ГИД ОРПОН) для
-                указанного адреса</p>
+        <div class="container mt-5">
+            <h1>Орпонизация</h1>
+            <p class="lead">Процесс получения глобального идентификатора системы ОРПОН (по простому: ГИД ОРПОН) для указанного адреса</p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">Сервис "Орпонизации"</h1>
+        <div class="container mt-5">
+            <h1>Сервис "Орпонизации"</h1>
             <p class="lead">Процедура изо дня в день орпонизирует предоставленные адреса</p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">Корректный формат адреса</h1>
-            <p class="lead">Зачастую по переданному адресу даже человек не может определить где это,
-                что уж говорить о "1 и 0", по этому, что бы получить максимально достоверный результат,
-                необходимо придерживаться определенного формата адреса:<br>
-                <span class="m-5" style="width: 600px;"><b>Область, район, населенный пункт, улица, дом</b></span><br>
+        <div class="container mt-5">
+            <h1>Корректный формат адреса</h1>
+            <p class="lead">Зачастую по переданному адресу даже человек не может определить где это, что уж говорить
+                о "1 и 0", по этому, что бы получить максимально достоверный результат, необходимо придерживаться определенного формата адреса:<br>
+                <span class="mx-5"><b>Область, район, населенный пункт, улица, дом</b></span><br>
                 Избегать посторонних слов, символов, цифр - которые никак не указывают на адрес.
             </p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">Орпонизация файлов</h1>
+        <div class="container mt-5">
+            <h1>Орпонизация файлов</h1>
             <p class="lead">На главной страничке проекта можно орпонизировать файлы.<br>Поддерживаемый формат: txt, csv.
                 Возможная кодировка UTF-8 или windows-1251 (определяется автоматически)<br>
                 Разделитель для столбцов: ";"<br>
@@ -54,36 +51,61 @@
             </p>
             <table class="table table-bordered table-sm text-center">
                 <thead>
-                    <tr>
-                        <th scope="col">Идентификатор и адрес</th>
-                        <th scope="col">Только адрес</th>
-                    </tr>
+                    <tr><th scope="col">Идентификатор и адрес</th>
+                        <th scope="col">Только адрес</th></tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1 ; Адрес</td>
-                        <td>Адрес</td>
-                    </tr>
-                    <tr>
-                        <td>2 ; Адрес</td>
-                        <td>Адрес</td>
-                    </tr>
-                    <tr>
-                        <td>3 ; Адрес</td>
-                        <td>Адрес</td>
-                    </tr>
+                    <tr><td>1 ; Адрес</td>
+                        <td>Адрес</td></tr>
+                    <tr><td>2 ; Адрес</td>
+                        <td>Адрес</td></tr>
+                    <tr><td>3 ; Адрес</td>
+                        <td>Адрес</td></tr>
                 </tbody>
             </table>
             <p class="lead"> Идентификатор должен быть целочисленным числом, уникальным для каждого адреса.</p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">API</h1>
-            <p class="lead">Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый
-                адрес}
+        <div class="container mt-5">
+            <h1>API</h1>
+            <p class="lead">Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый адрес}</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 280px; width: 800px;">{
+    Id: 1,
+    GlobalId: 21904819,
+    ParsingLevelCode: "FIAS_HOUSE",
+    UnparsedParts: "",
+    QualityCode: "UNDEF_05",
+    CheckStatus: "VALIDATED",
+    IsValid: true,
+    Error: null,
+    AddressOrpon: "630088, Новосибирская обл, Новосибирск г., Зорге ул., дом 1"
+}</textarea>
+            </div>
 
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 280px; width: 500px;">{
+            <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /api/get_global_id
+                <br> И в ответ будет уникальный GIUD задачи, пример: deb74f17-d553-45ed-b45c-24cd5c9c3406.<br>
+                Тело запроса при этом:</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 110px; width: 800px;">[
+    {"Id":"1","Address":"Новосибирск Зорге 1"},
+    {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
+]</textarea>
+            </div>
+
+            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученный ранее}</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 130px; width: 800px;">{
+    "message":"Я все завершил. Я КрасафчеГ!",
+    "status":"COMPLETED",
+    "dateStatus":"2021-02-07T07:44:38.768+00:00"
+}</textarea>
+            </div>
+
+            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученный ранее}</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 330px; width: 800px;">[
+    {
         Id: 1,
         GlobalId: 21904819,
         ParsingLevelCode: "FIAS_HOUSE",
@@ -92,48 +114,9 @@
         CheckStatus: "VALIDATED",
         IsValid: true,
         Error: null,
-        AddressOrpon: null
-}</textarea>
-            </div>
-            </p>
-
-            <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /api/get_global_id.
-                <br> И в ответ будет уникальный GIUD задачи, пример: deb74f17-d553-45ed-b45c-24cd5c9c3406.<br>
-                Тело запроса при этом:
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 110px; width: 800px;">
-[
-    {"Id":"1","Address":"Новосибирск Зорге 1"},
-    {"Id":"2","Address":"165150, Архангельская обл, Вельский р-н, Вельск г., Гайдара ул., дом 14"}
-]</textarea>
-            </div>
-
-            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученый
-                ранее}.
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 130px; width: 800px;">{
-    "message":"Я все завершил. Я КрасафчеГ!",
-    "status":"COMPLETED",
-    "dateStatus":"2021-02-07T07:44:38.768+00:00"
-}</textarea>
-            </div>
-
-            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученый
-                ранее}.
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
-        {
-            Id: 1,
-            GlobalId: 21904819,
-            ParsingLevelCode: "FIAS_HOUSE",
-            UnparsedParts: "",
-            QualityCode: "UNDEF_05",
-            CheckStatus: "VALIDATED",
-            IsValid: true,
-            Error: null,
-            AddressOrpon: null
-        },
-        {
+        AddressOrpon: "630088, Новосибирская обл, Новосибирск г., Зорге ул., дом 1"
+    },
+    {
         "Id":2,
         "GlobalId":-1,
         "ParsingLevelCode":null,
@@ -141,20 +124,18 @@
         "QualityCode":null,
         "CheckStatus":null,
         "IsValid":false,
-        "Error":"Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact
-    cause of the failure.",
-    "AddressOrpon":null
+        "Error":"Client received SOAP Fault from server: WsSearchAddrElByFullNamePortTypeImpl ошибка: #PON_0051 Please see the server log to find more detail regarding exact cause of the failure.",
+        "AddressOrpon":null
     }
 ]</textarea>
             </div>
-            </p>
         </div>
 
-        <div class="container">
-            <h1 class="mt-5">API служебное</h1>
-            <p class="lead">Получить список компонентов сервиса - это GET запрос на адрес /orponing_service/all_services
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 330px; width: 500px;">[
+        <div class="container mt-5">
+            <h1>API служебное</h1>
+            <p class="lead">Получить список компонентов сервиса - это GET запрос на адрес /orponing_service/all_services</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 330px; width: 800px;">[
     {
         "name":"Фоновый сервис орпонизации",
         "id":"orponing-service",
@@ -171,58 +152,43 @@
     }...и т.д.
 ]</textarea>
             </div>
-            </p>
 
-            <p class="lead">Получить статус компонента - это GET запрос на адрес /orponing_service/status?service={id
-                требуемого компонента}
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 130px; width: 500px;">{
+            <p class="lead">Получить статус компонента - это GET запрос на адрес /orponing_service/status?service={id требуемого компонента}</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 130px; width: 800px;">{
     "message":"Мне нечего делать",
     "status":"STOP",
     "dateStatus":"2021-02-01T04:08:56.886+00:00"
 }</textarea>
             </div>
-            </p>
 
-            <p class="lead">Запуск компонента - это GET запрос на адрес /orponing_service/{id требуемого
-                компонента}/start
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 130px; width: 500px;">{
+            <p class="lead">Запуск компонента - это GET запрос на адрес /orponing_service/{id требуемого компонента}/start</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 130px; width: 800px;">{
     "message":"Мне недосуг",
     "status":"START",
     "dateStatus":"2021-02-01T04:43:49.423+00:00"
 }</textarea>
             </div>
-            </p>
 
-            <p class="lead">Получить лог сервиса - это POST запрос на адрес /log
-            <div class="form-floating">
-                В ответ будет получен полный лог за текущий день простым текстом
-            </div>
-            </p>
+            <p class="lead">Получить лог сервиса - это POST запрос на адрес /log<br>
+                <span class="mx-5">В ответ будет получен полный лог за текущий день простым текстом</span></p>
 
-            <p class="lead">Получить список фалов архива - это GET запрос на адрес /log/files
-            <div class="form-floating">
-                ["2021-02-10.0","2021-02-11.0","2021-02-13.0","2021-02-14.0"]
-            </div>
-            </p>
+            <p class="lead">Получить список фалов архива - это GET запрос на адрес /log/files<br>
+                <span class="mx-5">["2021-02-10.0","2021-02-11.0","2021-02-13.0","2021-02-14.0"]</span></p>
 
-            <p class="lead">Получить лог из архива - это GET запрос на адрес /log/read?file={имя требуемого файла}
-            <div class="form-floating">
-                В ответ будет получен полный лог из указанного файла
-            </div>
-            </p>
 
-            <p class="lead">Очистить архив логов - это GET запрос на адрес /log/clear?password={пароль от операции}
-            <div class="form-floating">
-                <textarea class="form-control p-1 mx-5" tabindex="В ответ получим:" style="height: 130px; width: 500px;">{
+            <p class="lead">Получить лог из архива - это GET запрос на адрес /log/read?file={имя требуемого файла}<br>
+                <span class="mx-5">В ответ будет получен полный лог из указанного файла</span></p>
+
+            <p class="lead">Очистить архив логов - это GET запрос на адрес /log/clear?password={пароль от операции}</p>
+            <div class="form-floating mx-5">
+                <textarea class="form-control p-1" tabindex="В ответ получим:" style="height: 130px; width: 800px;">{
     "message":"Я все завершил. Я КрасафчеГ!",
     "status":"COMPLETED",
     "dateStatus":"2021-02-01T04:43:49.423+00:00"
 }</textarea>
             </div>
-            </p>
-
         </div>
     </div>
     <script src="../js/common.js"></script>
