@@ -58,8 +58,17 @@ getElement("orponing-file").onclick = () => {
     hideElement("result-file");
     try {
         const reader = new FileReader();
-        reader.readAsText(file, "UTF-8");
-        reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
+        reader.readAsBinaryString(file);
+
+        reader.onload = function (e) {
+            try {
+                orponingFile(decodeURIComponent(escape(e.target.result)));
+            } catch {
+                const reader = new FileReader();
+                reader.readAsText(file, "windows-1251");
+                reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
+            }
+        }
     } catch (e) {
         notifyError(e);
         stopProcessing("div-form-file");
@@ -124,12 +133,19 @@ function checkTypeFile(file) {
 function convertStringToAddress(data) {
     list = [];
     if (data) {
-        data.split("\r\n").forEach(element => {
-            if (element) {
-                const a = element.split(";");
-                list.push({ Id: a[0], Address: a[1] });
+        const rows = data.split(/\r\n|\n/);
+
+        if (rows[0].split(";").length > 1) {
+            for (const row of rows) {
+                const items = row.split(";");
+                list.push({ Id: items[0], Address: items[1] });
             }
-        });
+        } else {
+            let index = 1;
+            for (const row of rows) {
+                list.push({ Id: index++, Address: row });
+            }
+        }
     }
 
     return list;

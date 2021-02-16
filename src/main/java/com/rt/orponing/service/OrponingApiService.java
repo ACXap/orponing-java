@@ -7,6 +7,8 @@ import com.rt.orponing.service.data.*;
 import com.rt.orponing.service.interfaces.IStatus;
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,7 @@ public class OrponingApiService implements IStatus {
     private final ExecutorService executor = new ThreadPoolExecutor(2, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(10));
     private final Map<UUID, Future<?>> mapFuture = new HashMap<>();
     private final Object lock = new Object();
+    private final Logger logger = LoggerFactory.getLogger(OrponingApiService.class);
     private Status status = Status.Stop(StatusMessage.STOP);
 
     //endregion PrivateField
@@ -46,12 +49,14 @@ public class OrponingApiService implements IStatus {
         mapFuture.put(uuid, executor.submit(() -> {
             try {
                 taskOrponing.startTask();
+                logger.info("Start task id: " + taskOrponing.getId() + "Count address: " + taskOrponing.getListAddressRequest().size());
 
                 List<AddressInfo> addressInfo = orponingService.orponingAddressList(taskOrponing.getListAddressRequest());
                 orponingService.setAddressById(addressInfo);
 
                 taskOrponing.setResult(addressInfo);
 
+                logger.info("Stop task id: " + taskOrponing.getId());
                 taskOrponing.stopTask();
             } catch (Exception e) {
                 taskOrponing.errorTask(e.getMessage());
