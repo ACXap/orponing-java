@@ -87,14 +87,13 @@ class OrponingServiceTest {
                 new AddressInfo(id_1, globalId_1, level_1, unparsed_1, "UNDEF_05", "VALIDATED"),
                 new AddressInfo(id_2, globalId_2, level_2, unparsed_2, "UNDEF_05", "VALIDATED"));
 
-        Mockito.when(soap.GetInfo(list))
-                .thenReturn(ai);
+        Mockito.doReturn(ai).when(soap).GetInfo(ArgumentMatchers.anyList());
 
         List<AddressInfo> response = service.orponingAddressList(list);
         AddressInfo addressInfo_1 = response.stream().filter(a -> a.Id == 1).findAny().get();
         AddressInfo addressInfo_2 = response.stream().filter(a -> a.Id == 2).findAny().get();
 
-        verify(soap, times(1)).GetInfo(list);
+        verify(soap, times(1)).GetInfo(ArgumentMatchers.anyList());
         verify(soap, times(0)).GetInfo(ArgumentMatchers.any(EntityAddress.class));
 
         assertEquals(id_1, addressInfo_1.Id);
