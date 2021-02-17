@@ -19,7 +19,7 @@ async function clearArchive() {
         if (result.status === "COMPLETED") {
             getElement("archive").innerHTML = "";
         } else {
-            alert(result.message);
+            notifyError(result.message);
         }
     }
 }
@@ -42,7 +42,6 @@ async function readLog(file) {
 function setActionButtonLog() {
     document.querySelectorAll("button.b-log").forEach(but => but.onclick = () => readLog(but.textContent));
 }
-
 
 loadLog();
 setActiveLink();

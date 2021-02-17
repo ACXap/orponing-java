@@ -37,14 +37,13 @@ getElement("orponing-address").onclick = async () => {
     } catch (e) {
         notifyError(e);
     } finally {
-        stopProcessing("div-form-address");
-        getElement("orponing-address").classList.remove("disabled");
+        stopProcessing("div-form-address", "orponing-address");
     }
 }
 
 getElement("orponing-file").onclick = () => {
     const file = getElement("formFile").files[0];
-    if (!checkTypeFile(file)) {
+    if (!isValidFile(file)) {
         if (!file) {
             alert("А кто файл то будет добавлять?");
         } else {
@@ -71,8 +70,7 @@ getElement("orponing-file").onclick = () => {
         }
     } catch (e) {
         notifyError(e);
-        stopProcessing("div-form-file");
-        getElement("orponing-file").classList.remove("disabled");
+        stopProcessing("div-form-file", "orponing-file");
     }
 }
 
@@ -118,16 +116,18 @@ function startProcessing(id, message) {
     getElement(id).insertAdjacentHTML('beforeend', proc);
 }
 
-function stopProcessing(id) {
+function stopProcessing(id, noDisabled) {
     const p = getElement(id).querySelector("div.processing");
 
     if (p) {
         p.remove();
     }
+
+    getElement(noDisabled).classList.remove("disabled");
 }
 
-function checkTypeFile(file) {
-    return !file || file.type === "text/plain" || (file.type === "application/vnd.ms-excel" && file.name.includes(".csv"));
+function isValidFile(file) {
+    return file && (file.type === "text/plain" || (file.type === "application/vnd.ms-excel" && file.name.includes(".csv")));
 }
 
 function convertStringToAddress(data) {
@@ -177,10 +177,7 @@ function getDownloadFile() {
 
 async function requestTask(id) {
     try {
-        console.log("get status task id = " + idTask);
-
         let result = await apiGetStatusTask(idTask);
-        console.log(result);
 
         if (result.status === "COMPLETED") {
 
@@ -192,15 +189,13 @@ async function requestTask(id) {
             displayElement("result-file");
             getElement("result-file").appendChild(downloadFile);
 
-            stopProcessing("div-form-file");
-            getElement("orponing-file").classList.remove("disabled");
+            stopProcessing("div-form-file", "orponing-file");
         } else {
-            timerId = setTimeout(() => requestTask(id), 2000);
+            timerId = setTimeout(() => requestTask(id), 5000);
         }
     } catch (e) {
         notifyError(e);
-        stopProcessing("div-form-file");
-        getElement("orponing-file").classList.remove("disabled");
+        stopProcessing("div-form-file", "orponing-file");
     }
 }
 
@@ -215,7 +210,6 @@ async function orponingFile(data) {
         notifyError(e);
         list = [];
 
-        stopProcessing("div-form-file");
-        getElement("orponing-file").classList.remove("disabled");
+        stopProcessing("div-form-file", "orponing-file");
     }
 }

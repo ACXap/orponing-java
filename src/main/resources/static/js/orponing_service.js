@@ -39,6 +39,7 @@ function getColor(status) {
     if (status === "START") return "green";
     if (status === "ERROR") return "red";
     if (status === "STOP") return "black";
+    if (status === "NO_CONNECT") return "blue";
 }
 
 function addStartButton(idService) {
@@ -55,27 +56,26 @@ async function loadStatus(idService) {
 }
 
 async function updateStatus(idService, getStatus) {
-    const divMain = getElement(idService);
-    const iconService = divMain.querySelectorAll("i")[1];
+    const iconService = getElement(idService).querySelectorAll("i")[1];
     iconService.classList.add("fa-spin");
 
     try {
         const status = await getStatus();
-
-        divMain.querySelectorAll("span")[0].title = status.status;
-        divMain.querySelectorAll("span")[0].textContent = status.message;
-        divMain.querySelectorAll("span")[1].textContent = new Date(status.dateStatus);
-        divMain.querySelectorAll("i")[0].style = `color:${getColor(status.status)}`;
+        setStatus(idService, status.status, status.message, status.dateStatus)
     } catch (e) {
         notifyError(e);
-
-        divMain.querySelectorAll("span")[0].title = "Нет связи со службой тестирования";
-        divMain.querySelectorAll("span")[0].textContent = "Нет соединения";
-        divMain.querySelectorAll("span")[1].textContent = "";
-        divMain.querySelectorAll("i")[0].style = "color:blue";
+        setStatus(idService, "NO_CONNECT", "Нет связи со службой тестирования", new Date);
     } finally {
         iconService.classList.remove("fa-spin");
     }
+}
+
+function setStatus(idService, status, message, date) {
+    const divMain = getElement(idService);
+    divMain.querySelectorAll("span")[0].title = status;
+    divMain.querySelectorAll("span")[0].textContent = message;
+    divMain.querySelectorAll("span")[1].textContent = new Date(date);
+    divMain.querySelectorAll("i")[0].style = `color:${getColor(status)}`;
 }
 
 init();

@@ -12,6 +12,7 @@
 
 <body>
     <header th:insert="../block/nav.html :: nav"></header>
+
     <div class="container py-5">
         <div class="row py-5 text-center">
             <h2>События у сервиса орпонизации</h2>
@@ -23,18 +24,17 @@
                     <textarea class="form-control p-2" id="floatingTextarea" style="height: 600px;"></textarea>
                 </div>
 
+                <div class="col-sm-2 px-1 border d-flex flex-column" style="height: 600px;">
+                    <div class="d-flex justify-content-center pt-2">
+                        <h3>Архив</h3>
+                    </div>
+                    <div class="overflow-auto text-center" style="max-height: 470px;">
+                        <button th:each="log : ${archive}" class="b-log btn btn-primary p-2 m-2" type="button" th:text="${log}"></button>
+                    </div>
 
-                    <div class="col-sm-2 px-1 border d-flex flex-column" style="height: 600px;">
-                        <div class="d-flex justify-content-center pt-2">
-                            <h3>Архив</h3>
-                        </div>
-                        <div class="overflow-auto text-center" style="max-height: 470px;">
-                            <button th:each="log : ${archive}" class="b-log btn btn-primary p-2 m-2" type="button" th:text="${log}"></button>
-                        </div>
-
-                        <div class="mt-auto mx-auto p-2">
-                            <button class="btn btn-primary" id="clearArchive" type="button">Очистить архив</button>
-                        </div>
+                    <div class="mt-auto mx-auto p-2">
+                        <button class="btn btn-primary" id="clearArchive" type="button">Очистить архив</button>
+                    </div>
                 </div>
             </div>
         </div>
