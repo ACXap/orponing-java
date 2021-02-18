@@ -1,17 +1,17 @@
-list = [];
+listAddressOfFile = [];
+listAddressOfClipboard = [];
 
 getElement("orponing-address").onclick = async () => {
     try {
         const address = getElement("input-address").value;
 
         if (address) {
-            disableElement("orponing-address");
             startProcessing("div-form-address", "Обработка запроса...");
 
             const json = await apiOrponingAddress(address);
 
             if (json) {
-                displayElement("result");
+                displayElement("result-address");
                 getElement("errorInfo").hidden = json.IsValid;
                 getElement("gidInfo").hidden = !json.IsValid;
                 getElement("addressInfo").hidden = !json.IsValid;
@@ -37,7 +37,7 @@ getElement("orponing-address").onclick = async () => {
     } catch (e) {
         notifyError(e);
     } finally {
-        stopProcessing("div-form-address", "orponing-address");
+        stopProcessing("div-form-address");
     }
 }
 
@@ -52,78 +52,81 @@ getElement("orponing-file").onclick = () => {
         return;
     }
 
-    disableElement("orponing-file");
     startProcessing("div-form-file", "Обработка запроса...");
     hideElement("result-file");
+
+    readFileUtfEncoding(file);
+}
+
+getElement("orponing-clipboard").onclick = () => {
+    if (!listAddressOfClipboard || listAddressOfClipboard.length == 0) return;
+
+    startProcessing("div-form-clipboard", "Обработка запроса...");
+    hideElement("result-clipboard");
+
+    orponingListAddress(listAddressOfClipboard, "div-form-clipboard");
+}
+
+getElement("formClipboard").onclick = async () => {
+    try {
+        if (navigator.clipboard) {
+            const data = await navigator.clipboard.readText();
+            listAddressOfClipboard = convertStringToAddress(data);
+            getElement("div-form-clipboard>div.count-address").textContent = "Всего записей: " + list.length;
+        }
+    } catch (e) {
+        getElement("div-form-clipboard>div.count-address").textContent = "Всего записей: 0";
+        notifyError(e);
+    }
+}
+
+getElement("input-address").addEventListener("keyup", e => {
+    if (e.keyCode != 13) return;
+    e.preventDefault();
+    getElement("orponing-address").click();
+})
+
+function readFileUtfEncoding(file) {
     try {
         const reader = new FileReader();
         reader.readAsBinaryString(file);
 
         reader.onload = function (e) {
+
+            let data = "";
+
             try {
-                orponingFile(decodeURIComponent(escape(e.target.result)));
-            } catch {
-                const reader = new FileReader();
-                reader.readAsText(file, "windows-1251");
-                reader.onload = readerEvent => { orponingFile(readerEvent.target.result); }
+                data = decodeURIComponent(escape(e.target.result));
+            } catch (error) {
+                readFileOtherEncoding(file);
+                return;
             }
+
+            orponingFileData(data);
         }
     } catch (e) {
-        notifyError(e);
-        stopProcessing("div-form-file", "orponing-file");
+        stopError(e, "div-form-file");
     }
 }
 
-getElement("tab-orponing-address").onclick = async () => {
-    displayElement("div-form-address");
-    hideElement("div-form-file");
-
-    hideElement("result-file");
-    if (getElement("gid").value) {
-        displayElement("result");
+function readFileOtherEncoding(file) {
+    try {
+        const reader = new FileReader();
+        reader.readAsText(file, "windows-1251");
+        reader.onload = readerEvent => orponingFileData(readerEvent.target.result);
+    } catch (e) {
+        stopError(e, "div-form-file");
     }
 }
 
-getElement("tab-orponing-file").onclick = async () => {
-    hideElement("div-form-address");
-    displayElement("div-form-file");
+function orponingFileData(data) {
+    listAddressOfFile.length = 0;
+    listAddressOfFile = convertStringToAddress(data);
+    getElement("div-form-file>div.count-address").textContent = "Всего записей: " + listAddressOfFile.length;
 
-    hideElement("result");
-    if (list.length > 0) {
-        displayElement("result-file");
+    if (listAddressOfFile.length > 0) {
+        orponingListAddress(listAddressOfFile, "div-form-file");
     }
-}
-
-getElement("input-address").addEventListener("keyup", (event) => {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        getElement("orponing-address").click();
-    }
-})
-
-function startProcessing(id, message) {
-    const p = getElement(id).querySelector("div.processing");
-
-    if (p) return;
-
-    const proc = `<div class="processing row py-2 text-center">
-                    <div class="container">
-                        <h5>${message}</h5>
-                        <div class="spinner-grow text-primary" role="status"></div>
-                    </div>
-                </div>`;
-
-    getElement(id).insertAdjacentHTML('beforeend', proc);
-}
-
-function stopProcessing(id, noDisabled) {
-    const p = getElement(id).querySelector("div.processing");
-
-    if (p) {
-        p.remove();
-    }
-
-    getElement(noDisabled).classList.remove("disabled");
 }
 
 function isValidFile(file) {
@@ -132,23 +135,28 @@ function isValidFile(file) {
 
 function convertStringToAddress(data) {
     list = [];
-    if (data) {
-        const rows = data.split(/\r\n|\n/);
 
-        if (rows[0].split(";").length > 1) {
-            for (const row of rows) {
-                const items = row.split(";");
-                list.push({ Id: items[0], Address: items[1] });
-            }
-        } else {
-            let index = 1;
-            for (const row of rows) {
-                list.push({ Id: index++, Address: row });
+    try {
+        if (data) {
+            const rows = data.split(/\r\n|\n/);
+
+            if (rows[0].split(";").length > 1) {
+                for (const row of rows) {
+                    const items = row.split(";");
+                    list.push({ Id: items[0], Address: items[1] });
+                }
+            } else {
+                let index = 1;
+                for (const row of rows) {
+                    list.push({ Id: index++, Address: row });
+                }
             }
         }
+    } catch (e) {
+        notifyError(e);
+    } finally {
+        return list;
     }
-
-    return list;
 }
 
 function convertAddressInfoToString(addressInfo) {
@@ -158,7 +166,7 @@ function convertAddressInfoToString(addressInfo) {
     data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
 
     addressInfo.forEach(el => {
-        data.push(`${el.Id};${list.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
+        data.push(`${el.Id};${listAddressOfFile.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
     });
 
     dataForSave += encodeURIComponent(data.join("\r\n"));
@@ -166,50 +174,28 @@ function convertAddressInfoToString(addressInfo) {
     return dataForSave;
 }
 
-function getDownloadFile() {
-    const downloadFile = document.createElement("a");
-    downloadFile.className = "btn btn-primary";
-    downloadFile.download = `load.csv`;
-    downloadFile.textContent = "Скачать";
-
-    return downloadFile;
+async function orponingListAddress(list, idForm) {
+    try {
+        idTask = await apiOrponingListAddress(list);
+        setTimeout(() => requestTask(idTask, idForm), 2000);
+    } catch (e) {
+        stopError(e, idForm);
+    }
 }
 
-async function requestTask(id) {
+async function requestTask(idTask, idForm) {
     try {
         let result = await apiGetStatusTask(idTask);
 
         if (result.status === "COMPLETED") {
 
             result = await apiGetResultTask(idTask);
-            const downloadFile = getDownloadFile();
-            downloadFile.href = convertAddressInfoToString(result);
-            removeElement("result-file>a");
-
-            displayElement("result-file");
-            getElement("result-file").appendChild(downloadFile);
-
-            stopProcessing("div-form-file", "orponing-file");
+            addDownLoadLink(idForm, convertAddressInfoToString(result));
+            stopProcessing(idForm);
         } else {
-            timerId = setTimeout(() => requestTask(id), 5000);
+            timerId = setTimeout(() => requestTask(idTask), 5000);
         }
     } catch (e) {
-        notifyError(e);
-        stopProcessing("div-form-file", "orponing-file");
-    }
-}
-
-async function orponingFile(data) {
-    try {
-        list = convertStringToAddress(data);
-
-        idTask = await apiOrponingListAddress(list);
-
-        setTimeout(() => requestTask(idTask), 2000);
-    } catch (e) {
-        notifyError(e);
-        list = [];
-
-        stopProcessing("div-form-file", "orponing-file");
+        stopError(e, idForm);
     }
 }

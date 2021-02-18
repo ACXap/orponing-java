@@ -23,13 +23,15 @@
                     <div class="tab-panel-tabs p-2">
                         <button class="btn btn-primary" id="tab-orponing-address">Адрес</button>
                         <button class="btn btn-primary" id="tab-orponing-file">Файл</button>
+                        <button class="btn btn-primary" id="tab-orponing-clipboard">Буфер обмена</button>
                     </div>
-                    <div id="div-form-address">
+                    <div id="div-form-address" hidden>
                         <div class="input-group p-2">
                             <input type="text" class="form-control" placeholder="Адрес" id="input-address">
-                            <button class="btn btn-primary" type="button" id="orponing-address">Орпонизируй меня полностью</button>
+                            <button class="btn btn-primary start" type="button" id="orponing-address">Орпонизируй меня
+                                полностью</button>
                         </div>
-                        <div class="container border p-3 mt-2" id="result" hidden>
+                        <div class="container border p-3 mt-2 result" id="result-address" hidden>
                             <div class="row">
                                 <div class="text-center">
                                     <h3 id="headerInfoAddress">Адрес разобран</h3>
@@ -72,21 +74,34 @@
                             </div>
                         </div>
                     </div>
-                    <div id="div-form-file" hidden>
+                    <div id="div-form-file">
                         <div class="input-group p-2">
                             <input class="form-control" type="file" id="formFile">
-                            <button class="btn btn-primary" type="button" id="orponing-file">Орпонизируй меня полностью</button>
+                            <button class="btn btn-primary start" type="button" id="orponing-file">Орпонизируй меня
+                                полностью</button>
                         </div>
-                        <div class="container border text-center p-3 mt-2" id="result-file" hidden></div>
+                        <div class="count-address px-2">Всего записей: 0</div>
+                        <div class="container border text-center p-3 mt-2 result" id="result-file" hidden></div>
+                    </div>
+                    <div id="div-form-clipboard" hidden>
+                        <div class="d-flex p-2">
+                            <button class="btn btn-primary" type="button" id="formClipboard">Вставить из буфера
+                                обмена</button>
+                            <button class="btn btn-primary ms-auto start" type="button"
+                                id="orponing-clipboard">Орпонизируй меня полностью</button>
+                        </div>
+                        <div class="count-address px-2">Всего записей: 0</div>
+                        <div class="container border text-center p-3 mt-2 result" id="result-clipboard" hidden></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="../js/common.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/main.js"></script>
+    <script src="../static/js/common.js"></script>
+    <script src="../static/js/api.js"></script>
+    <script src="../static/js/main.js"></script>
+    <script src="../static/js/main_view.js"></script>
 </body>
 
 </html>

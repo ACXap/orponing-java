@@ -59,23 +59,19 @@ async function apiGetResultTask(id) {
 }
 
 async function _getJson(response) {
-    const result = await response.json();
-
     if (response.status == 200) {
-        return result;
+        return await response.json();
     }
 
-    throw new Error(result.message);
+    throw new Error(response.statusText);
 }
 
 async function _getText(response) {
-    const result = await response.text();
-
     if (response.status == 200) {
-        return result;
+        return await response.text();
     }
 
-    throw new Error(result);
+    throw new Error(response.statusText);
 }
 
 function _getHeadersPost() {
