@@ -29,6 +29,10 @@ function disableElement(id) {
     getElement(id).classList.add("disabled");
 }
 
+function enableElement(id) {
+    getElement(id).classList.remove("disabled");
+}
+
 function notifyError(e) {
     console.error(e);
     alert(e);

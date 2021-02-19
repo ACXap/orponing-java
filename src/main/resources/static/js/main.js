@@ -1,151 +1,86 @@
 listAddressOfFile = [];
 listAddressOfClipboard = [];
 
-getElement("orponing-address").onclick = async () => {
-    try {
-        const address = getElement("input-address").value;
-
-        if (address) {
-            startProcessing("div-form-address", "Обработка запроса...");
-
-            const json = await apiOrponingAddress(address);
-
-            if (json) {
-                displayElement("result-address");
-                getElement("errorInfo").hidden = json.IsValid;
-                getElement("gidInfo").hidden = !json.IsValid;
-                getElement("addressInfo").hidden = !json.IsValid;
-
-                getElement("gid").value = json.GlobalId;
-                getElement("addressOrpon").value = json.AddressOrpon;
-                getElement("parsingLevelCode").value = json.ParsingLevelCode;
-                getElement("unparsedParts").value = json.UnparsedParts;
-                getElement("qualityCode").value = json.QualityCode;
-                getElement("checkStatus").value = json.CheckStatus;
-                getElement("error").value = json.Error;
-
-                header = getElement("headerInfoAddress");
-                if (json.IsValid) {
-                    header.textContent = "Адрес разобран";
-                    header.style = "color:green";
-                } else {
-                    header.textContent = "Адрес разобран c ошибками";
-                    header.style = "color:red";
-                }
-            }
-        }
-    } catch (e) {
-        notifyError(e);
-    } finally {
-        stopProcessing("div-form-address");
-    }
+async function orponingAddress(address) {
+    const json = await apiOrponingAddress(address);
+    return json;
 }
 
-getElement("orponing-file").onclick = () => {
-    // const file = getElement("formFile").files[0];
-    // if (!isValidFile(file)) {
-    //     if (!file) {
-    //         alert("А кто файл то будет добавлять?");
-    //     } else {
-    //         alert("Неверный тип файла. Допускается только *.txt и *.csv");
-    //     }
-    //     return;
-    // }
-
-    if (listAddressOfFile.length > 0) {
-        startProcessing("div-form-file", "Обработка запроса...");
-        hideElement("result-file");
-        orponingListAddress(listAddressOfFile, "div-form-file");
-    }
-
-
-
-
-
-
-}
-
-getElement("orponing-clipboard").onclick = () => {
-    if (!listAddressOfClipboard || listAddressOfClipboard.length == 0) return;
-
-    startProcessing("div-form-clipboard", "Обработка запроса...");
-    hideElement("result-clipboard");
-
-    orponingListAddress(listAddressOfClipboard, "div-form-clipboard");
-}
-
-getElement("formClipboard").onclick = async () => {
-    try {
-        if (navigator.clipboard) {
-            const data = await navigator.clipboard.readText();
-            listAddressOfClipboard = convertStringToAddress(data);
-            getElement("div-form-clipboard>div.count-address").textContent = "Всего записей: " + list.length;
-        }
-    } catch (e) {
-        getElement("div-form-clipboard>div.count-address").textContent = "Всего записей: 0";
-        notifyError(e);
-    }
-}
-
-getElement("input-address").addEventListener("keyup", e => {
-    if (e.keyCode != 13) return;
-    e.preventDefault();
-    getElement("orponing-address").click();
-});
-
-getElement("formFile").onchange = (e) => {
-    const file = getElement("formFile").files[0];
-    if (!isValidFile(file)) {
-        if (!file) {
-            alert("А кто файл то будет добавлять?");
-        } else {
-            alert("Неверный тип файла. Допускается только *.txt и *.csv");
-        }
-        listAddressOfFile.length = 0;
-        getElement("div-form-file>div.count-address").textContent = "Всего записей: 0";
+async function orponingFile(callBack) {
+    if (!listAddressOfFile || listAddressOfFile.length === 0) {
+        callBack();
         return;
     }
 
-    readFileUtfEncoding(file);
-};
+    orponingListAddress(listAddressOfFile, callBack);
+}
 
-function readFileUtfEncoding(file) {
+async function orponingClipboard(callBack) {
+    if (!listAddressOfClipboard || listAddressOfClipboard.length === 0) {
+        callBack();
+        return;
+    }
+
+    orponingListAddress(listAddressOfClipboard, callBack);
+}
+
+function initListAddressOfClipboard(data) {
+    try {
+        listAddressOfClipboard = convertStringToAddress(data);
+        return { count: listAddressOfClipboard.length, error: null };
+    } catch (e) {
+        listAddressOfClipboard.length = 0;
+        return { count: 0, error: e };
+    }
+}
+
+function initListAddressOfFile(file, callBack) {
+    if (!isValidFile(file)) {
+        const message = !file ? "А кто файл то будет добавлять?" : "Неверный тип файла. Допускается только *.txt и *.csv";
+        callBack({ count: 0, error: message })
+        return;
+    }
+
+    readFileUtfEncoding(file, callBack);
+}
+
+function readFileUtfEncoding(file, callBack) {
     try {
         const reader = new FileReader();
         reader.readAsBinaryString(file);
 
         reader.onload = function (e) {
-
-            let data = "";
-
             try {
-                data = decodeURIComponent(escape(e.target.result));
+                const data = decodeURIComponent(escape(e.target.result));
+                convertFileDataToAddress(data, callBack);
             } catch (error) {
-                readFileOtherEncoding(file);
+                readFileOtherEncoding(file, callBack);
                 return;
             }
-
-            convertFileDataToAddress(data);
         }
     } catch (e) {
-        stopError(e, "div-form-file");
+        callBack({ count: 0, error: e });
     }
 }
 
-function readFileOtherEncoding(file) {
+function readFileOtherEncoding(file, callBack) {
     try {
         const reader = new FileReader();
         reader.readAsText(file, "windows-1251");
-        reader.onload = readerEvent => convertFileDataToAddress(readerEvent.target.result);
+        reader.onload = readerEvent => convertFileDataToAddress(readerEvent.target.result, callBack);
     } catch (e) {
-        stopError(e, "div-form-file");
+        callBack({ count: 0, error: e });
     }
 }
 
-function convertFileDataToAddress(data) {
-    listAddressOfFile.length = 0;
-    listAddressOfFile = convertStringToAddress(data);
-    getElement("div-form-file>div.count-address").textContent = "Всего записей: " + listAddressOfFile.length;
+function convertFileDataToAddress(data, callBack) {
+    try {
+        listAddressOfFile = convertStringToAddress(data);
+        callBack({ count: listAddressOfClipboard.length, error: null });
+    } catch (e) {
+        listAddressOfFile.length = 0;
+        callBack({ count: 0, error: e });
+    }
 }
 
 function isValidFile(file) {
@@ -155,27 +90,23 @@ function isValidFile(file) {
 function convertStringToAddress(data) {
     list = [];
 
-    try {
-        if (data) {
-            const rows = data.split(/\r\n|\n/);
+    if (data) {
+        const rows = data.split(/\r\n|\n/);
 
-            if (rows[0].split(";").length > 1) {
-                for (const row of rows) {
-                    const items = row.split(";");
-                    list.push({ Id: items[0], Address: items[1] });
-                }
-            } else {
-                let index = 1;
-                for (const row of rows) {
-                    list.push({ Id: index++, Address: row });
-                }
+        if (rows[0].split(";").length > 1) {
+            for (const row of rows) {
+                const items = row.split(";");
+                list.push({ Id: items[0], Address: items[1] });
+            }
+        } else {
+            let index = 1;
+            for (const row of rows) {
+                list.push({ Id: index++, Address: row });
             }
         }
-    } catch (e) {
-        notifyError(e);
-    } finally {
-        return list;
     }
+
+    return list;
 }
 
 function convertAddressInfoToString(addressInfo) {
@@ -193,28 +124,26 @@ function convertAddressInfoToString(addressInfo) {
     return dataForSave;
 }
 
-async function orponingListAddress(list, idForm) {
+async function orponingListAddress(list, callBack) {
     try {
         idTask = await apiOrponingListAddress(list);
-        setTimeout(() => requestTask(idTask, idForm), 2000);
+        setTimeout(() => requestTask(idTask, callBack), 2000);
     } catch (e) {
-        stopError(e, idForm);
+        callBack("", e);
     }
 }
 
-async function requestTask(idTask, idForm) {
+async function requestTask(idTask, callBack) {
     try {
         let result = await apiGetStatusTask(idTask);
 
         if (result.status === "COMPLETED") {
-
             result = await apiGetResultTask(idTask);
-            addDownLoadLink(idForm, convertAddressInfoToString(result));
-            stopProcessing(idForm);
+            callBack(convertAddressInfoToString(result));
         } else {
-            timerId = setTimeout(() => requestTask(idTask, idForm), 5000);
+            timerId = setTimeout(() => requestTask(idTask, callBack), 5000);
         }
     } catch (e) {
-        stopError(e, idForm);
+        callBack("", e);
     }
 }

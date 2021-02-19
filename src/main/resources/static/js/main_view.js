@@ -1,20 +1,136 @@
-getElement("tab-orponing-address").onclick = openTabAddress;
-getElement("tab-orponing-file").onclick = openTabFile;
-getElement("tab-orponing-clipboard").onclick = openTabClip;
-openLasTab();
+//#region const
+TAB_ADDRESS = "tab-orponing-address";
+FORM_ADDRESS = "div-form-address";
+RESULT_ADDRESS = "result-address";
+ORPONING_ADDRESS = "orponing-address";
+INPUT_ADDRESS = "input-address";
 
-function openLasTab() {
+TAB_FILE = "tab-orponing-file";
+FORM_FILE = "div-form-file";
+RESULT_FILE = "result-file";
+ORPONING_FILE = "orponing-file";
+INPUT_FILE = "input-file";
+
+TAB_CLIPBOARD = "tab-orponing-clipboard";
+FORM_CLIPBOARD = "div-form-clipboard";
+RESULT_CLIPBOARD = "result-clipboard";
+ORPONING_CLIPBOARD = "orponing-clipboard";
+INPUT_CLIPBOARD = "input-clipboard";
+//#endregion
+
+getElement(TAB_ADDRESS).onclick = openTabAddress;
+getElement(TAB_FILE).onclick = openTabFile;
+getElement(TAB_CLIPBOARD).onclick = openTabClip;
+openLastTab();
+
+getElement(INPUT_ADDRESS).addEventListener("keyup", e => {
+    if (e.keyCode != 13) return;
+    e.preventDefault();
+    getElement(ORPONING_ADDRESS).click();
+});
+
+getElement(INPUT_CLIPBOARD).onclick = async () => {
+    if (navigator.clipboard) {
+        const data = await navigator.clipboard.readText();
+
+        const result = initListAddressOfClipboard(data);
+        if (result.error) notifyError(result.error);
+        getElement(FORM_CLIPBOARD + ">div.count-address").textContent = "Всего записей: " + result.count;
+    }
+}
+
+getElement(INPUT_FILE).onchange = (e) => {
+    const file = e.currentTarget.files[0];
+
+    initListAddressOfFile(file, (result) => {
+        if (result.error) notifyError(error);
+        getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
+    });
+}
+
+getElement(ORPONING_ADDRESS).onclick = async () => {
+    try {
+        const address = getElement(INPUT_ADDRESS).value;
+
+        if (address) {
+            startProcessing(FORM_ADDRESS, "Обработка запроса...");
+
+            const json = await orponingAddress(address);
+
+            if (json) {
+                displayElement(RESULT_ADDRESS);
+                getElement("errorInfo").hidden = json.IsValid;
+                getElement("gidInfo").hidden = !json.IsValid;
+                getElement("addressInfo").hidden = !json.IsValid;
+
+                getElement("gid").value = json.GlobalId;
+                getElement("addressOrpon").value = json.AddressOrpon;
+                getElement("parsingLevelCode").value = json.ParsingLevelCode;
+                getElement("unparsedParts").value = json.UnparsedParts;
+                getElement("qualityCode").value = json.QualityCode;
+                getElement("checkStatus").value = json.CheckStatus;
+                getElement("error").value = json.Error;
+
+                header = getElement("headerInfoAddress");
+                if (json.IsValid) {
+                    header.textContent = "Адрес разобран";
+                    header.style = "color:green";
+                } else {
+                    header.textContent = "Адрес разобран c ошибками";
+                    header.style = "color:red";
+                }
+            } else {
+                hideElement(RESULT_ADDRESS);
+            }
+        }
+    } catch (e) {
+        notifyError(e);
+    } finally {
+        stopProcessing(FORM_ADDRESS);
+    }
+}
+
+getElement(ORPONING_FILE).onclick = () => {
+    startProcessing(FORM_FILE, "Обработка запроса...");
+    hideElement(RESULT_FILE);
+
+    orponingFile((data, error) => {
+        if (data) {
+            addDownLoadLink(FORM_FILE, data);
+        } else if (error) {
+            notifyError(error);
+        }
+
+        stopProcessing(FORM_FILE);
+    });
+}
+
+getElement(ORPONING_CLIPBOARD).onclick = () => {
+    startProcessing(FORM_CLIPBOARD, "Обработка запроса...");
+    hideElement(RESULT_CLIPBOARD);
+
+    orponingClipboard((data, error) => {
+        if (data) {
+            addDownLoadLink(FORM_CLIPBOARD, data);
+        } else if (error) {
+            notifyError(error);
+        }
+
+        stopProcessing(FORM_CLIPBOARD);
+    });
+}
+
+function openLastTab() {
     const lastTab = window.localStorage.getItem("lastTabName");
     if (lastTab) {
         getElement(lastTab).click();
     } else {
-        getElement("tab-orponing-address").click();
+        getElement(TAB_ADDRESS).click();
     }
 }
 
 function startProcessing(id, message) {
-    const p = getElement(id).querySelector("div.processing");
-
+    const p = getElement(id + ">div.processing");
     if (p) return;
 
     const proc = `<div class="processing row py-2 text-center">
@@ -25,19 +141,14 @@ function startProcessing(id, message) {
                 </div>`;
 
     getElement(id).insertAdjacentHTML("beforeend", proc);
-    getElement(id + ">div>button.start").classList.add("disabled");
+    disableElement(id + ">div>button.start");
 }
 
 function stopProcessing(id) {
-    const p = getElement(id).querySelector("div.processing");
+    const p = getElement(id + ">div.processing");
 
-    if (p) {
-        p.remove();
-    }
-
-    const a = getElement(id + ">div>button.start");
-
-    getElement(id + ">div>button.start").classList.remove("disabled");
+    if (p) p.remove();
+    enableElement(id + ">div>button.start");
 }
 
 function getDownloadFile() {
@@ -60,54 +171,33 @@ function addDownLoadLink(idForm, data) {
 }
 
 function openTabAddress() {
-    window.localStorage.setItem("lastTabName", "tab-orponing-address");
-    displayElement("div-form-address");
-    if (getElement("gid").value) {
-        displayElement("result-address");
-    }
+    window.localStorage.setItem("lastTabName", TAB_ADDRESS);
+    displayElement(FORM_ADDRESS);
+    if (getElement("gid").value) displayElement(RESULT_ADDRESS);
 
-    closeTabFile();
-    closeTabClip();
+    closeTab(FORM_FILE);
+    closeTab(FORM_CLIPBOARD);
 }
 
 function openTabFile() {
-    window.localStorage.setItem("lastTabName", "tab-orponing-file");
-    displayElement("div-form-file");
-    if (listAddressOfFile.length > 0) {
-        displayElement("result-file");
-    }
+    window.localStorage.setItem("lastTabName", TAB_FILE);
+    displayElement(FORM_FILE);
+    if (listAddressOfFile.length > 0) displayElement(RESULT_FILE);
 
-    closeTabAddress();
-    closeTabClip();
+    closeTab(FORM_ADDRESS);
+    closeTab(FORM_CLIPBOARD);
 }
 
 function openTabClip() {
-    window.localStorage.setItem("lastTabName", "tab-orponing-clipboard");
-    displayElement("div-form-clipboard");
-    if (listAddressOfClipboard.length > 0) {
-        displayElement("result-clipboard");
-    }
+    window.localStorage.setItem("lastTabName", TAB_CLIPBOARD);
+    displayElement(FORM_CLIPBOARD);
+    if (listAddressOfClipboard.length > 0) displayElement(RESULT_CLIPBOARD);
 
-    closeTabAddress();
-    closeTabFile();
+    closeTab(FORM_ADDRESS);
+    closeTab(FORM_FILE);
 }
 
-function closeTabAddress() {
-    hideElement("div-form-address");
-    hideElement("result-address");
-}
-
-function closeTabFile() {
-    hideElement("div-form-file");
-    hideElement("result-file");
-}
-
-function closeTabClip() {
-    hideElement("div-form-clipboard");
-    hideElement("result-clipboard");
-}
-
-function stopError(error, idForm) {
-    notifyError(error);
-    stopProcessing(idForm);
+function closeTab(formName) {
+    hideElement(formName);
+    hideElement(formName + ">div.result");
 }
