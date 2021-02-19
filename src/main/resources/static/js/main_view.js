@@ -33,7 +33,12 @@ getElement(INPUT_CLIPBOARD).onclick = async () => {
 
         if (data) {
             const result = initListAddressOfClipboard(data);
-            if (result.error) notifyError(result.error);
+            if (result.error) {
+                notifyError(result.error);
+            } else {
+                setPreview(FORM_CLIPBOARD, result.previewList);
+            }
+
             getElement(FORM_CLIPBOARD + ">div.count-address").textContent = "Всего записей: " + result.count;
         } else {
             notifyError("В буфере обмена нет подходящих данных");
@@ -48,6 +53,8 @@ getElement(INPUT_FILE).onchange = (e) => {
         if (result.error) {
             notifyError(result.error);
             getElement(INPUT_FILE).value = "";
+        } else {
+            setPreview(FORM_FILE, result.previewList);
         }
         getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
     });
@@ -117,9 +124,22 @@ getElement(FORM_FILE).ondrop = (e) => {
             getElement(INPUT_FILE).files = files;
         }
 
+        setPreview(FORM_FILE, result.previewList);
         getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
     });
 };
+
+function setPreview(idForm, result) {
+    removeElement(idForm + ">div.preview");
+    if (result) {
+        const header = getHeaderPreview();
+        getElement(idForm).insertAdjacentHTML("beforeend", header);
+        for (const address of result) {
+            const row = getRowPreview(address.Id, address.Address);
+            getElement(idForm + ">div.preview>div").insertAdjacentHTML("beforeend", row);
+        }
+    }
+}
 
 function orponingData(idForm, execute) {
     startProcessing(idForm, "Обработка запроса...");
@@ -218,6 +238,30 @@ function openTabClip() {
 function closeTab(formName) {
     hideElement(formName);
     hideElement(formName + ">div.result");
+}
+
+function getRowPreview(id, address) {
+
+    const result = parseInt(id);
+
+    let color = "";
+    let title = "";
+
+    if (!result) {
+        color = "bg-danger";
+        title = "Идентификатор должен быть числом";
+    }
+
+    return `<div class="row border"><div class="col-2 border-end ${color}" title="${title}">${id}</div><div class="col-10">${address}</div></div>`;
+}
+
+function getHeaderPreview() {
+    return `<div class="preview">
+    <h5 class="text-center">Предварительный обзор данных для обработки (первые 10 записей)</h5>
+    <div class="container">
+        <div class="row border"><div class="col-2 border-end">Идентификатор</div><div class="col-10">Адрес</div></div>
+    </div>
+</div>`;
 }
 
 openLastTab();

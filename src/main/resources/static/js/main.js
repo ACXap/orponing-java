@@ -27,7 +27,7 @@ async function orponingClipboard(callBack) {
 function initListAddressOfClipboard(data) {
     try {
         listAddressOfClipboard = convertStringToAddress(data);
-        return { count: listAddressOfClipboard.length, error: null };
+        return { count: listAddressOfClipboard.length, error: null, previewList: listAddressOfClipboard.slice(0, 9) };
     } catch (e) {
         listAddressOfClipboard.length = 0;
         return { count: 0, error: e };
@@ -76,7 +76,7 @@ function readFileOtherEncoding(file, callBack) {
 function convertFileDataToAddress(data, callBack) {
     try {
         listAddressOfFile = convertStringToAddress(data);
-        callBack({ count: listAddressOfFile.length, error: null });
+        callBack({ count: listAddressOfFile.length, error: null, previewList: listAddressOfFile.slice(0, 10) });
     } catch (e) {
         listAddressOfFile.length = 0;
         callBack({ count: 0, error: e });
