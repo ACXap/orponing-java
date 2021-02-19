@@ -1,3 +1,11 @@
+server.ssl.key-store-type=PKCS12
+server.ssl.key-store=classpath:keystore/keystore.p12
+server.ssl.key-store-password=test
+server.ssl.key-alias=tomcat
+server.ssl.enabled=true
+trust.store=classpath:keystore/keystore.p12
+trust.store.password=test
+
 server.compression.enabled=true
 server.compression.mime-types=text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
 server.compression.min-response-size=1024
