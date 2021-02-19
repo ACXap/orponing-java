@@ -182,7 +182,9 @@ function openTabAddress() {
 function openTabFile() {
     window.localStorage.setItem("lastTabName", TAB_FILE);
     displayElement(FORM_FILE);
-    if (listAddressOfFile.length > 0) displayElement(RESULT_FILE);
+
+    const t = getElement(FORM_FILE + ">div.result>a");
+    if (getElement(FORM_FILE + ">div.result>a")) displayElement(RESULT_FILE);
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_CLIPBOARD);
@@ -191,7 +193,7 @@ function openTabFile() {
 function openTabClip() {
     window.localStorage.setItem("lastTabName", TAB_CLIPBOARD);
     displayElement(FORM_CLIPBOARD);
-    if (listAddressOfClipboard.length > 0) displayElement(RESULT_CLIPBOARD);
+    if (getElement(FORM_CLIPBOARD + ">div.result>a")) displayElement(RESULT_CLIPBOARD);
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_FILE);

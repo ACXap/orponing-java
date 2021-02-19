@@ -109,14 +109,14 @@ function convertStringToAddress(data) {
     return list;
 }
 
-function convertAddressInfoToString(addressInfo) {
+function convertAddressInfoToString(addressInfo, list) {
     let dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
 
     const data = [];
     data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
 
     addressInfo.forEach(el => {
-        data.push(`${el.Id};${listAddressOfFile.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
+        data.push(`${el.Id};${list.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
     });
 
     dataForSave += encodeURIComponent(data.join("\r\n"));
@@ -127,21 +127,21 @@ function convertAddressInfoToString(addressInfo) {
 async function orponingListAddress(list, callBack) {
     try {
         idTask = await apiOrponingListAddress(list);
-        setTimeout(() => requestTask(idTask, callBack), 2000);
+        setTimeout(() => requestTask(idTask, list, callBack), 2000);
     } catch (e) {
         callBack("", e);
     }
 }
 
-async function requestTask(idTask, callBack) {
+async function requestTask(idTask, list, callBack) {
     try {
         let result = await apiGetStatusTask(idTask);
 
         if (result.status === "COMPLETED") {
             result = await apiGetResultTask(idTask);
-            callBack(convertAddressInfoToString(result));
+            callBack(convertAddressInfoToString(result, list));
         } else {
-            timerId = setTimeout(() => requestTask(idTask, callBack), 5000);
+            timerId = setTimeout(() => requestTask(idTask, list, callBack), 5000);
         }
     } catch (e) {
         callBack("", e);
