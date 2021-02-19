@@ -1,27 +1,25 @@
 //#region const
 TAB_ADDRESS = "tab-orponing-address";
 FORM_ADDRESS = "div-form-address";
-RESULT_ADDRESS = "result-address";
 ORPONING_ADDRESS = "orponing-address";
 INPUT_ADDRESS = "input-address";
 
 TAB_FILE = "tab-orponing-file";
 FORM_FILE = "div-form-file";
-//RESULT_FILE = "result-file";
 ORPONING_FILE = "orponing-file";
 INPUT_FILE = "input-file";
 
 TAB_CLIPBOARD = "tab-orponing-clipboard";
 FORM_CLIPBOARD = "div-form-clipboard";
-//RESULT_CLIPBOARD = "result-clipboard";
 ORPONING_CLIPBOARD = "orponing-clipboard";
 INPUT_CLIPBOARD = "input-clipboard";
+
+DIV_RESULT = "div.result";
 //#endregion
 
 getElement(TAB_ADDRESS).onclick = openTabAddress;
 getElement(TAB_FILE).onclick = openTabFile;
 getElement(TAB_CLIPBOARD).onclick = openTabClip;
-openLastTab();
 
 getElement(INPUT_ADDRESS).addEventListener("keyup", e => {
     if (e.keyCode != 13) return;
@@ -65,7 +63,7 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
             const json = await orponingAddress(address);
 
             if (json) {
-                displayElement(RESULT_ADDRESS);
+                displayElement(FORM_ADDRESS + ">" + DIV_RESULT);
                 getElement("errorInfo").hidden = json.IsValid;
                 getElement("gidInfo").hidden = !json.IsValid;
                 getElement("addressInfo").hidden = !json.IsValid;
@@ -87,7 +85,7 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
                     header.style = "color:red";
                 }
             } else {
-                hideElement(RESULT_ADDRESS);
+                hideElement(FORM_ADDRESS + ">" + DIV_RESULT);
             }
         }
     } catch (e) {
@@ -97,9 +95,9 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
     }
 }
 
-getElement(ORPONING_FILE).onclick = () => orponing(FORM_FILE, orponingFile);
-getElement(ORPONING_CLIPBOARD).onclick = () => orponing(FORM_CLIPBOARD, orponingClipboard);
+getElement(ORPONING_FILE).onclick = () => orponingData(FORM_FILE, orponingFile);
 
+getElement(ORPONING_CLIPBOARD).onclick = () => orponingData(FORM_CLIPBOARD, orponingClipboard);
 
 getElement(FORM_FILE).ondragover = (e) => {
     e.stopPropagation();
@@ -123,7 +121,7 @@ getElement(FORM_FILE).ondrop = (e) => {
     });
 };
 
-function orponing(idForm, execute) {
+function orponingData(idForm, execute) {
     startProcessing(idForm, "Обработка запроса...");
     hideElement(idForm + ">div.result");
 
@@ -191,7 +189,7 @@ function addDownLoadLink(idForm, data) {
 function openTabAddress() {
     window.localStorage.setItem("lastTabName", TAB_ADDRESS);
     displayElement(FORM_ADDRESS);
-    if (getElement("gid").value) displayElement(FORM_FILE + ">div.result");
+    if (getElement("gid").value) displayElement(FORM_FILE + ">" + DIV_RESULT);
 
     closeTab(FORM_FILE);
     closeTab(FORM_CLIPBOARD);
@@ -202,7 +200,7 @@ function openTabFile() {
     displayElement(FORM_FILE);
 
     const t = getElement(FORM_FILE + ">div.result>a");
-    if (getElement(FORM_FILE + ">div.result>a")) displayElement(FORM_FILE + ">div.result");
+    if (getElement(FORM_FILE + ">div.result>a")) displayElement(FORM_FILE + ">" + DIV_RESULT);
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_CLIPBOARD);
@@ -211,7 +209,7 @@ function openTabFile() {
 function openTabClip() {
     window.localStorage.setItem("lastTabName", TAB_CLIPBOARD);
     displayElement(FORM_CLIPBOARD);
-    if (getElement(FORM_CLIPBOARD + ">div.result>a")) displayElement(FORM_CLIPBOARD + ">div.result");
+    if (getElement(FORM_CLIPBOARD + ">div.result>a")) displayElement(FORM_CLIPBOARD + ">" + DIV_RESULT);
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_FILE);
@@ -221,3 +219,5 @@ function closeTab(formName) {
     hideElement(formName);
     hideElement(formName + ">div.result");
 }
+
+openLastTab();
