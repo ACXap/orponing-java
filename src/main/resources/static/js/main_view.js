@@ -33,9 +33,13 @@ getElement(INPUT_CLIPBOARD).onclick = async () => {
     if (navigator.clipboard) {
         const data = await navigator.clipboard.readText();
 
-        const result = initListAddressOfClipboard(data);
-        if (result.error) notifyError(result.error);
-        getElement(FORM_CLIPBOARD + ">div.count-address").textContent = "Всего записей: " + result.count;
+        if (data) {
+            const result = initListAddressOfClipboard(data);
+            if (result.error) notifyError(result.error);
+            getElement(FORM_CLIPBOARD + ">div.count-address").textContent = "Всего записей: " + result.count;
+        } else {
+            notifyError("В буфере обмена нет подходящих данных");
+        }
     }
 }
 
@@ -43,7 +47,10 @@ getElement(INPUT_FILE).onchange = (e) => {
     const file = e.currentTarget.files[0];
 
     initListAddressOfFile(file, (result) => {
-        if (result.error) notifyError(error);
+        if (result.error) {
+            notifyError(result.error);
+            getElement(INPUT_FILE).value = "";
+        }
         getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
     });
 }
@@ -119,6 +126,29 @@ getElement(ORPONING_CLIPBOARD).onclick = () => {
         stopProcessing(FORM_CLIPBOARD);
     });
 }
+
+getElement(FORM_FILE).ondragover = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+};
+
+getElement(FORM_FILE).ondrop = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const files = e.dataTransfer.files;
+
+    initListAddressOfFile(files[0], (result) => {
+        if (result.error) {
+            notifyError(result.error);
+            getElement(INPUT_FILE).value = "";
+        } else {
+            getElement(INPUT_FILE).files = files;
+        }
+
+        getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
+    });
+};
 
 function openLastTab() {
     const lastTab = window.localStorage.getItem("lastTabName");
