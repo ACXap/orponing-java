@@ -1,6 +1,16 @@
 getElement("tab-orponing-address").onclick = openTabAddress;
 getElement("tab-orponing-file").onclick = openTabFile;
 getElement("tab-orponing-clipboard").onclick = openTabClip;
+openLasTab();
+
+function openLasTab() {
+    const lastTab = window.localStorage.getItem("lastTabName");
+    if (lastTab) {
+        getElement(lastTab).click();
+    } else {
+        getElement("tab-orponing-address").click();
+    }
+}
 
 function startProcessing(id, message) {
     const p = getElement(id).querySelector("div.processing");
@@ -50,6 +60,7 @@ function addDownLoadLink(idForm, data) {
 }
 
 function openTabAddress() {
+    window.localStorage.setItem("lastTabName", "tab-orponing-address");
     displayElement("div-form-address");
     if (getElement("gid").value) {
         displayElement("result-address");
@@ -60,6 +71,7 @@ function openTabAddress() {
 }
 
 function openTabFile() {
+    window.localStorage.setItem("lastTabName", "tab-orponing-file");
     displayElement("div-form-file");
     if (listAddressOfFile.length > 0) {
         displayElement("result-file");
@@ -70,6 +82,7 @@ function openTabFile() {
 }
 
 function openTabClip() {
+    window.localStorage.setItem("lastTabName", "tab-orponing-clipboard");
     displayElement("div-form-clipboard");
     if (listAddressOfClipboard.length > 0) {
         displayElement("result-clipboard");

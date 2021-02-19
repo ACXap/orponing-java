@@ -42,20 +42,27 @@ getElement("orponing-address").onclick = async () => {
 }
 
 getElement("orponing-file").onclick = () => {
-    const file = getElement("formFile").files[0];
-    if (!isValidFile(file)) {
-        if (!file) {
-            alert("А кто файл то будет добавлять?");
-        } else {
-            alert("Неверный тип файла. Допускается только *.txt и *.csv");
-        }
-        return;
+    // const file = getElement("formFile").files[0];
+    // if (!isValidFile(file)) {
+    //     if (!file) {
+    //         alert("А кто файл то будет добавлять?");
+    //     } else {
+    //         alert("Неверный тип файла. Допускается только *.txt и *.csv");
+    //     }
+    //     return;
+    // }
+
+    if (listAddressOfFile.length > 0) {
+        startProcessing("div-form-file", "Обработка запроса...");
+        hideElement("result-file");
+        orponingListAddress(listAddressOfFile, "div-form-file");
     }
 
-    startProcessing("div-form-file", "Обработка запроса...");
-    hideElement("result-file");
 
-    readFileUtfEncoding(file);
+
+
+
+
 }
 
 getElement("orponing-clipboard").onclick = () => {
@@ -84,7 +91,23 @@ getElement("input-address").addEventListener("keyup", e => {
     if (e.keyCode != 13) return;
     e.preventDefault();
     getElement("orponing-address").click();
-})
+});
+
+getElement("formFile").onchange = (e) => {
+    const file = getElement("formFile").files[0];
+    if (!isValidFile(file)) {
+        if (!file) {
+            alert("А кто файл то будет добавлять?");
+        } else {
+            alert("Неверный тип файла. Допускается только *.txt и *.csv");
+        }
+        listAddressOfFile.length = 0;
+        getElement("div-form-file>div.count-address").textContent = "Всего записей: 0";
+        return;
+    }
+
+    readFileUtfEncoding(file);
+};
 
 function readFileUtfEncoding(file) {
     try {
@@ -102,7 +125,7 @@ function readFileUtfEncoding(file) {
                 return;
             }
 
-            orponingFileData(data);
+            convertFileDataToAddress(data);
         }
     } catch (e) {
         stopError(e, "div-form-file");
@@ -113,20 +136,16 @@ function readFileOtherEncoding(file) {
     try {
         const reader = new FileReader();
         reader.readAsText(file, "windows-1251");
-        reader.onload = readerEvent => orponingFileData(readerEvent.target.result);
+        reader.onload = readerEvent => convertFileDataToAddress(readerEvent.target.result);
     } catch (e) {
         stopError(e, "div-form-file");
     }
 }
 
-function orponingFileData(data) {
+function convertFileDataToAddress(data) {
     listAddressOfFile.length = 0;
     listAddressOfFile = convertStringToAddress(data);
     getElement("div-form-file>div.count-address").textContent = "Всего записей: " + listAddressOfFile.length;
-
-    if (listAddressOfFile.length > 0) {
-        orponingListAddress(listAddressOfFile, "div-form-file");
-    }
 }
 
 function isValidFile(file) {
@@ -193,7 +212,7 @@ async function requestTask(idTask, idForm) {
             addDownLoadLink(idForm, convertAddressInfoToString(result));
             stopProcessing(idForm);
         } else {
-            timerId = setTimeout(() => requestTask(idTask), 5000);
+            timerId = setTimeout(() => requestTask(idTask, idForm), 5000);
         }
     } catch (e) {
         stopError(e, idForm);
