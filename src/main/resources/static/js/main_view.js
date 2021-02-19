@@ -97,35 +97,52 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
     }
 }
 
-getElement(ORPONING_FILE).onclick = () => {
-    startProcessing(FORM_FILE, "Обработка запроса...");
-    hideElement(RESULT_FILE);
+getElement(ORPONING_FILE).onclick = () => { orponing(FORM_FILE, RESULT_FILE, orponingFile); }
+//     startProcessing(FORM_FILE, "Обработка запроса...");
+//     hideElement(RESULT_FILE);
 
-    orponingFile((data, error) => {
+//     orponingFile((data, error) => {
+//         if (data) {
+//             addDownLoadLink(FORM_FILE, data);
+//         } else if (error) {
+//             notifyError(error);
+//         }
+
+//         stopProcessing(FORM_FILE);
+//     });
+// }
+
+getElement(ORPONING_CLIPBOARD).onclick = () => { orponing(FORM_CLIPBOARD, RESULT_CLIPBOARD, orponingClipboard); }
+//     startProcessing(FORM_CLIPBOARD, "Обработка запроса...");
+//     hideElement(RESULT_CLIPBOARD);
+
+//     orponingClipboard((data, error) => {
+//         if (data) {
+//             addDownLoadLink(FORM_CLIPBOARD, data);
+//         } else if (error) {
+//             notifyError(error);
+//         }
+
+//         stopProcessing(FORM_CLIPBOARD);
+//     });
+// }
+
+function orponing(idForm, idResult, execute) {
+    startProcessing(idForm, "Обработка запроса...");
+    hideElement(idResult);
+
+    execute((data, error) => {
         if (data) {
-            addDownLoadLink(FORM_FILE, data);
+            addDownLoadLink(idForm, data);
         } else if (error) {
             notifyError(error);
         }
 
-        stopProcessing(FORM_FILE);
+        stopProcessing(idForm);
     });
 }
 
-getElement(ORPONING_CLIPBOARD).onclick = () => {
-    startProcessing(FORM_CLIPBOARD, "Обработка запроса...");
-    hideElement(RESULT_CLIPBOARD);
 
-    orponingClipboard((data, error) => {
-        if (data) {
-            addDownLoadLink(FORM_CLIPBOARD, data);
-        } else if (error) {
-            notifyError(error);
-        }
-
-        stopProcessing(FORM_CLIPBOARD);
-    });
-}
 
 getElement(FORM_FILE).ondragover = (e) => {
     e.stopPropagation();
