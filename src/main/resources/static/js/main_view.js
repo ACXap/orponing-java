@@ -7,13 +7,13 @@ INPUT_ADDRESS = "input-address";
 
 TAB_FILE = "tab-orponing-file";
 FORM_FILE = "div-form-file";
-RESULT_FILE = "result-file";
+//RESULT_FILE = "result-file";
 ORPONING_FILE = "orponing-file";
 INPUT_FILE = "input-file";
 
 TAB_CLIPBOARD = "tab-orponing-clipboard";
 FORM_CLIPBOARD = "div-form-clipboard";
-RESULT_CLIPBOARD = "result-clipboard";
+//RESULT_CLIPBOARD = "result-clipboard";
 ORPONING_CLIPBOARD = "orponing-clipboard";
 INPUT_CLIPBOARD = "input-clipboard";
 //#endregion
@@ -97,51 +97,8 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
     }
 }
 
-getElement(ORPONING_FILE).onclick = () => { orponing(FORM_FILE, RESULT_FILE, orponingFile); }
-//     startProcessing(FORM_FILE, "Обработка запроса...");
-//     hideElement(RESULT_FILE);
-
-//     orponingFile((data, error) => {
-//         if (data) {
-//             addDownLoadLink(FORM_FILE, data);
-//         } else if (error) {
-//             notifyError(error);
-//         }
-
-//         stopProcessing(FORM_FILE);
-//     });
-// }
-
-getElement(ORPONING_CLIPBOARD).onclick = () => { orponing(FORM_CLIPBOARD, RESULT_CLIPBOARD, orponingClipboard); }
-//     startProcessing(FORM_CLIPBOARD, "Обработка запроса...");
-//     hideElement(RESULT_CLIPBOARD);
-
-//     orponingClipboard((data, error) => {
-//         if (data) {
-//             addDownLoadLink(FORM_CLIPBOARD, data);
-//         } else if (error) {
-//             notifyError(error);
-//         }
-
-//         stopProcessing(FORM_CLIPBOARD);
-//     });
-// }
-
-function orponing(idForm, idResult, execute) {
-    startProcessing(idForm, "Обработка запроса...");
-    hideElement(idResult);
-
-    execute((data, error) => {
-        if (data) {
-            addDownLoadLink(idForm, data);
-        } else if (error) {
-            notifyError(error);
-        }
-
-        stopProcessing(idForm);
-    });
-}
-
+getElement(ORPONING_FILE).onclick = () => orponing(FORM_FILE, orponingFile);
+getElement(ORPONING_CLIPBOARD).onclick = () => orponing(FORM_CLIPBOARD, orponingClipboard);
 
 
 getElement(FORM_FILE).ondragover = (e) => {
@@ -154,7 +111,6 @@ getElement(FORM_FILE).ondrop = (e) => {
     e.preventDefault();
 
     const files = e.dataTransfer.files;
-
     initListAddressOfFile(files[0], (result) => {
         if (result.error) {
             notifyError(result.error);
@@ -166,6 +122,21 @@ getElement(FORM_FILE).ondrop = (e) => {
         getElement(FORM_FILE + ">div.count-address").textContent = "Всего записей: " + result.count;
     });
 };
+
+function orponing(idForm, execute) {
+    startProcessing(idForm, "Обработка запроса...");
+    hideElement(idForm + ">div.result");
+
+    execute((data, error) => {
+        if (data) {
+            addDownLoadLink(idForm, data);
+        } else if (error) {
+            notifyError(error);
+        }
+
+        stopProcessing(idForm);
+    });
+}
 
 function openLastTab() {
     const lastTab = window.localStorage.getItem("lastTabName");
@@ -220,7 +191,7 @@ function addDownLoadLink(idForm, data) {
 function openTabAddress() {
     window.localStorage.setItem("lastTabName", TAB_ADDRESS);
     displayElement(FORM_ADDRESS);
-    if (getElement("gid").value) displayElement(RESULT_ADDRESS);
+    if (getElement("gid").value) displayElement(FORM_FILE + ">div.result");
 
     closeTab(FORM_FILE);
     closeTab(FORM_CLIPBOARD);
@@ -231,7 +202,7 @@ function openTabFile() {
     displayElement(FORM_FILE);
 
     const t = getElement(FORM_FILE + ">div.result>a");
-    if (getElement(FORM_FILE + ">div.result>a")) displayElement(RESULT_FILE);
+    if (getElement(FORM_FILE + ">div.result>a")) displayElement(FORM_FILE + ">div.result");
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_CLIPBOARD);
@@ -240,7 +211,7 @@ function openTabFile() {
 function openTabClip() {
     window.localStorage.setItem("lastTabName", TAB_CLIPBOARD);
     displayElement(FORM_CLIPBOARD);
-    if (getElement(FORM_CLIPBOARD + ">div.result>a")) displayElement(RESULT_CLIPBOARD);
+    if (getElement(FORM_CLIPBOARD + ">div.result>a")) displayElement(FORM_CLIPBOARD + ">div.result");
 
     closeTab(FORM_ADDRESS);
     closeTab(FORM_FILE);
