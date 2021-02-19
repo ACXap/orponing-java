@@ -76,7 +76,7 @@ function readFileOtherEncoding(file, callBack) {
 function convertFileDataToAddress(data, callBack) {
     try {
         listAddressOfFile = convertStringToAddress(data);
-        callBack({ count: listAddressOfClipboard.length, error: null });
+        callBack({ count: listAddressOfFile.length, error: null });
     } catch (e) {
         listAddressOfFile.length = 0;
         callBack({ count: 0, error: e });
