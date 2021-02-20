@@ -149,6 +149,7 @@ function orponingData(idForm, execute) {
     execute((data, error) => {
         if (data) {
             addDownLoadLink(idForm, data);
+            removeElement(idForm + ">div.preview");
         } else if (error) {
             notifyError(error);
         }
@@ -242,7 +243,6 @@ function closeTab(formName) {
 }
 
 function getRowPreview(id, address) {
-
     const result = parseInt(id);
 
     let color = "";

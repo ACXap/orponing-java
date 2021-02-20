@@ -28,8 +28,9 @@
                     <div class="d-flex justify-content-center pt-2">
                         <h3>Архив</h3>
                     </div>
-                    <div class="overflow-auto text-center" style="max-height: 470px;">
-                        <button th:each="log : ${archive}" class="b-log btn btn-primary p-2 m-2" type="button" th:text="${log}"></button>
+                    <div class="overflow-auto text-center" style="max-height: 470px;" id="archive">
+                        <button th:each="log : ${archive}" class="b-log btn btn-primary p-2 m-2" type="button"
+                            th:text="${log}"></button>
                     </div>
 
                     <div class="mt-auto mx-auto p-2">
@@ -43,9 +44,10 @@
         </div>
 
     </div>
-    <script src="../js/common.js"></script>
-    <script src="../js/api.js"></script>
-    <script src="../js/log.js"></script>
+    <script src="../static/js/common.js"></script>
+    <!-- <script src="../js/api.js"></script> -->
+    <script src="../test/apiTest.js"></script>
+    <script src="../static/js/log.js"></script>
 </body>
 
 </html>

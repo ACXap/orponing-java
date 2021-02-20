@@ -1,4 +1,28 @@
 "use strict"
+async function _getJson(response) {
+    if (response.status == 200) {
+        return await response.json();
+    }
+
+    throw new Error(response.statusText);
+}
+
+async function _getText(response) {
+    if (response.status == 200) {
+        return await response.text();
+    }
+
+    throw new Error(response.statusText);
+}
+
+function _getHeadersPost() {
+    return {
+        'Content-Type': 'application/json;charset=utf-8',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Content-Encoding': 'gzip, deflate, br'
+    };
+}
+
 async function apiGetLog() {
     const response = await fetch("/log", {
         method: 'POST',
@@ -57,28 +81,4 @@ async function apiGetStatusTask(id) {
 async function apiGetResultTask(id) {
     const response = await fetch("/api/get_global_id/result?id=" + id);
     return _getJson(response);
-}
-
-async function _getJson(response) {
-    if (response.status == 200) {
-        return await response.json();
-    }
-
-    throw new Error(response.statusText);
-}
-
-async function _getText(response) {
-    if (response.status == 200) {
-        return await response.text();
-    }
-
-    throw new Error(response.statusText);
-}
-
-function _getHeadersPost() {
-    return {
-        'Content-Type': 'application/json;charset=utf-8',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Content-Encoding': 'gzip, deflate, br'
-    };
 }
