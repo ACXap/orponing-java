@@ -1,20 +1,20 @@
 //#region const
-TAB_ADDRESS = "tab-orponing-address";
-FORM_ADDRESS = "div-form-address";
-ORPONING_ADDRESS = "orponing-address";
-INPUT_ADDRESS = "input-address";
+const TAB_ADDRESS = "tab-orponing-address";
+const FORM_ADDRESS = "div-form-address";
+const ORPONING_ADDRESS = "orponing-address";
+const INPUT_ADDRESS = "input-address";
 
-TAB_FILE = "tab-orponing-file";
-FORM_FILE = "div-form-file";
-ORPONING_FILE = "orponing-file";
-INPUT_FILE = "input-file";
+const TAB_FILE = "tab-orponing-file";
+const FORM_FILE = "div-form-file";
+const ORPONING_FILE = "orponing-file";
+const INPUT_FILE = "input-file";
 
-TAB_CLIPBOARD = "tab-orponing-clipboard";
-FORM_CLIPBOARD = "div-form-clipboard";
-ORPONING_CLIPBOARD = "orponing-clipboard";
-INPUT_CLIPBOARD = "input-clipboard";
+const TAB_CLIPBOARD = "tab-orponing-clipboard";
+const FORM_CLIPBOARD = "div-form-clipboard";
+const ORPONING_CLIPBOARD = "orponing-clipboard";
+const INPUT_CLIPBOARD = "input-clipboard";
 
-DIV_RESULT = "div.result";
+const DIV_RESULT = "div.result";
 //#endregion
 
 getElement(TAB_ADDRESS).onclick = openTabAddress;
@@ -209,7 +209,7 @@ function addDownLoadLink(idForm, data) {
 function openTabAddress() {
     window.localStorage.setItem("lastTabName", TAB_ADDRESS);
     displayElement(FORM_ADDRESS);
-    if (getElement("gid").value) displayElement(FORM_FILE + ">" + DIV_RESULT);
+    if (getElement("gid").value) displayElement(FORM_ADDRESS + ">" + DIV_RESULT);
 
     closeTab(FORM_FILE);
     closeTab(FORM_CLIPBOARD);
