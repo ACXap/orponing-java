@@ -130,7 +130,7 @@ function convertAddressInfoToString(addressInfo, list) {
 async function orponingListAddress(list, callBack) {
     try {
         const idTask = await apiOrponingListAddress(list);
-        setTimeout(() => requestTask(idTask, list, callBack), 2000);
+        setTimeout(() => requestTask(idTask, list, callBack), 5000);
     } catch (e) {
         callBack("", e);
     }
@@ -144,7 +144,7 @@ async function requestTask(idTask, list, callBack) {
             result = await apiGetResultTask(idTask);
             callBack(convertAddressInfoToString(result, list));
         } else {
-            timerId = setTimeout(() => requestTask(idTask, list, callBack), 5000);
+            setTimeout(() => requestTask(idTask, list, callBack), 5000);
         }
     } catch (e) {
         callBack("", e);

@@ -1,6 +1,6 @@
 "use strict"
 function setActiveLink() {
-    for (el of document.querySelectorAll("a")) {
+    for (const el of document.querySelectorAll("a")) {
         if (el.href == window.location.href) {
             el.classList.add("active");
             break;

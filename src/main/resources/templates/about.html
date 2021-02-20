@@ -85,7 +85,7 @@
 
         <div class="container mt-5">
             <h1>API</h1>
-            <p class="lead">Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый адрес}</p>
+            <h5>Орпонизация одиночного адреса - это GET запрос на адрес /get_globalid?address={требуемый адрес}</h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 280px; width: 800px;">{
     Id: 1,
@@ -100,10 +100,10 @@
 }</textarea>
             </div>
 
-            <p class="lead">Орпонизация списка адресов - это POST запрос на адрес /api/get_global_id
-                <br> И в ответ будет уникальный GIUD задачи, пример: deb74f17-d553-45ed-b45c-24cd5c9c3406.<br>
-                Тело запроса при этом:
-            </p>
+            <h5>Орпонизация списка адресов - это POST запрос на адрес /api/get_global_id</h5>
+            <p class="lead">И в ответ будет уникальный GIUD задачи, пример: deb74f17-d553-45ed-b45c-24cd5c9c3406.<br>
+                Тело запроса при этом:</p>
+
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 110px; width: 800px;">[
     {"Id":"1","Address":"Новосибирск Зорге 1"},
@@ -111,8 +111,7 @@
 ]</textarea>
             </div>
 
-            <p class="lead">Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученный
-                ранее}</p>
+            <h5>Получить статус выполняемой задачи - это GET запрос на адрес /api/get_global_id/status?id={уникальный GUID полученный ранее} </h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 130px; width: 800px;">{
     "message":"Я все завершил. Я КрасафчеГ!",
@@ -121,11 +120,11 @@
 }</textarea>
             </div>
 
-            <p class="lead">Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученный
-                ранее}</p>
+            <h5>Получить результат выполняемой задачи - это GET запрос на адрес /api/get_global_id/result?id={уникальный GUID полученный
+                ранее} </h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 330px; width: 800px;">[
-    {
+{
         Id: 1,
         GlobalId: 21904819,
         ParsingLevelCode: "FIAS_HOUSE",
@@ -153,7 +152,7 @@
 
         <div class="container mt-5">
             <h1>API служебное</h1>
-            <p class="lead">Получить список компонентов сервиса - это GET запрос на адрес /orponing_service/all_services</p>
+            <h5>Получить список компонентов сервиса - это GET запрос на адрес /orponing_service/all_services</h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 330px; width: 800px;">[
     {
@@ -173,7 +172,7 @@
 ]</textarea>
             </div>
 
-            <p class="lead">Получить статус компонента - это GET запрос на адрес /orponing_service/status?service={id требуемого компонента}</p>
+            <h5>Получить статус компонента - это GET запрос на адрес /orponing_service/status?service={id требуемого компонента}</h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 130px; width: 800px;">{
     "message":"Мне нечего делать",
@@ -182,7 +181,7 @@
 }</textarea>
             </div>
 
-            <p class="lead">Запуск компонента - это GET запрос на адрес /orponing_service/{id требуемого компонента}/start</p>
+            <h5>Запуск компонента - это GET запрос на адрес /orponing_service/{id требуемого компонента}/start</h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 130px; width: 800px;">{
     "message":"Мне недосуг",
@@ -191,20 +190,16 @@
 }</textarea>
             </div>
 
-            <p class="lead">Получить лог сервиса - это POST запрос на адрес /log<br>
-                <span class="mx-5">В ответ будет получен полный лог за текущий день простым текстом</span>
-            </p>
+            <h5>Получить лог сервиса - это POST запрос на адрес /log</h5>
+            <div class="mx-5 mb-2">В ответ будет получен полный лог за текущий день простым текстом</div>
 
-            <p class="lead">Получить список фалов архива - это GET запрос на адрес /log/files<br>
-                <span class="mx-5">["2021-02-10.0","2021-02-11.0","2021-02-13.0","2021-02-14.0"]</span>
-            </p>
+            <h5>Получить список фалов архива - это GET запрос на адрес /log/files</h5>
+            <div class="mx-5 mb-2">["2021-02-10.0","2021-02-11.0","2021-02-13.0","2021-02-14.0"]</div>
 
+            <h5>Получить лог из архива - это GET запрос на адрес /log/read?file={имя требуемого файла}</h5>
+            <div class="mx-5 mb-2">В ответ будет получен полный лог из указанного файла</div>
 
-            <p class="lead">Получить лог из архива - это GET запрос на адрес /log/read?file={имя требуемого файла}<br>
-                <span class="mx-5">В ответ будет получен полный лог из указанного файла</span>
-            </p>
-
-            <p class="lead">Очистить архив логов - это GET запрос на адрес /log/clear?password={пароль от операции}</p>
+            <h5>Очистить архив логов - это GET запрос на адрес /log/clear?password={пароль от операции}</h5>
             <div class="form-floating mx-5">
                 <textarea class="form-control p-1" style="height: 130px; width: 800px;">{
     "message":"Я все завершил. Я КрасафчеГ!",
