@@ -1,27 +1,27 @@
 "use strict"
 export default class ServiceOrponingClipboard {
-    _serviceOrponing;
-    _listAddress = [];
+    serviceOrponing;
+    listAddress = [];
 
     constructor(serviceOrponing) {
-        this._serviceOrponing = serviceOrponing;
+        this.serviceOrponing = serviceOrponing;
     }
 
-    async orponing(callBack, name) {
-        if (this._listAddress.length === 0) {
+    async orponing(callBack) {
+        if (this.listAddress.length === 0) {
             callBack();
             return;
         }
 
-        this._serviceOrponing.orponingListAddress(this._listAddress, callBack, name);
+        this.serviceOrponing.orponingListAddress(this.listAddress, callBack, "Буфер обмена");
     }
 
     initListAddress(data) {
-        this._listAddress.length = 0;
+        this.listAddress.length = 0;
 
         try {
-            this._listAddress.push(...this._serviceOrponing.convertStringToAddress(data));
-            return { count: this._listAddress.length, error: null, previewList: this._listAddress.slice(0, 9) };
+            this.listAddress.push(...this.serviceOrponing.convertStringToAddress(data));
+            return { count: this.listAddress.length, error: null, previewList: this.listAddress.slice(0, 9) };
         } catch (e) {
             return { count: 0, error: e };
         }

@@ -2,18 +2,19 @@
 export default class ServiceOrponingFile {
     _serviceOrponing;
     _listAddress = [];
+    _fileName = "";
 
     constructor(serviceOrponing) {
         this._serviceOrponing = serviceOrponing;
     }
 
-    async orponing(callBack, name) {
+    async orponing(callBack) {
         if (this._listAddress.length === 0) {
             callBack();
             return;
         }
 
-        this._serviceOrponing.orponingListAddress(this._listAddress, callBack, name);
+        this._serviceOrponing.orponingListAddress(this._listAddress, callBack, this._fileName);
     }
 
     initListAddress(file, callBack) {
@@ -22,7 +23,7 @@ export default class ServiceOrponingFile {
             callBack({ count: 0, error: message })
             return;
         }
-
+        this._fileName = file.name;
         this._readFileUtfEncoding(file, callBack);
     }
 

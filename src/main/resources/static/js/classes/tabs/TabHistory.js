@@ -24,42 +24,35 @@ export default class TabHistory extends TabCommon {
     }
 
     updateHistory() {
-        const divs = this.form.querySelectorAll("div.result>div.item");
-        for (const d of divs) {
-            d.remove();
-        }
-
         const listHistory = this.serviceHistory.getHistory();
-        if (listHistory) {
 
-            const div = this.form.querySelector("div.result");
-            div.hidden = false;
-            for (const i of listHistory) {
-                div.insertAdjacentHTML("beforeend", this.getRow(i));
+        const divResult = this.form.querySelector("div.result");
+        divResult.innerHTML = "";
+
+        if (listHistory.size > 0) {
+            divResult.insertAdjacentHTML("beforeend", this.getHeader());
+
+            for (const i of listHistory.values()) {
+                divResult.insertAdjacentHTML("beforeend", this.getRow(i));
             }
-
             this.addRemoveHandler();
             this.addDownLoadHandler();
             this.addUpdateItemHandler();
-        }
 
-        if (this.form.querySelectorAll("div.item").length === 0) {
-            this.form.querySelector("div.result").hidden = true;
+            if (this.form.querySelector("h3.clear")) {
+                this.form.querySelector("h3.clear").remove();
+            }
+        } else {
             if (!this.form.querySelector("h3.clear")) {
                 this.form.insertAdjacentHTML("beforeend", `<h3 class="text-center clear">История пуста</h3>`);
             }
-        } else {
-            const h = this.form.querySelector("h3.clear");
-            if (h) h.remove();
         }
     }
 
     addRemoveHandler() {
         this.form.querySelectorAll("i.remove").forEach(i => {
-            i.onclick = (e) => {
-                this.serviceHistory.removeItem(e.target.getAttribute("data-id"));
-            }
-        })
+            i.onclick = (e) => this.serviceHistory.removeItem(e.target.getAttribute("data-id"));
+        });
     }
 
     addDownLoadHandler() {
@@ -67,7 +60,7 @@ export default class TabHistory extends TabCommon {
             i.onclick = (e) => {
                 console.log(e.target.getAttribute("data-id"));
             }
-        })
+        });
     }
 
     addUpdateItemHandler() {
@@ -85,7 +78,7 @@ export default class TabHistory extends TabCommon {
         return `<div class="row item ${this.getColorRow(status)}">
         <div class="col-1">${id}</div>
         <div class="col-2">${d.toLocaleDateString("ru-RU")}\t${d.toLocaleTimeString("ru-RU")}</div>
-        <div class="col-5">${name}</div>
+        <div class="col-5" title="${status}">${name}</div>
         <div class="col-1">${countRecord}</div>
         <div class="col-1">${checkStatus}</div>
         <div class="col-1">${downLoad}</div>
@@ -93,22 +86,21 @@ export default class TabHistory extends TabCommon {
     </div>`;
     }
 
+    getHeader() {
+        return `<div class="row border">
+            <div class="col-1 border-end">№</div>
+            <div class="col-2 border-end">Дата</div>
+            <div class="col-5 border-end">Что было</div>
+            <div class="col-1 border-end">Записей</div>
+            <div class="col-1 border-end">Статус</div>
+            <div class="col-1 border-end">Скачать</div>
+            <div class="col-1">Удалить</div>
+        </div>`;
+    }
+
     getColorRow(status) {
         if (status === "COMPLETED") return "bg-success";
         if (status === "START") return "bg-warning";
         if (status === "ERROR") return "bg-danger"
-    }
-
-    getIconStatus(status) {
-        if (status === "COMPLETED") return "fas fa-check";
-        if (status === "START") return "fas fa-clock";
-        if (status === "ERROR") return "fas fa-exclamation-triangle"
-    }
-
-    getColor(status) {
-        if (status === "START") return "green";
-        if (status === "ERROR") return "red";
-        if (status === "STOP") return "black";
-        if (status === "NO_CONNECT") return "blue";
     }
 }

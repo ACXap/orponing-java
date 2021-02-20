@@ -4,6 +4,7 @@ export default class ServiceOrponing {
     _serviceHistory;
 
     handlerStartTask;
+    handlerCompletedTask;
 
     constructor(api) {
         this._api = api;
@@ -34,6 +35,8 @@ export default class ServiceOrponing {
             let result = await this.getStatus(idTask);
 
             if (result.status === "COMPLETED") {
+                this.handlerCompletedTask({ status: result.status, taskId: idTask, date: new Date() });
+
                 result = await this._api.apiGetResultTask(idTask);
                 callBack(this.convertAddressInfoToString(result, list));
             } else {

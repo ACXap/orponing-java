@@ -53,7 +53,7 @@ export default class TabFile extends TabWithResultLoad {
 
         this.form.querySelector("button.start").onclick = () => {
             if (this.form.querySelector("input").value) {
-                this.orponingData((c) => this.serviceOrponing.orponing(c, this.form.querySelector("input").files[0].name));
+                this.orponingData((c) => this.serviceOrponing.orponing(c));
             }
         }
     }

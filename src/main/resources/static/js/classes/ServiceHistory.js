@@ -13,6 +13,9 @@ export default class ServiceHistory {
         this.serviceOrponing.handlerStartTask = (item) => {
             this.addItem(item);
         }
+        this.serviceOrponing.handlerCompletedTask = (task) => {
+            this.setStatusTask(task);
+        }
         this.updateList();
     }
 
@@ -47,6 +50,17 @@ export default class ServiceHistory {
         if (this.handlerUpdateHistory) this.handlerUpdateHistory();
     }
 
+    setStatusTask(task) {
+        this.updateList();
+
+        const t = this.listHistory.get(task.taskId);
+        t.status = task.status;
+        t.date = task.date;
+
+        window.localStorage.setItem("history", JSON.stringify(Array.from(this.listHistory.entries())));
+        if (this.handlerUpdateHistory) this.handlerUpdateHistory();
+    }
+
     updateList() {
         try {
             const history = new Map(JSON.parse(window.localStorage.getItem("history")));
@@ -68,6 +82,6 @@ export default class ServiceHistory {
     }
 
     getHistory() {
-        return this.listHistory.values();
+        return this.listHistory;
     }
 }

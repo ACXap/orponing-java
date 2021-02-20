@@ -32,7 +32,7 @@ export default class TabClipboard extends TabWithResultLoad {
             }
         }
 
-        this.form.querySelector("button.start").onclick = () => this.orponingData((c) => this.serviceOrponing.orponing(c, "Буфер обмена"));
+        this.form.querySelector("button.start").onclick = () => this.orponingData((c) => this.serviceOrponing.orponing(c));
     }
 
     open() {
