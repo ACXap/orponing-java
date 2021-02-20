@@ -1,0 +1,73 @@
+"use strict"
+export default class ServiceOrponing {
+    _api;
+    constructor(api) {
+        this._api = api;
+    }
+
+    async orponingAddress(address) {
+        const json = await this._api.apiOrponingAddress(address);
+        return json;
+    }
+
+    async orponingListAddress(list, callBack) {
+        try {
+            const idTask = await this._api.apiOrponingListAddress(list);
+            setTimeout(() => this._requestTask(idTask, list, callBack), 5000);
+        } catch (e) {
+            callBack("", e);
+        }
+    }
+
+    async _requestTask(idTask, list, callBack) {
+        try {
+            let result = await this._api.apiGetStatusTask(idTask);
+
+            if (result.status === "COMPLETED") {
+                result = await this._api.apiGetResultTask(idTask);
+                callBack(this.convertAddressInfoToString(result, list));
+            } else {
+                setTimeout(() => this._requestTask(idTask, list, callBack), 5000);
+            }
+        } catch (e) {
+            callBack("", e);
+        }
+    }
+
+    convertAddressInfoToString(addressInfo, list) {
+        let dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
+
+        const data = [];
+        data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
+
+        addressInfo.forEach(el => {
+            data.push(`${el.Id};${list.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
+        });
+
+        dataForSave += encodeURIComponent(data.join("\r\n"));
+
+        return dataForSave;
+    }
+
+    convertStringToAddress(data) {
+        const list = [];
+
+        if (data) {
+            const rows = data.split(/\r\n|\n/);
+
+            if (rows[0].split(";").length > 1) {
+                for (const row of rows) {
+                    const items = row.split(";");
+                    list.push({ Id: items[0], Address: items[1] });
+                }
+            } else {
+                let index = 1;
+                for (const row of rows) {
+                    list.push({ Id: index++, Address: row });
+                }
+            }
+        }
+
+        return list;
+    }
+}
