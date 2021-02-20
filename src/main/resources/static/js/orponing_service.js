@@ -1,16 +1,20 @@
+"use strict"
+const api = new Api();
+const commonUi = new CommonUi();
+
 async function init() {
     try {
-        const result = await apiGetListServices();
+        const result = await api.apiGetListServices();
 
         result.forEach(el => {
-            getElement("main").insertAdjacentHTML('afterbegin', getBlock(el));
+            commonUi.getElement("main").insertAdjacentHTML('afterbegin', getBlock(el));
             if (el.isStartable) addStartButton(el.id);
             loadStatus(el.id);
         });
     } catch (e) {
-        notifyError(e);
+        commonUi.notifyError(e);
     } finally {
-        getElement("loadcomp").remove();
+        commonUi.getElement("loadcomp").remove();
     }
 }
 
@@ -43,27 +47,27 @@ function getColor(status) {
 }
 
 function addStartButton(idService) {
-    getElement(idService).querySelector("div.row")
+    commonUi.getElement(idService).querySelector("div.row")
         .innerHTML += `<div class="col-8"><i class="fas fa-play m-3" title="Запустить сервис" onClick="startService('${idService}')" style="cursor:pointer"></i></div>`;
 }
 
 async function startService(idService) {
-    updateStatus(idService, async () => apiStartService(idService));
+    updateStatus(idService, async () => api.apiStartService(idService));
 }
 
 async function loadStatus(idService) {
-    updateStatus(idService, async () => apiGetStatusService(idService));
+    updateStatus(idService, async () => api.apiGetStatusService(idService));
 }
 
 async function updateStatus(idService, getStatus) {
-    const iconService = getElement(idService).querySelectorAll("i")[1];
+    const iconService = commonUi.getElement(idService).querySelectorAll("i")[1];
     iconService.classList.add("fa-spin");
 
     try {
         const status = await getStatus();
         setStatus(idService, status.status, status.message, status.dateStatus)
     } catch (e) {
-        notifyError(e);
+        commonUi.notifyError(e);
         setStatus(idService, "NO_CONNECT", "Нет связи со службой тестирования", new Date);
     } finally {
         iconService.classList.remove("fa-spin");
@@ -71,7 +75,7 @@ async function updateStatus(idService, getStatus) {
 }
 
 function setStatus(idService, status, message, date) {
-    const divMain = getElement(idService);
+    const divMain = commonUi.getElement(idService);
     divMain.querySelectorAll("span")[0].title = status;
     divMain.querySelectorAll("span")[0].textContent = message;
     divMain.querySelectorAll("span")[1].textContent = new Date(date);
@@ -79,4 +83,4 @@ function setStatus(idService, status, message, date) {
 }
 
 init();
-setActiveLink();
+commonUi.setActiveLink();

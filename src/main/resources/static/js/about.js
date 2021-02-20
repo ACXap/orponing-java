@@ -1,2 +1,2 @@
 "use strict"
-setActiveLink();
+new CommonUi().setActiveLink();

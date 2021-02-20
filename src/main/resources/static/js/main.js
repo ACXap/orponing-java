@@ -1,152 +1,24 @@
-"use strict"
-const listAddressOfFile = [];
-const listAddressOfClipboard = [];
+import Api from '../js/classes/Api.js';
+import CommonUi from '../js/classes/CommonUi.js';
+import ServiceOrponing from "../js/classes/ServiceOrponing.js";
+import ServiceOrponingAddress from "../js/classes/ServiceOrponingAddress.js";
+import ServiceOrponingFile from "../js/classes/ServiceOrponingFile.js";
+import ServiceOrponingClipboard from "../js/classes/ServiceOrponingClipboard.js";
+import TabCommon from "../js/classes/tabs/TabCommon.js";
+import TabAddress from "../js/classes/tabs/TabAddress.js";
+import TabFile from "../js/classes/tabs/TabFile.js";
+import TabClipboard from "../js/classes/tabs/TabClipboard.js";
+import MainController from "../js/classes/MainController.js";
 
-async function orponingAddress(address) {
-    const json = await apiOrponingAddress(address);
-    return json;
-}
+const api = new Api();
+const commonUi = new CommonUi();
+const serviceOrponing = new ServiceOrponing(api);
+const serviceOrponingAddress = new ServiceOrponingAddress(serviceOrponing);
+const serviceOrponingFile = new ServiceOrponingFile(serviceOrponing);
+const serviceOrponingClipboard = new ServiceOrponingClipboard(serviceOrponing);
+const mainController = new MainController({ serviceOrponingAddress, serviceOrponingFile, serviceOrponingClipboard, commonUi });
 
-async function orponingFile(callBack) {
-    if (!listAddressOfFile || listAddressOfFile.length === 0) {
-        callBack();
-        return;
-    }
-
-    orponingListAddress(listAddressOfFile, callBack);
-}
-
-async function orponingClipboard(callBack) {
-    if (!listAddressOfClipboard || listAddressOfClipboard.length === 0) {
-        callBack();
-        return;
-    }
-
-    orponingListAddress(listAddressOfClipboard, callBack);
-}
-
-function initListAddressOfClipboard(data) {
-    listAddressOfClipboard.length = 0;
-
-    try {
-        listAddressOfClipboard.push(...convertStringToAddress(data));
-        return { count: listAddressOfClipboard.length, error: null, previewList: listAddressOfClipboard.slice(0, 9) };
-    } catch (e) {
-        return { count: 0, error: e };
-    }
-}
-
-function initListAddressOfFile(file, callBack) {
-    if (!isValidFile(file)) {
-        const message = !file ? "А кто файл то будет добавлять?" : "Неверный тип файла. Допускается только *.txt и *.csv";
-        callBack({ count: 0, error: message })
-        return;
-    }
-
-    readFileUtfEncoding(file, callBack);
-}
-
-function readFileUtfEncoding(file, callBack) {
-    try {
-        const reader = new FileReader();
-        reader.readAsBinaryString(file);
-
-        reader.onload = function (e) {
-            try {
-                const data = decodeURIComponent(escape(e.target.result));
-                convertFileDataToAddress(data, callBack);
-            } catch (error) {
-                readFileOtherEncoding(file, callBack);
-                return;
-            }
-        }
-    } catch (e) {
-        callBack({ count: 0, error: e });
-    }
-}
-
-function readFileOtherEncoding(file, callBack) {
-    try {
-        const reader = new FileReader();
-        reader.readAsText(file, "windows-1251");
-        reader.onload = readerEvent => convertFileDataToAddress(readerEvent.target.result, callBack);
-    } catch (e) {
-        callBack({ count: 0, error: e });
-    }
-}
-
-function convertFileDataToAddress(data, callBack) {
-    listAddressOfFile.length = 0;
-
-    try {
-        listAddressOfFile.push(...convertStringToAddress(data));
-        callBack({ count: listAddressOfFile.length, error: null, previewList: listAddressOfFile.slice(0, 10) });
-    } catch (e) {
-        callBack({ count: 0, error: e });
-    }
-}
-
-function isValidFile(file) {
-    return file && (file.type === "text/plain" || (file.type === "application/vnd.ms-excel" && file.name.includes(".csv")));
-}
-
-function convertStringToAddress(data) {
-    const list = [];
-
-    if (data) {
-        const rows = data.split(/\r\n|\n/);
-
-        if (rows[0].split(";").length > 1) {
-            for (const row of rows) {
-                const items = row.split(";");
-                list.push({ Id: items[0], Address: items[1] });
-            }
-        } else {
-            let index = 1;
-            for (const row of rows) {
-                list.push({ Id: index++, Address: row });
-            }
-        }
-    }
-
-    return list;
-}
-
-function convertAddressInfoToString(addressInfo, list) {
-    let dataForSave = "data:application/txt;charset=utf-8,%EF%BB%BF";
-
-    const data = [];
-    data.push("id;Address;GlobalId;AddressOrpon;ParsingLevelCode;QualityCode;UnparsedParts;Error");
-
-    addressInfo.forEach(el => {
-        data.push(`${el.Id};${list.find(e => e.Id == el.Id).Address};${el.GlobalId ?? ""};${el.AddressOrpon ?? ""};${el.ParsingLevelCode ?? ""};${el.QualityCode ?? ""};${el.UnparsedParts ?? ""};${el.Error ?? ""}`);
-    });
-
-    dataForSave += encodeURIComponent(data.join("\r\n"));
-
-    return dataForSave;
-}
-
-async function orponingListAddress(list, callBack) {
-    try {
-        const idTask = await apiOrponingListAddress(list);
-        setTimeout(() => requestTask(idTask, list, callBack), 5000);
-    } catch (e) {
-        callBack("", e);
-    }
-}
-
-async function requestTask(idTask, list, callBack) {
-    try {
-        let result = await apiGetStatusTask(idTask);
-
-        if (result.status === "COMPLETED") {
-            result = await apiGetResultTask(idTask);
-            callBack(convertAddressInfoToString(result, list));
-        } else {
-            setTimeout(() => requestTask(idTask, list, callBack), 5000);
-        }
-    } catch (e) {
-        callBack("", e);
-    }
-}
+const tabAddress = new TabAddress(serviceOrponingAddress);
+const tabFile = new TabFile();
+const tabClipboard = new TabClipboard();
+TabCommon.openLastTab();

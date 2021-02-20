@@ -1,42 +1,44 @@
 "use strict"
+const commonUi = new CommonUi();
+const api = new Api();
 // пока будем получать весь, потом подумаем как получать только обновления
-getElement("loadLog").onclick = loadLog;
-getElement("clearArchive").onclick = clearArchive;
+commonUi.getElement("loadLog").onclick = loadLog;
+commonUi.getElement("clearArchive").onclick = clearArchive;
 
 async function loadLog() {
     try {
-        const log = await apiGetLog();
+        const log = await api.apiGetLog();
         setTextLog(log);
     } catch (e) {
-        notifyError(e);
+        commonUi.notifyError(e);
     }
 }
 
 async function clearArchive() {
     const password = window.prompt("Укажите пароль для операции:");
     if (password) {
-        const result = await apiClearArchive(password);
+        const result = await api.apiClearArchive(password);
 
         if (result.status === "COMPLETED") {
-            getElement("archive").innerHTML = "";
+            commonUi.getElement("archive").innerHTML = "";
         } else {
-            notifyError(result.message);
+            commonUi.notifyError(result.message);
         }
     }
 }
 
 function setTextLog(log) {
-    const t = getElement("floatingTextarea");
+    const t = commonUi.getElement("floatingTextarea");
     t.value = log
     t.scrollTop = Number.MAX_SAFE_INTEGER;
 }
 
 async function readLog(file) {
     try {
-        const log = await apiGetLogFile(file);
+        const log = await api.apiGetLogFile(file);
         setTextLog(log);
     } catch (e) {
-        notifyError(e);
+        commonUi.notifyError(e);
     }
 }
 
@@ -45,5 +47,5 @@ function setActionButtonLog() {
 }
 
 loadLog();
-setActiveLink();
+commonUi.setActiveLink();
 setActionButtonLog();
