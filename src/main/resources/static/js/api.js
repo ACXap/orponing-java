@@ -1,3 +1,4 @@
+"use strict"
 async function apiGetLog() {
     const response = await fetch("/log", {
         method: 'POST',

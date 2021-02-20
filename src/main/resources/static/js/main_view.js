@@ -1,3 +1,4 @@
+"use strict"
 //#region const
 const TAB_ADDRESS = "tab-orponing-address";
 const FORM_ADDRESS = "div-form-address";
@@ -83,7 +84,7 @@ getElement(ORPONING_ADDRESS).onclick = async () => {
                 getElement("checkStatus").value = json.CheckStatus;
                 getElement("error").value = json.Error;
 
-                header = getElement("headerInfoAddress");
+                const header = getElement("headerInfoAddress");
                 if (json.IsValid) {
                     header.textContent = "Адрес разобран";
                     header.style = "color:green";

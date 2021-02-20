@@ -1,5 +1,6 @@
-listAddressOfFile = [];
-listAddressOfClipboard = [];
+"use strict"
+const listAddressOfFile = [];
+const listAddressOfClipboard = [];
 
 async function orponingAddress(address) {
     const json = await apiOrponingAddress(address);
@@ -25,11 +26,12 @@ async function orponingClipboard(callBack) {
 }
 
 function initListAddressOfClipboard(data) {
+    listAddressOfClipboard.length = 0;
+
     try {
-        listAddressOfClipboard = convertStringToAddress(data);
+        listAddressOfClipboard.push(...convertStringToAddress(data));
         return { count: listAddressOfClipboard.length, error: null, previewList: listAddressOfClipboard.slice(0, 9) };
     } catch (e) {
-        listAddressOfClipboard.length = 0;
         return { count: 0, error: e };
     }
 }
@@ -74,11 +76,12 @@ function readFileOtherEncoding(file, callBack) {
 }
 
 function convertFileDataToAddress(data, callBack) {
+    listAddressOfFile.length = 0;
+
     try {
-        listAddressOfFile = convertStringToAddress(data);
+        listAddressOfFile.push(...convertStringToAddress(data));
         callBack({ count: listAddressOfFile.length, error: null, previewList: listAddressOfFile.slice(0, 10) });
     } catch (e) {
-        listAddressOfFile.length = 0;
         callBack({ count: 0, error: e });
     }
 }
@@ -88,7 +91,7 @@ function isValidFile(file) {
 }
 
 function convertStringToAddress(data) {
-    list = [];
+    const list = [];
 
     if (data) {
         const rows = data.split(/\r\n|\n/);
@@ -126,7 +129,7 @@ function convertAddressInfoToString(addressInfo, list) {
 
 async function orponingListAddress(list, callBack) {
     try {
-        idTask = await apiOrponingListAddress(list);
+        const idTask = await apiOrponingListAddress(list);
         setTimeout(() => requestTask(idTask, list, callBack), 2000);
     } catch (e) {
         callBack("", e);

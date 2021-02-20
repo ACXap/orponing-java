@@ -1,3 +1,4 @@
+"use strict"
 function setActiveLink() {
     for (el of document.querySelectorAll("a")) {
         if (el.href == window.location.href) {

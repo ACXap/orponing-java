@@ -1,3 +1,4 @@
+"use strict"
 // пока будем получать весь, потом подумаем как получать только обновления
 getElement("loadLog").onclick = loadLog;
 getElement("clearArchive").onclick = clearArchive;
