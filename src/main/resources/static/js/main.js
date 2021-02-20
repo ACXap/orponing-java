@@ -1,5 +1,6 @@
-import Api from '../js/classes/Api.js';
-import CommonUi from '../js/classes/CommonUi.js';
+//import Api from '../js/classes/Api.js';
+import Api from '../../test/Api.js';
+
 import ServiceOrponing from "../js/classes/ServiceOrponing.js";
 import ServiceOrponingAddress from "../js/classes/ServiceOrponingAddress.js";
 import ServiceOrponingFile from "../js/classes/ServiceOrponingFile.js";
@@ -8,17 +9,18 @@ import TabCommon from "../js/classes/tabs/TabCommon.js";
 import TabAddress from "../js/classes/tabs/TabAddress.js";
 import TabFile from "../js/classes/tabs/TabFile.js";
 import TabClipboard from "../js/classes/tabs/TabClipboard.js";
-import MainController from "../js/classes/MainController.js";
+import TabHistory from "../js/classes/tabs/TabHistory.js";
+import ServiceHistory from '../js/classes/ServiceHistory.js';
 
 const api = new Api();
-const commonUi = new CommonUi();
 const serviceOrponing = new ServiceOrponing(api);
+const serviceHistory = new ServiceHistory(serviceOrponing);
 const serviceOrponingAddress = new ServiceOrponingAddress(serviceOrponing);
 const serviceOrponingFile = new ServiceOrponingFile(serviceOrponing);
 const serviceOrponingClipboard = new ServiceOrponingClipboard(serviceOrponing);
-const mainController = new MainController({ serviceOrponingAddress, serviceOrponingFile, serviceOrponingClipboard, commonUi });
 
 const tabAddress = new TabAddress(serviceOrponingAddress);
-const tabFile = new TabFile();
-const tabClipboard = new TabClipboard();
+const tabFile = new TabFile(serviceOrponingFile);
+const tabClipboard = new TabClipboard(serviceOrponingClipboard);
+const tabHistory = new TabHistory(serviceHistory);
 TabCommon.openLastTab();

@@ -1,17 +1,41 @@
 "use strict"
-import TabCommon from "./TabCommon.js";
-export default class TabClipboard extends TabCommon {
+import TabWithResultLoad from "./TabWithResultLoad.js";
+export default class TabClipboard extends TabWithResultLoad {
     tab;
     form;
+    serviceOrponing;
 
-    constructor(option) {
+    constructor(serviceOrponingClipboard) {
         super();
+        this.serviceOrponing = serviceOrponingClipboard;
         this.tab = document.querySelector("#tab-orponing-clipboard");
         this.form = document.querySelector("#div-form-clipboard");
+        this.addTab(this);
+        this.tab.onclick = () => this.open();
 
-        this.addTab(this.tab);
-        this.addForm(this.form);
+        this.form.querySelector("#input-clipboard").onclick = async () => {
+            if (navigator.clipboard) {
+                const data = await navigator.clipboard.readText();
 
-        this.tab.onclick = () => this.openForm(this.tab, this.form, document.querySelector("div.result"));
+                if (data) {
+                    const result = this.serviceOrponing.initListAddress(data);
+                    if (result.error) {
+                        this.notifyError(result.error);
+                    } else {
+                        this.setPreview(result.previewList);
+                    }
+
+                    this.form.querySelector("div.count-address").textContent = "Всего записей: " + result.count;
+                } else {
+                    this.notifyError("В буфере обмена нет подходящих данных");
+                }
+            }
+        }
+
+        this.form.querySelector("button.start").onclick = () => this.orponingData((c) => this.serviceOrponing.orponing(c, "Буфер обмена"));
+    }
+
+    open() {
+        this.openForm(this.form.querySelector("div.result>a"));
     }
 }

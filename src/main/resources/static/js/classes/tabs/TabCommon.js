@@ -1,35 +1,31 @@
 "use strict"
 export default class TabCommon {
     static listTab = [];
-    static listForm = [];
 
     addTab(tab) {
         TabCommon.listTab.push(tab);
     }
-    addForm(form) {
-        TabCommon.listForm.push(form);
-    }
 
-    openForm(currentTab, currentForm, isOpenResult) {
-        window.localStorage.setItem("lastTabName", currentTab.id);
-        currentForm.hidden = false;
+    openForm(isOpenResult) {
+        window.localStorage.setItem("lastTabName", this.tab.id);
+        this.form.hidden = false;
 
-        if (isOpenResult) currentForm.querySelector("div.result");
+        if (isOpenResult) this.form.querySelector("div.result").hidden = false;
 
-        this.closeFormsExceptCurrent(currentForm);
+        this.closeFormsExceptCurrent(this.form);
     }
 
     closeFormsExceptCurrent(currentForm) {
-        for (const form of TabCommon.listForm) {
-            if (form != currentForm) {
-                form.hidden = true;
-                form.querySelector("div.result").hidden = true;
+        for (const tab of TabCommon.listTab) {
+            if (tab.form != currentForm) {
+                tab.form.hidden = true;
+                tab.form.querySelector("div.result").hidden = true;
             }
         }
     }
 
-    startProcessing(form, message) {
-        const p = form.querySelector("div.processing");
+    startProcessing(message) {
+        const p = this.form.querySelector("div.processing");
         if (p) return;
 
         const proc = `<div class="processing row py-2 text-center">
@@ -39,14 +35,14 @@ export default class TabCommon {
                     </div>
                 </div>`;
 
-        form.insertAdjacentHTML("beforeend", proc);
-        form.querySelector("button.start").classList.add("disabled");
+        this.form.insertAdjacentHTML("beforeend", proc);
+        this.form.querySelector("button.start").classList.add("disabled");
     }
 
-    stopProcessing(form) {
-        const p = form.querySelector("div.processing");
+    stopProcessing() {
+        const p = this.form.querySelector("div.processing");
         if (p) p.remove();
-        form.querySelector("button.start").classList.remove("disabled");
+        this.form.querySelector("button.start").classList.remove("disabled");
     }
 
     notifyError(e) {
@@ -56,7 +52,7 @@ export default class TabCommon {
 
     static openLastTab() {
         const tabName = window.localStorage.getItem("lastTabName");
-        const tab = this.listTab.filter(t => t.tab.id == tabName);
+        const tab = this.listTab.filter(t => t.tab.id == tabName)[0];
         if (tab) {
             tab.open();
         } else {

@@ -7,13 +7,13 @@ export default class ServiceOrponingClipboard {
         this._serviceOrponing = serviceOrponing;
     }
 
-    async orponing(callBack) {
+    async orponing(callBack, name) {
         if (this._listAddress.length === 0) {
             callBack();
             return;
         }
 
-        this._serviceOrponing.orponingListAddress(this._listAddress, callBack);
+        this._serviceOrponing.orponingListAddress(this._listAddress, callBack, name);
     }
 
     initListAddress(data) {

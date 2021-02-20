@@ -8,14 +8,12 @@ export default class TabAddress extends TabCommon {
     constructor(serviceOrponing) {
         super();
         this.serviceOrponing = serviceOrponing;
-
         this.tab = document.querySelector("#tab-orponing-address");
         this.form = document.querySelector("#div-form-address");
 
-        this.addTab(this.tab);
-        this.addForm(this.form);
+        this.addTab(this);
 
-        this.tab.onclick = () => open();
+        this.tab.onclick = () => this.open();
         this.form.querySelector("input").addEventListener("keyup", e => {
             if (e.keyCode != 13) return;
             e.preventDefault();
@@ -30,7 +28,7 @@ export default class TabAddress extends TabCommon {
             const address = this.form.querySelector("input").value;
 
             if (address) {
-                this.startProcessing(this.form, "Обработка запроса...");
+                this.startProcessing("Обработка запроса...");
 
                 const json = await this.serviceOrponing.orponing(address);
 
@@ -63,11 +61,11 @@ export default class TabAddress extends TabCommon {
         } catch (e) {
             this.notifyError(e);
         } finally {
-            this.stopProcessing(this.form);
+            this.stopProcessing();
         }
     }
 
     open() {
-        this.openForm(this.tab, this.form, document.querySelector("#gid").value);
+        this.openForm(document.querySelector("#gid").value);
     }
 }

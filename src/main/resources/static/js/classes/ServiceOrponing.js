@@ -1,6 +1,10 @@
 "use strict"
 export default class ServiceOrponing {
     _api;
+    _serviceHistory;
+
+    handlerStartTask;
+
     constructor(api) {
         this._api = api;
     }
@@ -10,24 +14,30 @@ export default class ServiceOrponing {
         return json;
     }
 
-    async orponingListAddress(list, callBack) {
+    async orponingListAddress(list, callBack, name) {
         try {
             const idTask = await this._api.apiOrponingListAddress(list);
-            setTimeout(() => this._requestTask(idTask, list, callBack), 5000);
+            this.handlerStartTask({ status: "START", name: name, taskId: idTask, countRecord: list.length, date: new Date() });
+            setTimeout(() => this._requestTask(idTask, list, callBack), 100);
         } catch (e) {
+            this.handlerStartTask({ status: "ERROR", name: name, taskId: "", countRecord: list.length, date: new Date() });
             callBack("", e);
         }
     }
 
+    async getStatus(idTask) {
+        return await this._api.apiGetStatusTask(idTask);
+    }
+
     async _requestTask(idTask, list, callBack) {
         try {
-            let result = await this._api.apiGetStatusTask(idTask);
+            let result = await this.getStatus(idTask);
 
             if (result.status === "COMPLETED") {
                 result = await this._api.apiGetResultTask(idTask);
                 callBack(this.convertAddressInfoToString(result, list));
             } else {
-                setTimeout(() => this._requestTask(idTask, list, callBack), 5000);
+                setTimeout(() => this._requestTask(idTask, list, callBack), 100);
             }
         } catch (e) {
             callBack("", e);
