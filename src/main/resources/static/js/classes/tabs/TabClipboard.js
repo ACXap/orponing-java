@@ -8,6 +8,7 @@ export default class TabClipboard extends TabWithResultLoad {
         this.serviceOrponing = serviceOrponingClipboard;
         this.tab = document.querySelector("#tab-orponing-clipboard");
         this.form = document.querySelector("#div-form-clipboard");
+
         this.addTab(this);
         this.tab.onclick = () => this.openForm();
 

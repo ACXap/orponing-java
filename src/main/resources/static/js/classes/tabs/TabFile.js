@@ -2,6 +2,7 @@
 import TabWithResultLoad from "./TabWithResultLoad.js";
 export default class TabFile extends TabWithResultLoad {
     serviceOrponing;
+    inputFile;
 
     constructor(serviceOrponingFile) {
         super();
@@ -9,18 +10,20 @@ export default class TabFile extends TabWithResultLoad {
 
         this.tab = document.querySelector("#tab-orponing-file");
         this.form = document.querySelector("#div-form-file");
+        this.inputFile = this.form.querySelector("input");
+
         this.addTab(this);
         this.tab.onclick = () => this.openForm();
 
-        this.initDragDrop()
+        this.initDragDrop();
 
-        this.form.querySelector("input").onchange = async (e) => {
+        this.inputFile.onchange = async (e) => {
             const file = e.currentTarget.files[0];
 
             const result = await this.serviceOrponing.initListAddress(file);
             if (result.error) {
                 this.notifyError(result.error);
-                this.form.querySelector("input").value = "";
+                this.inputFile.value = "";
             } else {
                 this.setPreview(result.previewList);
             }
@@ -29,7 +32,7 @@ export default class TabFile extends TabWithResultLoad {
         }
 
         this.form.querySelector("button.start").onclick = async () => {
-            if (this.form.querySelector("input").value) {
+            if (inputFile.value) {
                 this.orponing(() => this.serviceOrponing.orponing());
             }
         }
@@ -57,9 +60,9 @@ export default class TabFile extends TabWithResultLoad {
             const result = await this.serviceOrponing.initListAddress(files[0]);
             if (result.error) {
                 this.notifyError(result.error);
-                this.form.querySelector("input").value = "";
+                this.inputFile.value = "";
             } else {
-                this.form.querySelector("input").files = files;
+                this.inputFile.files = files;
             }
 
             this.setPreview(result.previewList);

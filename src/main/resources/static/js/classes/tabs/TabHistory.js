@@ -1,8 +1,6 @@
 "use strict"
 import TabCommon from "./TabCommon.js";
 export default class TabHistory extends TabCommon {
-    tab;
-    form;
     serviceHistory;
 
     constructor(serviceHistory) {
