@@ -1,8 +1,6 @@
 "use strict"
 import TabWithResultLoad from "./TabWithResultLoad.js";
 export default class TabFile extends TabWithResultLoad {
-    tab;
-    form;
     serviceOrponing;
 
     constructor(serviceOrponingFile) {
@@ -12,53 +10,60 @@ export default class TabFile extends TabWithResultLoad {
         this.tab = document.querySelector("#tab-orponing-file");
         this.form = document.querySelector("#div-form-file");
         this.addTab(this);
-        this.tab.onclick = () => this.open();
+        this.tab.onclick = () => this.openForm();
 
-        this.form.ondragover = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-        };
+        this.initDragDrop()
 
-        this.form.ondrop = (e) => {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const files = e.dataTransfer.files;
-            this.serviceOrponing.initListAddress(files[0], (result) => {
-                if (result.error) {
-                    this.notifyError(result.error);
-                    this.form.querySelector("input").value = "";
-                } else {
-                    this.form.querySelector("input").files = files;
-                }
-
-                this.setPreview(result.previewList);
-                this.form.querySelector("div.count-address").textContent = "Всего записей: " + result.count;
-            });
-        };
-
-        this.form.querySelector("input").onchange = (e) => {
+        this.form.querySelector("input").onchange = async (e) => {
             const file = e.currentTarget.files[0];
 
-            this.serviceOrponing.initListAddress(file, (result) => {
-                if (result.error) {
-                    this.notifyError(result.error);
-                    this.form.querySelector("input").value = "";
-                } else {
-                    this.setPreview(result.previewList);
-                }
-                this.form.querySelector("div.count-address").textContent = "Всего записей: " + result.count;
-            });
+            const result = await this.serviceOrponing.initListAddress(file);
+            if (result.error) {
+                this.notifyError(result.error);
+                this.form.querySelector("input").value = "";
+            } else {
+                this.setPreview(result.previewList);
+            }
+
+            this.form.querySelector("div.count-address").textContent = "Всего записей: " + result.count;
         }
 
-        this.form.querySelector("button.start").onclick = () => {
+        this.form.querySelector("button.start").onclick = async () => {
             if (this.form.querySelector("input").value) {
-                this.orponingData((c) => this.serviceOrponing.orponing(c));
+                this.orponing(() => this.serviceOrponing.orponing());
             }
         }
     }
 
-    open() {
-        this.openForm(this.form.querySelector("div.result>a"));
+    initDragDrop() {
+        this.form.ondragover = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            this.form.classList.add("bg-secondary");
+        };
+
+        this.form.ondragleave = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            this.form.classList.remove("bg-secondary");
+        };
+
+        this.form.ondrop = async (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            this.form.classList.remove("bg-secondary");
+
+            const files = e.dataTransfer.files;
+            const result = await this.serviceOrponing.initListAddress(files[0]);
+            if (result.error) {
+                this.notifyError(result.error);
+                this.form.querySelector("input").value = "";
+            } else {
+                this.form.querySelector("input").files = files;
+            }
+
+            this.setPreview(result.previewList);
+            this.form.querySelector("div.count-address").textContent = "Всего записей: " + result.count;
+        };
     }
 }

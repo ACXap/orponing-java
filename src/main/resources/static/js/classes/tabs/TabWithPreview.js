@@ -22,15 +22,8 @@ export default class TabWithPreview extends TabCommon {
 
     getRowPreview(id, address) {
         const result = parseInt(id);
-
-        let color = "";
-        let title = "";
-
-        if (!result) {
-            color = "bg-danger";
-            title = "Идентификатор должен быть числом";
-        }
-
+        const color = result ? "" : "bg-danger";
+        const title = result ? "" : "Идентификатор должен быть числом";
         return `<div class="row border"><div class="col-2 border-end ${color}" title="${title}">${id}</div><div class="col-10">${address}</div></div>`;
     }
 

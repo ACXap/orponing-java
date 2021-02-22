@@ -16,11 +16,12 @@ export default class TabHistory extends TabCommon {
         this.addTab(this);
 
         this.tab.onclick = () => this.open();
+        this.updateHistory();
     }
 
     open() {
         this.updateHistory();
-        this.openForm(this.form.querySelectorAll("div.item").length > 0);
+        this.openForm();
     }
 
     updateHistory() {
@@ -28,6 +29,7 @@ export default class TabHistory extends TabCommon {
 
         const divResult = this.form.querySelector("div.result");
         divResult.innerHTML = "";
+        divResult.hidden = listHistory.size === 0;
 
         if (listHistory.size > 0) {
             divResult.insertAdjacentHTML("beforeend", this.getHeader());

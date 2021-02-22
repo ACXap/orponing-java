@@ -1,36 +1,31 @@
 "use strict"
 export default class TabCommon {
     static listTab = [];
+    tab;
+    form;
 
     addTab(tab) {
         TabCommon.listTab.push(tab);
     }
 
-    openForm(isOpenResult) {
+    openForm() {
         window.localStorage.setItem("lastTabName", this.tab.id);
         this.form.hidden = false;
-
-        if (isOpenResult) this.form.querySelector("div.result").hidden = false;
-
-        this.closeFormsExceptCurrent(this.form);
+        this.closeOthersForms();
     }
 
-    closeFormsExceptCurrent(currentForm) {
-        for (const tab of TabCommon.listTab) {
-            if (tab.form != currentForm) {
-                tab.form.hidden = true;
-                tab.form.querySelector("div.result").hidden = true;
-            }
-        }
+    closeOthersForms() {
+        TabCommon.listTab.forEach(tab => tab.form.hidden = tab.form != this.form);
     }
 
     startProcessing(message) {
+        const m = message ?? "Обработка запроса...";
         const p = this.form.querySelector("div.processing");
         if (p) return;
 
         const proc = `<div class="processing row py-2 text-center">
                     <div class="container">
-                        <h5>${message}</h5>
+                        <h5>${m}</h5>
                         <div class="spinner-grow text-primary" role="status"></div>
                     </div>
                 </div>`;
@@ -54,9 +49,9 @@ export default class TabCommon {
         const tabName = window.localStorage.getItem("lastTabName");
         const tab = this.listTab.filter(t => t.tab.id == tabName)[0];
         if (tab) {
-            tab.open();
+            tab.openForm();
         } else {
-            listTab[0].open();
+            listTab[0].openForm();
         }
     }
 }

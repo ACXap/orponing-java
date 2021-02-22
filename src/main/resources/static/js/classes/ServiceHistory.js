@@ -10,10 +10,10 @@ export default class ServiceHistory {
 
     constructor(serviceOrponing) {
         this.serviceOrponing = serviceOrponing;
-        this.serviceOrponing.handlerStartTask = (item) => {
+        this.serviceOrponing.onStartTask = (item) => {
             this.addItem(item);
         }
-        this.serviceOrponing.handlerCompletedTask = (task) => {
+        this.serviceOrponing.onCompletedTask = (task) => {
             this.setStatusTask(task);
         }
         this.updateList();

@@ -1,10 +1,9 @@
 "use strict"
 export default class ServiceOrponing {
     _api;
-    _serviceHistory;
 
-    handlerStartTask;
-    handlerCompletedTask;
+    onStartTask;
+    onCompletedTask;
 
     constructor(api) {
         this._api = api;
@@ -15,36 +14,36 @@ export default class ServiceOrponing {
         return json;
     }
 
-    async orponingListAddress(list, callBack, name) {
+    async orponingListAddress(list, name) {
         try {
             const idTask = await this._api.apiOrponingListAddress(list);
-            this.handlerStartTask({ status: "START", name: name, taskId: idTask, countRecord: list.length, date: new Date() });
-            setTimeout(() => this._requestTask(idTask, list, callBack), 100);
+            this.onStartTask({ status: "START", name: name, taskId: idTask, countRecord: list.length, date: new Date() });
+
+            while (true) {
+                await this._delay(100);
+                let result = await this.getStatus(idTask);
+                if (result.status === "COMPLETED") {
+                    this.onCompletedTask({ status: result.status, taskId: idTask, date: new Date() });
+                    result = await this.getResult(idTask);
+                    return { data: this.convertAddressInfoToString(result, list), error: null }
+                }
+            }
         } catch (e) {
-            this.handlerStartTask({ status: "ERROR", name: name, taskId: "", countRecord: list.length, date: new Date() });
-            callBack("", e);
+            this.onStartTask({ status: "ERROR", name: name, taskId: "", countRecord: list.length, date: new Date() });
+            return { data: "", error: e.message };
         }
+    }
+
+    _delay(delay) {
+        return new Promise(resolve => setTimeout(resolve, delay));
     }
 
     async getStatus(idTask) {
         return await this._api.apiGetStatusTask(idTask);
     }
 
-    async _requestTask(idTask, list, callBack) {
-        try {
-            let result = await this.getStatus(idTask);
-
-            if (result.status === "COMPLETED") {
-                this.handlerCompletedTask({ status: result.status, taskId: idTask, date: new Date() });
-
-                result = await this._api.apiGetResultTask(idTask);
-                callBack(this.convertAddressInfoToString(result, list));
-            } else {
-                setTimeout(() => this._requestTask(idTask, list, callBack), 100);
-            }
-        } catch (e) {
-            callBack("", e);
-        }
+    async getResult(idTask) {
+        return await this._api.apiGetResultTask(idTask);
     }
 
     convertAddressInfoToString(addressInfo, list) {

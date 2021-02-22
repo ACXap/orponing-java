@@ -25,19 +25,17 @@ export default class TabWithResultLoad extends TabWithPreview {
         this.form.querySelector("div.result").appendChild(downloadFile);
     }
 
-    orponingData(execute) {
-        this.startProcessing("Обработка запроса...");
-        this.form.querySelector("div.result").hidden = true;
+    async orponing(execute) {
+        this.startProcessing();
 
-        execute((data, error) => {
-            if (data) {
-                this.addDownLoadLink(data);
-                this.removePreview();
-            } else if (error) {
-                this.notifyError(error);
-            }
+        const result = await execute();
+        if (result.error) {
+            this.notifyError(result.error);
+        } else {
+            this.addDownLoadLink(result.data);
+            this.removePreview();
+        }
 
-            this.stopProcessing();
-        });
+        this.stopProcessing();
     }
 }

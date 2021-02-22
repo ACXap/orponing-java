@@ -1,8 +1,6 @@
 "use strict"
 import TabWithResultLoad from "./TabWithResultLoad.js";
 export default class TabClipboard extends TabWithResultLoad {
-    tab;
-    form;
     serviceOrponing;
 
     constructor(serviceOrponingClipboard) {
@@ -11,7 +9,7 @@ export default class TabClipboard extends TabWithResultLoad {
         this.tab = document.querySelector("#tab-orponing-clipboard");
         this.form = document.querySelector("#div-form-clipboard");
         this.addTab(this);
-        this.tab.onclick = () => this.open();
+        this.tab.onclick = () => this.openForm();
 
         this.form.querySelector("#input-clipboard").onclick = async () => {
             if (navigator.clipboard) {
@@ -32,10 +30,8 @@ export default class TabClipboard extends TabWithResultLoad {
             }
         }
 
-        this.form.querySelector("button.start").onclick = () => this.orponingData((c) => this.serviceOrponing.orponing(c));
-    }
-
-    open() {
-        this.openForm(this.form.querySelector("div.result>a"));
+        this.form.querySelector("button.start").onclick = async () => {
+            this.orponing(() => this.serviceOrponing.orponing());
+        };
     }
 }
