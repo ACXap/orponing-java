@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @Lazy
 @RequiredArgsConstructor
-@RequestMapping("/log")
+@RequestMapping("/api/1.0/log")
 public class LogController {
     private final LogReadService service;
     private final PasswordService passwordService;

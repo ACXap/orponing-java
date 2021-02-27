@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 @RestController
 @Lazy
-@RequestMapping("/api/get_global_id")
+@RequestMapping("/api/1.0/get_global_id")
 @RequiredArgsConstructor
 public class AddressOrponingController {
     private final OrponingApiService service;

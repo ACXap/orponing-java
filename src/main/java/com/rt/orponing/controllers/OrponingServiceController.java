@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 @RestController
 @Lazy
 @RequiredArgsConstructor
-@RequestMapping("/orponing_service/")
+@RequestMapping("/api/1.0/orponing_service/")
 public class OrponingServiceController {
     private final ManagerService managerService;
 
