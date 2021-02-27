@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @Lazy
 @RequestMapping("/api/1.0/get_global_id")
