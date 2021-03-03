@@ -66,7 +66,7 @@ public class OrponingApiService implements IStatus {
         return uuid.toString();
     }
 
-    public List<AddressInfo> getResultTask(String taskId) throws Exception {
+    public List<ResponseAddressInfo> getResultTask(String taskId) throws Exception {
 
         TaskOrponing taskOrponing = getTask(taskId);
 

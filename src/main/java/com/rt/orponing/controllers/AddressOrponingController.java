@@ -4,6 +4,7 @@ package com.rt.orponing.controllers;
 
 import com.rt.orponing.repository.data.AddressInfo;
 import com.rt.orponing.repository.data.EntityAddress;
+import com.rt.orponing.repository.data.ResponseAddressInfo;
 import com.rt.orponing.service.OrponingApiService;
 import com.rt.orponing.service.data.Status;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class AddressOrponingController {
     }
 
     @GetMapping(path = "/result")
-    public List<AddressInfo> apiGetResultTask(@RequestParam("id") String id) {
+    public List<ResponseAddressInfo> apiGetResultTask(@RequestParam("id") String id) {
         try {
             return service.getResultTask(id);
         } catch (Exception ex) {

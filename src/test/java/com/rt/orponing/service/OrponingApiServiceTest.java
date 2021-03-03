@@ -1,6 +1,7 @@
 package com.rt.orponing.service;
 
 import com.rt.orponing.repository.data.AddressInfo;
+import com.rt.orponing.repository.data.ResponseAddressInfo;
 import com.rt.orponing.service.config.ServiceTestConfig;
 import com.rt.orponing.service.config.ServiceTestStopConfig;
 import com.rt.orponing.service.data.Status;
@@ -50,7 +51,7 @@ class OrponingApiServiceTest {
     @Test
     void getResultTask_goodId() throws Exception {
         String taskId = service.addTask(new ArrayList<>());
-        List<AddressInfo> list = null;
+        List<ResponseAddressInfo> list = null;
 Thread.sleep(1000);
       //  try {
             list = service.getResultTask(taskId);
@@ -72,7 +73,7 @@ Thread.sleep(1000);
     @Test
     void getResultTask_errorId() throws Exception {
         try {
-            List<AddressInfo> list = service.getResultTask("12312313");
+            List<ResponseAddressInfo> list = service.getResultTask("12312313");
             fail();
         } catch (Exception ex) {
             assertEquals("Id not correct", ex.getMessage());
@@ -84,7 +85,7 @@ Thread.sleep(1000);
         UUID uuid = UUID.randomUUID();
 
         try {
-            List<AddressInfo> list = service.getResultTask(uuid.toString());
+            List<ResponseAddressInfo> list = service.getResultTask(uuid.toString());
             fail();
         } catch (Exception ex) {
             assertEquals("Id not found", ex.getMessage());
