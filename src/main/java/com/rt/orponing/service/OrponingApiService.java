@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -25,28 +24,22 @@ import java.util.concurrent.TimeUnit;
 public class OrponingApiService implements IStatus {
 
     //region PrivateField;
-
     private final OrponingService orponingService;
     private final Map<UUID, TaskOrponing> mapTask = new HashMap<>();
-    private final ExecutorService executor = new ThreadPoolExecutor(2, 4, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<>(10));
-    private final Map<UUID, Future<?>> mapFuture = new HashMap<>();
-    private final Object lock = new Object();
+    private final LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(10);
+    private final ExecutorService executor = new ThreadPoolExecutor(2, 4, 1, TimeUnit.MINUTES, queue);
     private final Logger logger = LoggerFactory.getLogger(OrponingApiService.class);
-    private Status status = Status.Stop(StatusMessage.STOP);
-
     //endregion PrivateField
 
     //region PublicMethod
 
     public String addTask(List<EntityAddress> entityAddressList) {
-        start();
-
         UUID uuid = UUID.randomUUID();
         TaskOrponing taskOrponing = new TaskOrponing(uuid, entityAddressList);
 
         mapTask.put(uuid, taskOrponing);
 
-        mapFuture.put(uuid, executor.submit(() -> {
+        executor.execute(() -> {
             try {
                 taskOrponing.startTask();
                 logger.info("Start task id: " + taskOrponing.getId() + " Count address: " + taskOrponing.getListAddressRequest().size());
@@ -61,13 +54,12 @@ public class OrponingApiService implements IStatus {
             } catch (Exception e) {
                 taskOrponing.errorTask(e.getMessage());
             }
-        }));
+        });
 
         return uuid.toString();
     }
 
     public List<ResponseAddressInfo> getResultTask(String taskId) throws Exception {
-
         TaskOrponing taskOrponing = getTask(taskId);
 
         if (taskOrponing.getStatusTask().getStatus() == StatusType.COMPLETED) {
@@ -83,11 +75,11 @@ public class OrponingApiService implements IStatus {
 
     @Override
     public Status getStatus() {
-        if (mapFuture.values().stream().anyMatch(f -> !f.isDone())) return status;
+        if (queue.size() > 0) {
+            Status.Start(StatusMessage.START);
+        }
 
-        mapFuture.clear();
-        status = Status.Stop(StatusMessage.NO_WORK);
-        return status;
+        return Status.Stop(StatusMessage.NO_WORK);
     }
 
     public AddressInfo orponingAddress(EntityAddress entityAddress) {
@@ -101,14 +93,6 @@ public class OrponingApiService implements IStatus {
     //endregion PublicMethod
 
     //region PrivateMethod
-
-    private void start() {
-        synchronized (lock) {
-            if (status.getStatus() != StatusType.START) {
-                status = Status.Start(StatusMessage.START);
-            }
-        }
-    }
 
     private UUID getId(String id) throws Exception {
         try {
